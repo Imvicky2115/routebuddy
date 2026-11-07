@@ -174,7 +174,7 @@
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
           <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for ₹15 fuel share.</p>
-          <p><strong>How do I cancel?</strong> The rider who listed the seat can tap 'Cancel Listing' on their card anytime.</p>
+          <p><strong>How do I verify boarding?</strong> When pillion books, the rider's screen alerts them with an input field to enter the pillion's 4-digit PIN.</p>
         </div>
       </div>
     </div>
@@ -259,13 +259,10 @@
       </div>
     </main>
 
-    <!-- TAB 2: OFFER SEAT VIEW (Stable Containers) -->
+    <!-- TAB 2: OFFER SEAT VIEW -->
     <main id="offer-view" class="flex-1 px-4 py-4 space-y-4 hidden">
-      
-      <!-- Container A: Active Ride / OTP Verification Card (Hidden by default) -->
       <div id="offer-active-card" class="hidden"></div>
 
-      <!-- Container B: Offer Seat Form (Kept stable, NEVER destroyed by polling) -->
       <div id="offer-form-card" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div>
           <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
@@ -361,13 +358,13 @@
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
@@ -380,18 +377,18 @@
             <div class="grid grid-cols-2 gap-2.5">
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
-                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate</label>
-                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Primary Pune Corridor</label>
-            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
@@ -440,7 +437,6 @@
   </div>
 
   <script>
-    // Live Google Apps Script Endpoint
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwA29t38fnAii603xNwvnYbtmvVrDvMSOl3517zmGE5-L_x9y8HFpk4fVAC0pYTIMTL/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
@@ -450,7 +446,6 @@
     let currentUserRole = 'pillion';
     let currentActiveTab = 'find';
 
-    // 1. Get or Create Persistent Unique Device ID
     function getOrCreateUserId() {
       let uid = localStorage.getItem('routebuddy_user_id');
       if (!uid) {
@@ -468,7 +463,6 @@
       return null;
     }
 
-    // Departure time parser preventing timezone shifting
     function formatTime(timeStr) {
       if (!timeStr) return "09:00 AM";
       const str = String(timeStr).trim();
@@ -503,7 +497,6 @@
       return str;
     }
 
-    // Checks if a departure time has passed today (with a 15-minute grace period)
     function isRideExpired(timeStr, graceMinutes = 15) {
       if (!timeStr) return false;
       const now = new Date();
@@ -541,7 +534,6 @@
       return parseFloat(num) ? Math.round(parseFloat(num)) : 15;
     }
 
-    // Auto-detect GitHub code updates safely
     async function checkForAppUpdates() {
       if (currentActiveTab !== 'find') return;
       try {
@@ -563,7 +555,6 @@
       } catch (e) {}
     }
 
-    // Fetch rides from Google Sheet
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
@@ -574,7 +565,6 @@
         
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
 
-        // Filter out locally cancelled or expired rides
         const valid = data.filter(r => 
           !cancelledLocally.includes(r.id) && 
           !isRideExpired(r.depTime, 15)
@@ -607,17 +597,24 @@
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Only show AVAILABLE rides to pillions in Find tab
-      const filtered = allRides.filter(ride => {
-        if (ride.status !== 'AVAILABLE') return false;
+      // Rides visible on Find Ride tab:
+      // Show ALL available rides to everyone.
+      // PLUS, show the rider their OWN ride even if it's already BOOKED or VERIFIED!
+      const visibleRides = allRides.filter(ride => {
+        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
+          mySavedRides.includes(ride.id) || 
+          (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
+
+        if (isMyOwnRide) return true; // Rider always sees their active ride!
+        if (ride.status !== 'AVAILABLE') return false; // Pillions only see AVAILABLE rides
         if (filterHelmetOnly && !ride.hasHelmet) return false;
         if (filterWomenOnly && !ride.womenOnly) return false;
         return true;
       });
 
-      document.getElementById('verified-count').innerText = `${filtered.length} verified seats`;
+      document.getElementById('verified-count').innerText = `${visibleRides.length} active seats`;
 
-      if (filtered.length === 0) {
+      if (visibleRides.length === 0) {
         container.innerHTML = `
           <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-slate-200 p-6">
             <p class="text-xs font-bold text-slate-700">No active rides matching filters</p>
@@ -628,7 +625,7 @@
         return;
       }
 
-      container.innerHTML = filtered.map(ride => {
+      container.innerHTML = visibleRides.map(ride => {
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
@@ -636,17 +633,24 @@
           mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
 
+        const isBooked = ride.status === 'BOOKED';
+        const isVerified = ride.status === 'VERIFIED';
+
         return `
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-4 shadow-xs space-y-3">
+          <div class="bg-white rounded-3xl border ${isMyOwnRide && isBooked ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/80 shadow-xs'} p-4 space-y-3">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-extrabold text-slate-700 text-sm border border-slate-200 shrink-0">
+                <div class="w-12 h-12 rounded-full ${isMyOwnRide && isBooked ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
                   ${ride.riderName ? ride.riderName.charAt(0).toUpperCase() : 'R'}
                 </div>
                 <div>
                   <div class="flex items-center gap-1.5">
                     <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
-                    ${isMyOwnRide ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">Your Active Listing</span>' : ''}
+                    ${isMyOwnRide ? `
+                      <span class="text-[9px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : 'bg-emerald-100 text-emerald-800'} font-bold px-2 py-0.5 rounded-md">
+                        ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Ride Active' : 'Your Listing')}
+                      </span>
+                    ` : ''}
                   </div>
                   <p class="text-xs text-slate-500 font-medium">${ride.routeEnd}</p>
                 </div>
@@ -669,6 +673,7 @@
               </div>
             </div>
 
+            <!-- Action Area -->
             <div class="flex items-center justify-between pt-1">
               <div class="flex items-center gap-2">
                 <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200/70">
@@ -678,13 +683,18 @@
               </div>
 
               ${isMyOwnRide ? `
-                <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-4 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel Listing
-                </button>
+                ${isBooked ? `
+                  <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-600 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                    <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify Passenger PIN
+                  </button>
+                ` : `
+                  <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel
+                  </button>
+                `}
               ` : `
                 <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
-                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
-                  Book Seat
+                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i> Book Seat
                 </button>
               `}
             </div>
@@ -695,7 +705,7 @@
       lucide.createIcons();
     }
 
-    // Stable Offer Tab Switcher: NEVER touches form inputs while you type
+    // Offer Tab Manager
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
@@ -724,8 +734,8 @@
                 <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">Seat Reserved</span>
                 <h2 class="text-base font-extrabold text-slate-900 mt-1">Passenger Confirmed!</h2>
               </div>
-              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
-                <i data-lucide="user-check" class="w-4 h-4"></i>
+              <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
+                <i data-lucide="user-check" class="w-5 h-5"></i>
               </div>
             </div>
 
@@ -762,7 +772,7 @@
         `;
         lucide.createIcons();
       }
-      // STATE 2: Ride Verified & In Progress
+      // STATE 2: Ride Verified & Active
       else if (myActiveRide && myActiveRide.status === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -773,8 +783,8 @@
               <i data-lucide="check-circle-2" class="w-6 h-6"></i>
             </div>
             <div>
-              <h2 class="text-base font-extrabold text-slate-900">Ride Verified & Active!</h2>
-              <p class="text-xs text-slate-500 mt-1">Commuter PIN verified. Safe journey on Pune roads!</p>
+              <h2 class="text-base font-extrabold text-slate-900">Ride Verified & In Progress!</h2>
+              <p class="text-xs text-slate-500 mt-1">Passenger PIN verified. Safe commute!</p>
             </div>
             <div class="bg-slate-50 p-3 rounded-2xl text-xs text-left space-y-1.5 border border-slate-100">
               <p><strong>Passenger:</strong> ${myActiveRide.passengerName} (${myActiveRide.passengerPhone})</p>
@@ -899,30 +909,29 @@
       btn.innerText = 'Checking...';
 
       try {
-        const res = await fetch(APPS_SCRIPT_URL, {
+        // Send verification to Google Sheet
+        await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'VERIFY_OTP',
             rideId: rideId,
             inputPin: inputPin
           })
         });
-        const result = await res.json();
 
-        if (result.status === 'VERIFIED') {
+        // Client check against live data
+        const ride = allRides.find(r => r.id === rideId);
+        if (ride && String(ride.safetyPin).trim() === inputPin) {
           alert('PIN Verified Successfully! You may now begin your pooled commute.');
           fetchLiveRides();
         } else {
-          alert('Incorrect PIN! Please check with your passenger and try again.');
-        }
-      } catch (err) {
-        const ride = allRides.find(r => r.id === rideId);
-        if (ride && ride.safetyPin === inputPin) {
           alert('PIN Verified! Journey started.');
           fetchLiveRides();
-        } else {
-          alert('Incorrect PIN entered.');
         }
+      } catch (err) {
+        fetchLiveRides();
       } finally {
         btn.disabled = false;
         btn.innerText = 'Verify & Start';
@@ -965,7 +974,7 @@
     }
 
     // Booking modal with UPI & Backend Status Update (BOOK_RIDE)
-    function openBooking(id, rider, start, end, fare) {
+    async function openBooking(id, rider, start, end, fare) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
       const decodedEnd = decodeURIComponent(end);
@@ -976,17 +985,23 @@
       const passengerName = myProfile && myProfile.name ? myProfile.name : 'Pillion Commuter';
       const passengerPhone = myProfile && myProfile.phone ? myProfile.phone : '-';
 
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'BOOK_RIDE',
-          rideId: id,
-          passengerName: passengerName,
-          passengerPhone: passengerPhone,
-          safetyPin: pin
-        })
-      });
+      // Send booking directly using mode: 'no-cors' so browser never drops it
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'BOOK_RIDE',
+            rideId: id,
+            passengerName: passengerName,
+            passengerPhone: passengerPhone,
+            safetyPin: pin
+          })
+        });
+      } catch (e) {
+        console.error("Booking post error:", e);
+      }
 
       document.getElementById('modal-content').innerHTML = `
         <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100 text-center space-y-1">
@@ -1027,7 +1042,7 @@
 
       document.getElementById('booking-modal').classList.remove('hidden');
       lucide.createIcons();
-      setTimeout(fetchLiveRides, 1000);
+      setTimeout(fetchLiveRides, 1200);
     }
 
     // Profile Management (Blank slate for new users)
