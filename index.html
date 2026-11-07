@@ -259,10 +259,73 @@
       </div>
     </main>
 
-    <!-- TAB 2: OFFER SEAT VIEW -->
+    <!-- TAB 2: OFFER SEAT VIEW (Stable Containers) -->
     <main id="offer-view" class="flex-1 px-4 py-4 space-y-4 hidden">
-      <div id="offer-container" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
-        <!-- Rendered dynamically by renderOfferTab() -->
+      
+      <!-- Container A: Active Ride / OTP Verification Card (Hidden by default) -->
+      <div id="offer-active-card" class="hidden"></div>
+
+      <!-- Container B: Offer Seat Form (Kept stable, NEVER destroyed by polling) -->
+      <div id="offer-form-card" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+        <div>
+          <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Appears on Pune commuters' devices instantly.</p>
+        </div>
+
+        <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
+            <input type="text" id="riderName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
+              <input type="text" id="bikeModel" required placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time</label>
+              <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Starting Landmark</label>
+            <input type="text" id="routeStart" required placeholder="e.g. Hadapsar noble hospital" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Destination Landmark</label>
+            <input type="text" id="routeEnd" required placeholder="e.g. E space, Viman Nagar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Fuel Contribution (₹)</label>
+              <input type="number" id="nominalFare" min="10" max="25" value="15" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Reg No.</label>
+              <input type="text" id="vehicleReg" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-1">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="hasHelmet" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300">
+              <span class="text-xs font-semibold text-slate-700">Spare helmet available for pillion</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="womenOnly" class="w-4 h-4 text-emerald-600 rounded border-slate-300">
+              <span class="text-xs font-semibold text-slate-700">Women-only commuter pool</span>
+            </label>
+          </div>
+
+          <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            Post Ride to Live Database
+          </button>
+        </form>
       </div>
     </main>
 
@@ -298,13 +361,13 @@
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
@@ -317,18 +380,18 @@
             <div class="grid grid-cols-2 gap-2.5">
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
-                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate</label>
-                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Primary Pune Corridor</label>
-            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
@@ -500,7 +563,7 @@
       } catch (e) {}
     }
 
-    // Fetch rides from Google Sheet (Runs every 5 seconds for instant sync)
+    // Fetch rides from Google Sheet
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
@@ -527,7 +590,7 @@
         }
 
         renderRides();
-        if (currentActiveTab === 'offer') renderOfferTab();
+        if (currentActiveTab === 'offer') updateOfferTabState();
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
@@ -632,15 +695,17 @@
       lucide.createIcons();
     }
 
-    // Offer Tab Logic: Handles Form, Booked State, and OTP Verification
-    function renderOfferTab() {
-      const container = document.getElementById('offer-view');
+    // Stable Offer Tab Switcher: NEVER touches form inputs while you type
+    function updateOfferTabState() {
+      const formCard = document.getElementById('offer-form-card');
+      const activeCard = document.getElementById('offer-active-card');
+      if (!formCard || !activeCard) return;
+
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       const myProfile = getMyProfile();
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Locate this device's active ride
       const myActiveRide = allRides.find(r => 
         (r.creatorUid && r.creatorUid === myUid) || 
         mySavedRides.includes(r.id) ||
@@ -649,7 +714,10 @@
 
       // STATE 1: Passenger Booked the Seat! (Rider verifies PIN)
       if (myActiveRide && myActiveRide.status === 'BOOKED') {
-        container.innerHTML = `
+        formCard.classList.add('hidden');
+        activeCard.classList.remove('hidden');
+
+        activeCard.innerHTML = `
           <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
               <div>
@@ -676,7 +744,6 @@
               </div>
             </div>
 
-            <!-- OTP Input Form for Rider -->
             <form onsubmit="handleVerifyOtp(event, '${myActiveRide.id}')" class="space-y-3 pt-1">
               <label class="block text-xs font-bold text-slate-700">Enter Passenger's 4-Digit Boarding PIN</label>
               <div class="flex gap-2">
@@ -697,7 +764,10 @@
       }
       // STATE 2: Ride Verified & In Progress
       else if (myActiveRide && myActiveRide.status === 'VERIFIED') {
-        container.innerHTML = `
+        formCard.classList.add('hidden');
+        activeCard.classList.remove('hidden');
+
+        activeCard.innerHTML = `
           <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-4 text-center">
             <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
               <i data-lucide="check-circle-2" class="w-6 h-6"></i>
@@ -719,7 +789,10 @@
       }
       // STATE 3: Ride Available (Waiting for Pillion)
       else if (myActiveRide && myActiveRide.status === 'AVAILABLE') {
-        container.innerHTML = `
+        formCard.classList.add('hidden');
+        activeCard.classList.remove('hidden');
+
+        activeCard.innerHTML = `
           <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
               <div>
@@ -757,73 +830,10 @@
         `;
         lucide.createIcons();
       }
-      // STATE 4: Blank Form (No Active Ride)
+      // STATE 4: No active ride — Show form safely!
       else {
-        container.innerHTML = `
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
-            <div>
-              <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Appears on Pune commuters' devices instantly.</p>
-            </div>
-
-            <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
-                <input type="text" id="riderName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-              </div>
-
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
-                  <input type="text" id="bikeModel" required placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time</label>
-                  <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Starting Landmark</label>
-                <input type="text" id="routeStart" required placeholder="e.g. Hadapsar noble hospital" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Destination Landmark</label>
-                <input type="text" id="routeEnd" required placeholder="e.g. E space, Viman Nagar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-              </div>
-
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1">Fuel Contribution (₹)</label>
-                  <input type="number" id="nominalFare" min="10" max="25" value="15" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Reg No.</label>
-                  <input type="text" id="vehicleReg" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-                </div>
-              </div>
-
-              <div class="space-y-2 pt-1">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="hasHelmet" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300">
-                  <span class="text-xs font-semibold text-slate-700">Spare helmet available for pillion</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="womenOnly" class="w-4 h-4 text-emerald-600 rounded border-slate-300">
-                  <span class="text-xs font-semibold text-slate-700">Women-only commuter pool</span>
-                </label>
-              </div>
-
-              <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                Post Ride to Live Database
-              </button>
-            </form>
-          </div>
-        `;
-        lucide.createIcons();
-        populateFormFromProfile();
+        activeCard.classList.add('hidden');
+        formCard.classList.remove('hidden');
       }
     }
 
@@ -906,7 +916,6 @@
           alert('Incorrect PIN! Please check with your passenger and try again.');
         }
       } catch (err) {
-        // Fallback for no-cors responses
         const ride = allRides.find(r => r.id === rideId);
         if (ride && ride.safetyPin === inputPin) {
           alert('PIN Verified! Journey started.');
@@ -952,6 +961,7 @@
 
       alert("Listing cancelled.");
       fetchLiveRides();
+      updateOfferTabState();
     }
 
     // Booking modal with UPI & Backend Status Update (BOOK_RIDE)
@@ -966,7 +976,6 @@
       const passengerName = myProfile && myProfile.name ? myProfile.name : 'Pillion Commuter';
       const passengerPhone = myProfile && myProfile.phone ? myProfile.phone : '-';
 
-      // Send booking directly to Google Apps Script
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1021,7 +1030,7 @@
       setTimeout(fetchLiveRides, 1000);
     }
 
-    // Profile Management (Blank slate for all new users)
+    // Profile Management (Blank slate for new users)
     function setUserRole(role) {
       currentUserRole = role;
       const pillionBtn = document.getElementById('role-btn-pillion');
@@ -1092,16 +1101,16 @@
       if (!profile) return;
 
       const riderInput = document.getElementById('riderName');
-      if (riderInput && profile.name) riderInput.value = profile.name;
+      if (riderInput && profile.name && !riderInput.value) riderInput.value = profile.name;
       
       const bikeInput = document.getElementById('bikeModel');
-      if (bikeInput && profile.vehicleModel) bikeInput.value = profile.vehicleModel;
+      if (bikeInput && profile.vehicleModel && !bikeInput.value) bikeInput.value = profile.vehicleModel;
       
       const timeInput = document.getElementById('depTimePicker');
-      if (timeInput && profile.defaultTime) timeInput.value = profile.defaultTime;
+      if (timeInput && profile.defaultTime && !timeInput.value) timeInput.value = profile.defaultTime;
       
       const plateInput = document.getElementById('vehicleReg');
-      if (plateInput && profile.vehiclePlate) plateInput.value = profile.vehiclePlate;
+      if (plateInput && profile.vehiclePlate && !plateInput.value) plateInput.value = profile.vehiclePlate;
     }
 
     function loadSavedProfile() {
@@ -1115,7 +1124,6 @@
 
       if (savedPhoto) renderAvatar(savedPhoto);
 
-      // NO fallback hardcoded mock details: new user devices remain blank
       if (saved) {
         const p = JSON.parse(saved);
         document.getElementById('userFullName').value = p.name || '';
@@ -1202,7 +1210,8 @@
       } else if (tab === 'offer') {
         offerView.classList.remove('hidden');
         navOffer.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
-        renderOfferTab();
+        updateOfferTabState();
+        populateFormFromProfile();
       } else if (tab === 'profile') {
         profileView.classList.remove('hidden');
         navProfile.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
@@ -1216,7 +1225,7 @@
       fetchLiveRides();
       checkForAppUpdates();
       setInterval(checkForAppUpdates, 60000);
-      setInterval(fetchLiveRides, 5000); // Fast 5-second polling for live ride sync
+      setInterval(fetchLiveRides, 5000);
     });
   </script>
 </body>
