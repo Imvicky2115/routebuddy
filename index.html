@@ -435,7 +435,7 @@
   </div>
 
   <script>
-    // Configured with your newest Apps Script deployment URL
+    // Live Google Apps Script Endpoint
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMm6gzifoUBGHbdgze9CVbdHFwLVIAuxAGaE9xkyb7rhtYavsYRHOnKAmF6_SvxfdUcg/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
@@ -462,25 +462,43 @@
       return null;
     }
 
+    // FIXED: Clean departure time parser with zero timezone shifting
     function formatTime(timeStr) {
       if (!timeStr) return "09:00 AM";
-      if (typeof timeStr === 'string' && timeStr.includes('T')) {
-        const d = new Date(timeStr);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+      
+      const str = String(timeStr).trim();
+
+      // 1. If it already has AM/PM (e.g., "6:00 PM" from Sheet), return it as-is!
+      if (/am|pm/i.test(str)) {
+        return str;
+      }
+
+      // 2. If it comes from Google Sheets as an ISO timestamp (e.g., 1899-12-30T18:00:00.000Z)
+      if (str.includes('T')) {
+        const parts = str.split('T')[1];
+        if (parts) {
+          const timeParts = parts.split(':');
+          let hours = parseInt(timeParts[0], 10);
+          const mins = timeParts[1] || '00';
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12 || 12;
+          const paddedHours = hours < 10 ? '0' + hours : hours;
+          return `${paddedHours}:${mins} ${ampm}`;
         }
       }
-      if (typeof timeStr === 'string' && timeStr.includes(':') && !timeStr.toLowerCase().includes('m')) {
-        const parts = timeStr.split(':');
+
+      // 3. If it comes from HTML5 input format "18:00"
+      if (str.includes(':')) {
+        const parts = str.split(':');
         let hours = parseInt(parts[0], 10);
-        const minutes = parts[1];
+        const mins = parts[1] ? parts[1].substring(0, 2) : '00';
         const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
+        hours = hours % 12 || 12;
         const paddedHours = hours < 10 ? '0' + hours : hours;
-        return `${paddedHours}:${minutes} ${ampm}`;
+        return `${paddedHours}:${mins} ${ampm}`;
       }
-      return timeStr;
+
+      return str;
     }
 
     function formatFare(raw) {
@@ -522,6 +540,7 @@
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const valid = data.filter(r => !cancelledLocally.includes(r.id));
 
+        // Group by rider name so each rider only shows 1 latest listing
         const map = new Map();
         valid.forEach(r => {
           if (r.riderName) {
@@ -545,7 +564,7 @@
       }
     }
 
-    // Render Ride Cards (Ownership check)
+    // Render Ride Cards (Accurate Device Ownership Detection)
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -577,10 +596,7 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        // A ride is owned by this device if:
-        // 1. Saved locally on this browser
-        // 2. OR creatorUid in Sheet matches device UID
-        // 3. OR profile name matches rider name
+        // Ownership check
         const isMyOwnRide = mySavedRides.includes(ride.id) || 
           (ride.creatorUid && ride.creatorUid === myUid) ||
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
@@ -626,6 +642,7 @@
                 ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
               </div>
 
+              <!-- Only the owner sees Cancel; all others see Book Seat -->
               ${isMyOwnRide ? `
                 <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-4 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel Listing
