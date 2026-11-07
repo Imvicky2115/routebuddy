@@ -174,7 +174,7 @@
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
           <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for ₹15 fuel share.</p>
-          <p><strong>How do I verify boarding?</strong> Show the 4-digit PIN on your active booking banner to the rider.</p>
+          <p><strong>When can I book another ride?</strong> Once the bike rider marks drop-off complete, both apps unlock for new rides.</p>
         </div>
       </div>
     </div>
@@ -211,7 +211,7 @@
     <!-- TAB 1: FIND RIDE VIEW -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
       
-      <!-- PILLION'S PERSISTENT ACTIVE RESERVATION & TRANSIT CARD -->
+      <!-- PILLION'S PERSISTENT ACTIVE RESERVATION & IN-TRANSIT CARD -->
       <div id="pillion-active-booking-banner" class="hidden"></div>
 
       <!-- Corridor Radar Card -->
@@ -639,7 +639,7 @@
 
       banner.classList.remove('hidden');
 
-      // STATE A: VERIFIED (Onboard with Rider!)
+      // STATE A: VERIFIED (Onboard with Rider!) - PIN AND CANCEL BUTTON COMPLETELY REMOVED!
       if (isVerified) {
         banner.innerHTML = `
           <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
@@ -663,8 +663,8 @@
                 <span class="font-bold text-white text-right">${bookedRide.routeEnd}</span>
               </div>
               <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
-                <span class="text-emerald-300">Boarding Handshake:</span>
-                <span class="text-emerald-200 font-mono font-bold">PIN ${pin} Verified</span>
+                <span class="text-emerald-300">Boarding Status:</span>
+                <span class="text-emerald-200 font-bold">Verified on Two-Wheeler</span>
               </div>
             </div>
 
@@ -679,7 +679,7 @@
           </div>
         `;
       } 
-      // STATE B: RESERVED (Waiting to board)
+      // STATE B: RESERVED (Waiting to board) - PIN & Cancel visible only before verification
       else {
         banner.innerHTML = `
           <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
@@ -755,6 +755,7 @@
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
+      // Rides visible on Find Ride tab:
       const visibleRides = allRides.filter(ride => {
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
           mySavedRides.includes(ride.id) || 
@@ -865,11 +866,16 @@
       lucide.createIcons();
     }
 
-    // Offer Tab Manager: Robust State Switcher
+    // Offer Tab Manager with Enforced In-Transit Lockout
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
       if (!formCard || !activeCard) return;
+
+      const existingInput = document.getElementById('riderInputOtp');
+      if (existingInput && (document.activeElement === existingInput || existingInput.value.length > 0)) {
+        return;
+      }
 
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
@@ -884,13 +890,11 @@
         (myProfile && myProfile.name && clean(myProfile.name) === clean(r.riderName))
       );
 
-      // Determine Target State
       let targetState = 'NONE';
       if (myActiveRide) {
         targetState = myActiveRide.status;
       }
 
-      // Avoid re-rendering if already showing the exact same state for this ride
       if (lastRenderedOfferStatus === targetState && lastRenderedOfferRideId === (myActiveRide ? myActiveRide.id : null)) {
         return;
       }
@@ -991,8 +995,9 @@
               </div>
             </div>
 
+            <!-- EXPLICIT DROP-OFF & PAYMENT ACTION -->
             <button onclick="completeMyRide('${myActiveRide.id}');" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-md transition flex items-center justify-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> Drop-off Complete / End Ride
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Drop-off Done & Payment Received
             </button>
           </div>
         `;
@@ -1139,9 +1144,9 @@
       fetchLiveRides();
     }
 
-    // Rider Completes the Drop-off
+    // Rider Completes the Drop-off and Payment Received
     async function completeMyRide(rideId) {
-      if (!confirm("Confirm drop-off destination reached and commute completed?")) return;
+      if (!confirm("Confirm drop-off destination reached and ₹15 fuel share payment received?")) return;
 
       localStorage.removeItem('my_in_transit_ride_id');
       allRides = allRides.filter(r => r.id !== rideId);
@@ -1162,7 +1167,7 @@
         });
       } catch (err) {}
 
-      alert("Drop-off complete! Thank you for reducing traffic on Pune tech corridors.");
+      alert("Drop-off completed and payment received! Thank you for pooling.");
       updateOfferTabState();
       renderRides();
       fetchLiveRides();
