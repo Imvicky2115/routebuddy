@@ -174,7 +174,7 @@
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
           <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for ₹15 fuel share.</p>
-          <p><strong>How do I verify boarding?</strong> When pillion books, the rider's screen alerts them with an input field to enter the pillion's 4-digit PIN.</p>
+          <p><strong>How do I verify boarding?</strong> Show the 4-digit PIN on your active booking banner to the rider.</p>
         </div>
       </div>
     </div>
@@ -210,6 +210,11 @@
 
     <!-- TAB 1: FIND RIDE VIEW -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
+      
+      <!-- PILLION'S ACTIVE RESERVED BOOKING CARD (Visible only if pillion has booked a ride) -->
+      <div id="pillion-active-booking-banner" class="hidden"></div>
+
+      <!-- Live Corridor Info -->
       <section class="bg-[#0f172a] rounded-3xl p-4 text-white shadow-md relative overflow-hidden">
         <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
@@ -358,13 +363,13 @@
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
@@ -377,18 +382,18 @@
             <div class="grid grid-cols-2 gap-2.5">
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
-                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate</label>
-                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Primary Pune Corridor</label>
-            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
@@ -579,6 +584,7 @@
           document.getElementById('radar-pickup').innerText = top.routeEnd;
         }
 
+        renderPillionActiveBanner();
         renderRides();
         if (currentActiveTab === 'offer') updateOfferTabState();
       } catch (err) {
@@ -588,25 +594,123 @@
       }
     }
 
+    // PERSISTENT PILLION ACTIVE BOOKING BANNER
+    function renderPillionActiveBanner() {
+      const banner = document.getElementById('pillion-active-booking-banner');
+      if (!banner) return;
+
+      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id');
+      const mySavedPin = localStorage.getItem('my_active_booked_pin');
+
+      if (!myBookedRideId) {
+        banner.classList.add('hidden');
+        banner.innerHTML = '';
+        return;
+      }
+
+      const bookedRide = allRides.find(r => r.id === myBookedRideId);
+
+      // If ride got cancelled or verified on sheet, clear local reservation
+      if (!bookedRide || bookedRide.status === 'CANCELLED') {
+        localStorage.removeItem('my_active_booked_ride_id');
+        localStorage.removeItem('my_active_booked_pin');
+        banner.classList.add('hidden');
+        banner.innerHTML = '';
+        return;
+      }
+
+      const pin = mySavedPin || bookedRide.safetyPin || '----';
+      const cleanFare = formatFare(bookedRide.fare);
+      const cleanTime = formatTime(bookedRide.depTime);
+      const isVerified = bookedRide.status === 'VERIFIED';
+      const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
+
+      banner.classList.remove('hidden');
+      banner.innerHTML = `
+        <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-emerald-400/40">
+          <div class="flex items-center justify-between border-b border-emerald-500/40 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full ${isVerified ? 'bg-amber-300' : 'bg-emerald-300 animate-ping'}"></span>
+              <span class="text-xs font-extrabold uppercase tracking-wider">${isVerified ? 'Ride Boarded & Active' : 'Your Reserved Pool Seat'}</span>
+            </div>
+            <span class="text-xs bg-emerald-900/60 border border-emerald-400/30 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-black tracking-tight leading-snug">${bookedRide.riderName}</p>
+              <p class="text-[11px] text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
+            </div>
+            <div class="text-right bg-emerald-950/40 border border-emerald-400/30 px-3 py-1.5 rounded-2xl">
+              <span class="text-[9px] uppercase tracking-wider text-emerald-300 font-bold block">Boarding PIN</span>
+              <span class="font-mono text-xl font-black tracking-widest text-emerald-200">${pin}</span>
+            </div>
+          </div>
+
+          <div class="bg-emerald-900/40 rounded-2xl p-2.5 text-xs space-y-1 border border-emerald-500/20">
+            <p class="truncate"><span class="text-emerald-300 font-semibold">Route:</span> ${bookedRide.routeStart} → ${bookedRide.routeEnd}</p>
+            <p><span class="text-emerald-300 font-semibold">Departure:</span> ${cleanTime}</p>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <a href="${upiUrl}" class="flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-800 text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
+            </a>
+            ${!isVerified ? `
+              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="px-3.5 py-2.5 bg-emerald-900/80 hover:bg-rose-900 active:scale-95 text-rose-200 border border-rose-400/40 text-xs font-bold rounded-xl transition flex items-center gap-1">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Pillion cancels their booking
+    async function cancelMyPillionBooking(rideId) {
+      if (!confirm("Are you sure you want to cancel your seat booking?")) return;
+
+      localStorage.removeItem('my_active_booked_ride_id');
+      localStorage.removeItem('my_active_booked_pin');
+      renderPillionActiveBanner();
+
+      // Free up the seat on Google Apps Script
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'CANCEL_RIDE',
+            rideId: rideId
+          })
+        });
+      } catch (err) {}
+
+      alert("Booking cancelled. The seat is now released.");
+      fetchLiveRides();
+    }
+
     // Render Ride Cards (Find Ride tab)
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       const myProfile = getMyProfile();
+      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id');
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
       // Rides visible on Find Ride tab:
-      // Show ALL available rides to everyone.
-      // PLUS, show the rider their OWN ride even if it's already BOOKED or VERIFIED!
       const visibleRides = allRides.filter(ride => {
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
           mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
 
         if (isMyOwnRide) return true; // Rider always sees their active ride!
-        if (ride.status !== 'AVAILABLE') return false; // Pillions only see AVAILABLE rides
+        if (ride.id === myBookedRideId) return false; // Already highlighted in pillion banner!
+        if (ride.status !== 'AVAILABLE') return false; // Other pillions only see AVAILABLE rides
         if (filterHelmetOnly && !ride.hasHelmet) return false;
         if (filterWomenOnly && !ride.womenOnly) return false;
         return true;
@@ -673,7 +777,6 @@
               </div>
             </div>
 
-            <!-- Action Area -->
             <div class="flex items-center justify-between pt-1">
               <div class="flex items-center gap-2">
                 <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200/70">
@@ -762,7 +865,7 @@
                   Verify & Start
                 </button>
               </div>
-              <p class="text-[11px] text-slate-400">Ask the pillion rider for the 4-digit PIN displayed on their booking confirmation pass.</p>
+              <p class="text-[11px] text-slate-400">Ask the pillion rider for the 4-digit PIN displayed on their active booking banner.</p>
             </form>
 
             <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
@@ -909,7 +1012,6 @@
       btn.innerText = 'Checking...';
 
       try {
-        // Send verification to Google Sheet
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -921,7 +1023,6 @@
           })
         });
 
-        // Client check against live data
         const ride = allRides.find(r => r.id === rideId);
         if (ride && String(ride.safetyPin).trim() === inputPin) {
           alert('PIN Verified Successfully! You may now begin your pooled commute.');
@@ -938,7 +1039,7 @@
       }
     }
 
-    // Cancel Ride
+    // Cancel Ride (By Rider)
     async function cancelMyRide(id) {
       if (!confirm("Are you sure you want to cancel your seat listing?")) return;
 
@@ -985,7 +1086,10 @@
       const passengerName = myProfile && myProfile.name ? myProfile.name : 'Pillion Commuter';
       const passengerPhone = myProfile && myProfile.phone ? myProfile.phone : '-';
 
-      // Send booking directly using mode: 'no-cors' so browser never drops it
+      // Store in pillion's local storage so banner shows permanently
+      localStorage.setItem('my_active_booked_ride_id', id);
+      localStorage.setItem('my_active_booked_pin', pin);
+
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -1035,17 +1139,17 @@
             Pay ₹${fare} Fuel Share via UPI (GPay / PhonePe)
           </a>
           <button onclick="closeModal('booking-modal'); fetchLiveRides();" class="touch-target w-full bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-xs">
-            Done & Back to Rides
+            Done & View Active Booking
           </button>
         </div>
       `;
 
       document.getElementById('booking-modal').classList.remove('hidden');
       lucide.createIcons();
-      setTimeout(fetchLiveRides, 1200);
+      fetchLiveRides();
     }
 
-    // Profile Management (Blank slate for new users)
+    // Profile Management (Persistent & clean)
     function setUserRole(role) {
       currentUserRole = role;
       const pillionBtn = document.getElementById('role-btn-pillion');
@@ -1139,6 +1243,7 @@
 
       if (savedPhoto) renderAvatar(savedPhoto);
 
+      // Rehydrate fields cleanly if profile exists
       if (saved) {
         const p = JSON.parse(saved);
         document.getElementById('userFullName').value = p.name || '';
@@ -1154,6 +1259,8 @@
         const initials = p.name ? p.name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0, 2) : 'U';
         const avatarText = document.getElementById('drawer-avatar-text');
         if (avatarText) avatarText.innerText = initials;
+
+        populateFormFromProfile();
       }
 
       setUserRole(savedRole);
