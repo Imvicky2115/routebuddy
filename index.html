@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -436,13 +436,14 @@
 
   <script>
     // Live Google Apps Script Endpoint
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMm6gzifoUBGHbdgze9CVbdHFwLVIAuxAGaE9xkyb7rhtYavsYRHOnKAmF6_SvxfdUcg/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8muNEvEvyIm0pmmtWD3YL2PYcOtiMi5pAlWIzykrZSNDjMhUaqfUPW4VhpeFiDXUC/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
     let filterHelmetOnly = false;
     let filterWomenOnly = false;
     let currentUserRole = 'rider';
+    let currentActiveTab = 'find';
 
     // 1. Get or Create Persistent Unique Device ID
     function getOrCreateUserId() {
@@ -462,18 +463,15 @@
       return null;
     }
 
-    // FIXED: Clean departure time parser with zero timezone shifting
+    // Departure time parser preventing timezone shifting
     function formatTime(timeStr) {
       if (!timeStr) return "09:00 AM";
-      
       const str = String(timeStr).trim();
 
-      // 1. If it already has AM/PM (e.g., "6:00 PM" from Sheet), return it as-is!
       if (/am|pm/i.test(str)) {
         return str;
       }
 
-      // 2. If it comes from Google Sheets as an ISO timestamp (e.g., 1899-12-30T18:00:00.000Z)
       if (str.includes('T')) {
         const parts = str.split('T')[1];
         if (parts) {
@@ -487,7 +485,6 @@
         }
       }
 
-      // 3. If it comes from HTML5 input format "18:00"
       if (str.includes(':')) {
         const parts = str.split(':');
         let hours = parseInt(parts[0], 10);
@@ -507,8 +504,9 @@
       return parseFloat(num) ? Math.round(parseFloat(num)) : 15;
     }
 
-    // Auto-detect GitHub code updates & reload
+    // Auto-detect GitHub code updates safely
     async function checkForAppUpdates() {
+      if (currentActiveTab !== 'find') return;
       try {
         const res = await fetch(GITHUB_REPO_API, {
           headers: { 'Accept': 'application/vnd.github.v3+json' },
@@ -538,14 +536,14 @@
         const data = await res.json();
         
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
-        const valid = data.filter(r => !cancelledLocally.includes(r.id));
+        const bookedLocally = JSON.parse(localStorage.getItem('my_booked_ride_ids') || '[]');
+        const valid = data.filter(r => !cancelledLocally.includes(r.id) && !bookedLocally.includes(r.id));
 
-        // Group by rider name so each rider only shows 1 latest listing
+        // Deduplicate by creatorUid so different riders never overwrite each other
         const map = new Map();
         valid.forEach(r => {
-          if (r.riderName) {
-            map.set(r.riderName.trim().toLowerCase(), r);
-          }
+          const key = r.creatorUid || r.riderName.trim().toLowerCase();
+          map.set(key, r);
         });
         allRides = Array.from(map.values());
 
@@ -564,7 +562,7 @@
       }
     }
 
-    // Render Ride Cards (Accurate Device Ownership Detection)
+    // Render Ride Cards
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -596,9 +594,9 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        // Ownership check
-        const isMyOwnRide = mySavedRides.includes(ride.id) || 
-          (ride.creatorUid && ride.creatorUid === myUid) ||
+        // Accurate ownership check
+        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
+          mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
 
         return `
@@ -642,7 +640,6 @@
                 ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
               </div>
 
-              <!-- Only the owner sees Cancel; all others see Book Seat -->
               ${isMyOwnRide ? `
                 <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-4 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel Listing
@@ -661,7 +658,7 @@
       lucide.createIcons();
     }
 
-    // Post a Ride with Creator UID
+    // Post a Ride
     async function handlePostRide(e) {
       e.preventDefault();
       const btn = document.getElementById('submit-ride-btn');
@@ -746,13 +743,33 @@
       fetchLiveRides();
     }
 
-    // Booking Pass modal with UPI
+    // Booking modal with UPI & Backend Status Update (BOOK_RIDE)
     function openBooking(id, rider, start, end, fare) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
       const decodedEnd = decodeURIComponent(end);
       const pin = Math.floor(1000 + Math.random() * 9000);
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(decodedRider)}&am=${fare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
+      const myProfile = getMyProfile();
+
+      const payload = {
+        action: 'BOOK_RIDE',
+        rideId: id,
+        passengerName: myProfile ? myProfile.name : 'Commuter Pillion',
+        passengerPhone: myProfile ? myProfile.phone : '-',
+        safetyPin: pin
+      };
+
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const booked = JSON.parse(localStorage.getItem('my_booked_ride_ids') || '[]');
+      booked.push(id);
+      localStorage.setItem('my_booked_ride_ids', JSON.stringify(booked));
 
       document.getElementById('modal-content').innerHTML = `
         <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100 text-center space-y-1">
@@ -785,7 +802,7 @@
             <i data-lucide="send" class="w-4 h-4"></i>
             Pay ₹${fare} Fuel Share via UPI (GPay / PhonePe)
           </a>
-          <button onclick="closeModal('booking-modal')" class="touch-target w-full bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-xs">
+          <button onclick="closeModal('booking-modal'); fetchLiveRides();" class="touch-target w-full bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-xs">
             Done & Back to Rides
           </button>
         </div>
@@ -941,6 +958,7 @@
     }
 
     function switchTab(tab) {
+      currentActiveTab = tab;
       const findView = document.getElementById('find-view');
       const offerView = document.getElementById('offer-view');
       const profileView = document.getElementById('profile-view');
