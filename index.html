@@ -211,7 +211,7 @@
     <!-- TAB 1: FIND RIDE VIEW -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
       
-      <!-- PILLION'S PERSISTENT ACTIVE RESERVATION CARD -->
+      <!-- PILLION'S PERSISTENT ACTIVE RESERVATION & TRANSIT CARD -->
       <div id="pillion-active-booking-banner" class="hidden"></div>
 
       <!-- Corridor Radar Card -->
@@ -594,7 +594,7 @@
       }
     }
 
-    // PILLION'S PERSISTENT ACTIVE RESERVATION CARD
+    // PILLION TRANSIT / BOARDING BANNER
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -610,7 +610,7 @@
 
       const bookedRide = allRides.find(r => r.id === myBookedRideId);
 
-      // If ride got cancelled or completed, clean up pillion view
+      // Clean up when ride ends or is cancelled
       if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
         localStorage.removeItem('my_active_booked_pin');
@@ -626,48 +626,90 @@
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
 
       banner.classList.remove('hidden');
-      banner.innerHTML = `
-        <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-emerald-400/40">
-          <div class="flex items-center justify-between border-b border-emerald-500/40 pb-2.5">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full ${isVerified ? 'bg-amber-300' : 'bg-emerald-300 animate-ping'}"></span>
-              <span class="text-xs font-extrabold uppercase tracking-wider">${isVerified ? 'Ride In Progress • On Two-Wheeler' : 'Your Reserved Pool Seat'}</span>
-            </div>
-            <span class="text-xs bg-emerald-900/60 border border-emerald-400/30 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
-          </div>
 
-          <div class="flex items-center justify-between">
+      // STATE A: VERIFIED (Onboard with Rider!)
+      if (isVerified) {
+        banner.innerHTML = `
+          <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
+            <div class="flex items-center justify-between border-b border-emerald-400/40 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-300 animate-ping"></span>
+                <span class="text-xs font-black uppercase tracking-wider text-emerald-200">Trip In Progress</span>
+              </div>
+              <span class="text-xs bg-emerald-950/60 border border-emerald-400/40 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
+            </div>
+
             <div>
-              <p class="text-sm font-black tracking-tight leading-snug">${bookedRide.riderName}</p>
-              <p class="text-[11px] text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
+              <p class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">You are onboard with</p>
+              <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
+              <p class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
             </div>
-            <div class="text-right bg-emerald-950/40 border border-emerald-400/30 px-3 py-1.5 rounded-2xl">
-              <span class="text-[9px] uppercase tracking-wider text-emerald-300 font-bold block">${isVerified ? 'PIN Verified' : 'Boarding PIN'}</span>
-              <span class="font-mono text-xl font-black tracking-widest text-emerald-200">${pin}</span>
+
+            <div class="bg-emerald-900/60 rounded-2xl p-3 text-xs space-y-1.5 border border-emerald-500/30">
+              <div class="flex justify-between">
+                <span class="text-emerald-300 font-semibold">Drop-off Destination:</span>
+                <span class="font-bold text-white text-right">${bookedRide.routeEnd}</span>
+              </div>
+              <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
+                <span class="text-emerald-300">Boarding Handshake:</span>
+                <span class="text-emerald-200 font-mono font-bold">PIN ${pin} Verified</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <a href="${upiUrl}" class="flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-2.5 rounded-xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
+              </a>
+              <a href="tel:8788337049" class="px-3.5 py-2.5 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-xl flex items-center gap-1">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> SOS
+              </a>
             </div>
           </div>
+        `;
+      } 
+      // STATE B: RESERVED (Waiting to board)
+      else {
+        banner.innerHTML = `
+          <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-400">Reserved Pool Seat</span>
+              </div>
+              <span class="text-xs bg-slate-800 border border-slate-600 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
+            </div>
 
-          <div class="bg-emerald-900/40 rounded-2xl p-2.5 text-xs space-y-1 border border-emerald-500/20">
-            <p class="truncate"><span class="text-emerald-300 font-semibold">Route:</span> ${bookedRide.routeStart} → ${bookedRide.routeEnd}</p>
-            <p><span class="text-emerald-300 font-semibold">Departure:</span> ${cleanTime}</p>
-          </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-black tracking-tight leading-snug">${bookedRide.riderName}</p>
+                <p class="text-[11px] text-slate-300 font-medium">${bookedRide.bikeModel}</p>
+              </div>
+              <div class="text-right bg-emerald-950/80 border border-emerald-500/40 px-3 py-1.5 rounded-2xl">
+                <span class="text-[9px] uppercase tracking-wider text-emerald-300 font-bold block">Boarding PIN</span>
+                <span class="font-mono text-xl font-black tracking-widest text-emerald-200">${pin}</span>
+              </div>
+            </div>
 
-          <div class="flex items-center gap-2 pt-1">
-            <a href="${upiUrl}" class="flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-800 text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
-              <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
-            </a>
-            ${!isVerified ? `
-              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="px-3.5 py-2.5 bg-emerald-900/80 hover:bg-rose-900 active:scale-95 text-rose-200 border border-rose-400/40 text-xs font-bold rounded-xl transition flex items-center gap-1">
+            <div class="bg-slate-800/80 rounded-2xl p-2.5 text-xs space-y-1 border border-slate-700">
+              <p class="truncate"><span class="text-slate-400 font-semibold">Route:</span> ${bookedRide.routeStart} → ${bookedRide.routeEnd}</p>
+              <p><span class="text-slate-400 font-semibold">Departure:</span> ${cleanTime}</p>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <a href="${upiUrl}" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
+              </a>
+              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="px-3.5 py-2.5 bg-slate-800 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition flex items-center gap-1">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
               </button>
-            ` : ''}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
       lucide.createIcons();
     }
 
-    // Pillion cancels their booking
+    // Pillion cancels their reservation
     async function cancelMyPillionBooking(rideId) {
       if (!confirm("Are you sure you want to cancel your seat booking?")) return;
 
@@ -687,7 +729,7 @@
         });
       } catch (err) {}
 
-      alert("Booking cancelled. The seat has been released.");
+      alert("Booking cancelled. The seat is released.");
       fetchLiveRides();
     }
 
@@ -719,8 +761,8 @@
       if (visibleRides.length === 0) {
         container.innerHTML = `
           <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-slate-200 p-6">
-            <p class="text-xs font-bold text-slate-700">No active rides matching filters</p>
-            <p class="text-[11px] text-slate-400 mt-1">Tap 'Offer Seat' below to list a new ride!</p>
+            <p class="text-xs font-bold text-slate-700">No other rides listed right now</p>
+            <p class="text-[11px] text-slate-400 mt-1">Tap 'Offer Seat' below to share an empty seat!</p>
           </div>
         `;
         lucide.createIcons();
@@ -739,18 +781,18 @@
         const isVerified = ride.status === 'VERIFIED';
 
         return `
-          <div class="bg-white rounded-3xl border ${isMyOwnRide && isBooked ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/80 shadow-xs'} p-4 space-y-3">
+          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/80 shadow-xs'} p-4 space-y-3">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full ${isMyOwnRide && isBooked ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
+                <div class="w-12 h-12 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
                   ${ride.riderName ? ride.riderName.charAt(0).toUpperCase() : 'R'}
                 </div>
                 <div>
                   <div class="flex items-center gap-1.5">
                     <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
                     ${isMyOwnRide ? `
-                      <span class="text-[9px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : 'bg-emerald-100 text-emerald-800'} font-bold px-2 py-0.5 rounded-md">
-                        ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Ride In Progress' : 'Your Listing')}
+                      <span class="text-[9px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-emerald-100 text-emerald-800')} font-bold px-2 py-0.5 rounded-md">
+                        ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Trip In Progress' : 'Your Listing')}
                       </span>
                     ` : ''}
                   </div>
@@ -775,6 +817,7 @@
               </div>
             </div>
 
+            <!-- Action Area -->
             <div class="flex items-center justify-between pt-1">
               <div class="flex items-center gap-2">
                 <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200/70">
@@ -789,8 +832,8 @@
                     <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify Passenger PIN
                   </button>
                 ` : (isVerified ? `
-                  <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
-                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> View Live Trip
+                  <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-teal-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> Drop-off Controls
                   </button>
                 ` : `
                   <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1">
@@ -810,16 +853,15 @@
       lucide.createIcons();
     }
 
-    // Offer Tab Manager with Input-Preservation Guard
+    // Offer Tab Manager with Enforced In-Transit Lockout
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
       if (!formCard || !activeCard) return;
 
-      // DO NOT RE-RENDER IF USER IS ACTIVELY TYPING IN THE PIN INPUT!
       const existingInput = document.getElementById('riderInputOtp');
       if (existingInput && (document.activeElement === existingInput || existingInput.value.length > 0)) {
-        return;
+        return; // Guard active PIN typing
       }
 
       const myUid = getOrCreateUserId();
@@ -874,7 +916,7 @@
                     Verify & Start
                   </button>
                 </div>
-                <p class="text-[11px] text-slate-400">Ask the pillion rider for the 4-digit PIN displayed on their active booking banner.</p>
+                <p class="text-[11px] text-slate-400">Ask the passenger for the 4-digit PIN displayed on their screen.</p>
               </form>
 
               <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
@@ -885,39 +927,51 @@
           lucide.createIcons();
         }
       }
-      // STATE 2: Ride Verified & Active (In Progress)
+      // STATE 2: RIDER IN TRANSIT (ENFORCED LOCKOUT RULE)
       else if (myActiveRide && myActiveRide.status === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
         activeCard.innerHTML = `
-          <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4 text-center">
-            <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-              <i data-lucide="navigation" class="w-6 h-6 animate-pulse"></i>
-            </div>
-            <div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">In Transit</span>
-              <h2 class="text-base font-extrabold text-slate-900 mt-2">Ride In Progress</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Passenger boarded successfully. Ride safely across Pune!</p>
+          <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-teal-700 px-2.5 py-0.5 rounded-full">Live Commute</span>
+                <h2 class="text-base font-extrabold text-slate-900 mt-1">Ride In Progress</h2>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
+                <i data-lucide="navigation" class="w-5 h-5"></i>
+              </div>
             </div>
 
-            <div class="bg-slate-50 p-4 rounded-2xl text-xs text-left space-y-2 border border-slate-100">
+            <!-- ENFORCED COMMUTER DISPATCH GUARD -->
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-3">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+              <div class="text-xs text-amber-900">
+                <p class="font-bold">Active Commute Locked</p>
+                <p class="text-[11px] text-amber-700 mt-0.5 leading-snug">
+                  You cannot list or accept another ride until you drop off <strong>${myActiveRide.passengerName}</strong> at their destination.
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100">
               <div class="flex justify-between">
-                <span class="text-slate-500">Pillion:</span>
+                <span class="text-slate-500">Passenger:</span>
                 <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-500">Drop-off:</span>
+                <span class="text-slate-500">Destination:</span>
                 <span class="font-bold text-slate-800">${myActiveRide.routeEnd}</span>
               </div>
-              <div class="flex justify-between border-t border-slate-200/60 pt-1.5">
+              <div class="flex justify-between border-t border-slate-200/60 pt-2">
                 <span class="text-slate-500">Fuel Contribution:</span>
-                <span class="font-extrabold text-emerald-700">₹${formatFare(myActiveRide.fare)}</span>
+                <span class="font-extrabold text-emerald-700">₹${formatFare(myActiveRide.fare)} (Direct UPI)</span>
               </div>
             </div>
 
             <button onclick="completeMyRide('${myActiveRide.id}');" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-md transition flex items-center justify-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> End Ride / Complete Drop-off
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Drop-off Complete / End Ride
             </button>
           </div>
         `;
@@ -961,7 +1015,7 @@
               <p class="text-[11px] text-slate-500 leading-relaxed text-center">Waiting for a pillion to book. As soon as someone books, their contact and safety PIN verification will appear here instantly.</p>
 
               <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
-                <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing to Post a New Seat
+                <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing
               </button>
             </div>
           `;
@@ -1029,7 +1083,7 @@
       }
     }
 
-    // Rider verifies Pillion's OTP
+    // Rider verifies Pillion's OTP Handshake
     async function handleVerifyOtp(e, rideId) {
       e.preventDefault();
       const inputPin = document.getElementById('riderInputOtp').value.trim();
@@ -1051,9 +1105,9 @@
 
         const ride = allRides.find(r => r.id === rideId);
         if (ride) {
-          ride.status = 'VERIFIED'; // Instantly update state locally!
+          ride.status = 'VERIFIED';
         }
-        alert('PIN Verified! Boarding complete. Starting pooled commute.');
+        alert('PIN Verified! Boarding handshake complete. Safe commute!');
         fetchLiveRides();
         updateOfferTabState();
       } catch (err) {
@@ -1066,9 +1120,9 @@
       }
     }
 
-    // Rider Completes the Ride
+    // Rider Completes the Drop-off
     async function completeMyRide(rideId) {
-      if (!confirm("Have you reached your destination and completed this commute?")) return;
+      if (!confirm("Confirm drop-off destination reached and commute completed?")) return;
 
       allRides = allRides.filter(r => r.id !== rideId);
       renderRides();
@@ -1086,7 +1140,7 @@
         });
       } catch (err) {}
 
-      alert("Ride completed successfully! Thank you for reducing traffic on Pune corridors.");
+      alert("Drop-off complete! Thank you for reducing traffic on Pune tech corridors.");
       fetchLiveRides();
       updateOfferTabState();
     }
@@ -1138,7 +1192,6 @@
       const passengerName = myProfile && myProfile.name ? myProfile.name : 'Pillion Commuter';
       const passengerPhone = myProfile && myProfile.phone ? myProfile.phone : '-';
 
-      // Store in pillion's local storage so persistent banner shows immediately
       localStorage.setItem('my_active_booked_ride_id', id);
       localStorage.setItem('my_active_booked_pin', pin);
 
@@ -1295,7 +1348,6 @@
 
       if (savedPhoto) renderAvatar(savedPhoto);
 
-      // Rehydrate fields cleanly if profile exists
       if (saved) {
         const p = JSON.parse(saved);
         document.getElementById('userFullName').value = p.name || '';
