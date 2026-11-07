@@ -93,7 +93,6 @@
             </button>
           </div>
 
-          <!-- Quick Profile Pill in Drawer -->
           <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl cursor-pointer active:scale-98 transition">
             <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0">
               <span id="drawer-avatar-text">U</span>
@@ -106,9 +105,9 @@
 
           <!-- Helpline Card -->
           <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2">
-            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Commuter Support & Helpline</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Commuter Helpline</span>
             <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
-            <p class="text-[11px] text-slate-500">Call or message for route emergency, lost items, or ride queries.</p>
+            <p class="text-[11px] text-slate-500">Call or WhatsApp for assistance, ride queries, or issues.</p>
             <div class="flex gap-2 pt-1">
               <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
                 <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
@@ -119,7 +118,7 @@
             </div>
           </div>
 
-          <!-- Menu Links: Safety, FAQ, Feedback, About -->
+          <!-- Links -->
           <div class="space-y-1.5 pt-1">
             <button onclick="openModal('safety-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
@@ -333,13 +332,13 @@
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div>
           <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Two-Wheeler Seat</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Syncs instantly with Pune commuters via your backend sheet.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Posts to Pune commuters via your live Google Sheet.</p>
         </div>
 
         <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
-            <input type="text" id="riderName" required placeholder="e.g., Ashish rajkumar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="riderName" required placeholder="e.g., Ashish Rajkumar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
@@ -347,9 +346,11 @@
               <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
               <input type="text" id="bikeModel" required placeholder="e.g., Scooty pep / Hunter 350" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
+            
+            <!-- Easy 12-Hour Native Time Selector with AM/PM -->
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time</label>
-              <input type="text" id="depTime" required placeholder="e.g., 09:15 AM" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
           </div>
 
@@ -397,7 +398,6 @@
     <main id="profile-view" class="flex-1 px-4 py-4 space-y-4 hidden">
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-5">
         
-        <!-- Header & Photo Upload -->
         <div class="flex flex-col items-center text-center">
           <div class="relative group">
             <div id="profile-pic-preview" class="w-20 h-20 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center overflow-hidden text-emerald-700 font-extrabold text-2xl shadow-sm">
@@ -412,7 +412,6 @@
           <p class="text-xs text-slate-500" id="profile-role-sub">Pune Commuter</p>
         </div>
 
-        <!-- Role Selector Pill: Pillion vs Rider -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1.5 text-center">Select Your Primary Commuter Role</label>
           <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-2xl">
@@ -425,7 +424,6 @@
           </div>
         </div>
 
-        <!-- Profile Details Form -->
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
@@ -439,11 +437,10 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
-              <input type="text" id="userDefaultTime" placeholder="09:15 AM" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="time" id="userDefaultTime" value="09:15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
           </div>
 
-          <!-- Rider-Only Vehicle Details -->
           <div id="rider-vehicle-fields" class="space-y-3 pt-1 border-t border-slate-100">
             <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Vehicle Specifications</span>
             <div class="grid grid-cols-2 gap-2.5">
@@ -490,7 +487,7 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation Bar (Find Ride, Offer Seat, My Profile) -->
+    <!-- Bottom Navigation Bar -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-2">
       <div class="max-w-md mx-auto grid grid-cols-3 px-3">
         <button onclick="switchTab('find')" id="nav-find" class="flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1">
@@ -518,16 +515,31 @@
     let filterWomenOnly = false;
     let currentUserRole = 'rider';
 
-    // Format ISO Datetimes from Sheet
-    function formatTime(raw) {
-      if (!raw) return "09:00 AM";
-      if (typeof raw === 'string' && raw.includes('T')) {
-        const d = new Date(raw);
+    // Converts 24h time ("14:30") or sheet time strings to clean 12h format ("02:30 PM")
+    function formatTime(timeStr) {
+      if (!timeStr) return "09:00 AM";
+      
+      // If it comes from Google Sheet as an ISO string
+      if (typeof timeStr === 'string' && timeStr.includes('T')) {
+        const d = new Date(timeStr);
         if (!isNaN(d.getTime())) {
           return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         }
       }
-      return raw;
+
+      // If it comes from HTML5 time input "HH:MM"
+      if (typeof timeStr === 'string' && timeStr.includes(':') && !timeStr.toLowerCase().includes('m')) {
+        const parts = timeStr.split(':');
+        let hours = parseInt(parts[0], 10);
+        const minutes = parts[1];
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 becomes 12
+        const paddedHours = hours < 10 ? '0' + hours : hours;
+        return `${paddedHours}:${minutes} ${ampm}`;
+      }
+
+      return timeStr;
     }
 
     function formatFare(raw) {
@@ -536,7 +548,15 @@
       return parseFloat(num) ? Math.round(parseFloat(num)) : 15;
     }
 
-    // 1. Fetch Real-Time Rides
+    function getCurrentUserName() {
+      const saved = localStorage.getItem('routebuddy_profile');
+      if (saved) {
+        try { return JSON.parse(saved).name.trim().toLowerCase(); } catch (e) {}
+      }
+      return 'ashish rajkumar';
+    }
+
+    // 1. Fetch Real-Time Rides & Deduplicate/Enforce Single Active Listing Per User
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
@@ -544,10 +564,20 @@
       try {
         const res = await fetch(APPS_SCRIPT_URL);
         const data = await res.json();
-        allRides = data;
         
-        if (data.length > 0) {
-          const top = data[data.length - 1];
+        // Group by riderName so each user only has 1 active listing card (the most recent one)
+        const uniqueRiderMap = new Map();
+        data.forEach(ride => {
+          if (ride.riderName) {
+            const key = ride.riderName.trim().toLowerCase();
+            uniqueRiderMap.set(key, ride);
+          }
+        });
+        
+        allRides = Array.from(uniqueRiderMap.values());
+        
+        if (allRides.length > 0) {
+          const top = allRides[allRides.length - 1];
           document.getElementById('corridor-title').innerText = `${top.routeStart} → ${top.routeEnd}`;
           document.getElementById('radar-journey').innerText = top.routeStart;
           document.getElementById('radar-pickup').innerText = top.routeEnd;
@@ -564,6 +594,7 @@
     // 2. Render Cards
     function renderRides() {
       const container = document.getElementById('rides-list');
+      const currentUserName = getCurrentUserName();
       
       const filtered = allRides.filter(ride => {
         if (filterHelmetOnly && !ride.hasHelmet) return false;
@@ -587,6 +618,7 @@
       container.innerHTML = filtered.map(ride => {
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
+        const isMyOwnRide = (ride.riderName && ride.riderName.trim().toLowerCase() === currentUserName);
 
         return `
           <div class="bg-white rounded-3xl border border-slate-200/80 p-4 shadow-xs space-y-3">
@@ -597,7 +629,10 @@
                   ${ride.riderName ? ride.riderName.charAt(0).toUpperCase() : 'R'}
                 </div>
                 <div>
-                  <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
+                  <div class="flex items-center gap-1.5">
+                    <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
+                    ${isMyOwnRide ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">You</span>' : ''}
+                  </div>
                   <p class="text-xs text-slate-500 font-medium">${ride.routeEnd}</p>
                 </div>
               </div>
@@ -627,10 +662,16 @@
                 ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
               </div>
 
-              <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
-                <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
-                Book Seat
-              </button>
+              ${isMyOwnRide ? `
+                <button onclick="cancelMyRide('${ride.id}')" class="touch-target px-3 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition">
+                  Cancel Listing
+                </button>
+              ` : `
+                <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
+                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
+                  Book Seat
+                </button>
+              `}
             </div>
           </div>
         `;
@@ -644,13 +685,16 @@
       e.preventDefault();
       const btn = document.getElementById('submit-ride-btn');
       btn.disabled = true;
-      btn.innerHTML = `<div class="loader mr-2"></div> Syncing with Sheet...`;
+      btn.innerHTML = `<div class="loader mr-2"></div> Updating live ride...`;
+
+      const rawTime = document.getElementById('depTimePicker').value;
+      const formatted12hTime = formatTime(rawTime);
 
       const payload = {
         action: 'CREATE_RIDE',
         riderName: document.getElementById('riderName').value,
         bikeModel: document.getElementById('bikeModel').value,
-        depTime: document.getElementById('depTime').value,
+        depTime: formatted12hTime,
         routeStart: document.getElementById('routeStart').value,
         routeEnd: document.getElementById('routeEnd').value,
         fare: document.getElementById('nominalFare').value,
@@ -666,8 +710,7 @@
           body: JSON.stringify(payload)
         });
 
-        alert("Ride saved to your Google Sheet! Updating screen...");
-        document.getElementById('offer-form').reset();
+        alert("Your active ride has been updated!");
         switchTab('find');
         setTimeout(fetchLiveRides, 1200);
       } catch (err) {
@@ -677,6 +720,14 @@
         btn.disabled = false;
         btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Live Database`;
         lucide.createIcons();
+      }
+    }
+
+    function cancelMyRide(id) {
+      if (confirm("Are you sure you want to cancel your active ride listing?")) {
+        allRides = allRides.filter(r => r.id !== id);
+        renderRides();
+        alert("Listing removed from your active feed.");
       }
     }
 
@@ -730,7 +781,7 @@
       lucide.createIcons();
     }
 
-    // Profile Management Logic
+    // Profile Management
     function setUserRole(role) {
       currentUserRole = role;
       const pillionBtn = document.getElementById('role-btn-pillion');
@@ -787,15 +838,13 @@
 
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
 
-      // Update Header & Offer Form Defaults
       document.getElementById('profile-name-header').innerText = profile.name;
       document.getElementById('drawer-user-name').innerText = profile.name;
       document.getElementById('drawer-user-role').innerText = profile.role === 'rider' ? 'Rider with Bike' : 'Pillion Commuter';
       
-      // Auto-populate offer form
       document.getElementById('riderName').value = profile.name;
       if (profile.vehicleModel) document.getElementById('bikeModel').value = profile.vehicleModel;
-      if (profile.defaultTime) document.getElementById('depTime').value = profile.defaultTime;
+      if (profile.defaultTime) document.getElementById('depTimePicker').value = profile.defaultTime;
       if (profile.vehiclePlate) document.getElementById('vehicleReg').value = profile.vehiclePlate;
 
       alert("Profile updated successfully!");
@@ -808,11 +857,14 @@
 
       if (savedPhoto) renderAvatar(savedPhoto);
 
+      // Default time fallback for mobile picker
+      document.getElementById('depTimePicker').value = "09:15";
+
       if (saved) {
         const p = JSON.parse(saved);
         document.getElementById('userFullName').value = p.name || '';
         document.getElementById('userPhone').value = p.phone || '';
-        document.getElementById('userDefaultTime').value = p.defaultTime || '';
+        document.getElementById('userDefaultTime').value = p.defaultTime || '09:15';
         document.getElementById('userVehicleModel').value = p.vehicleModel || '';
         document.getElementById('userVehiclePlate').value = p.vehiclePlate || '';
         document.getElementById('userCorridor').value = p.corridor || '';
@@ -820,13 +872,11 @@
         document.getElementById('profile-name-header').innerText = p.name || 'Ashish Rajkumar';
         document.getElementById('drawer-user-name').innerText = p.name || 'Ashish Rajkumar';
 
-        // Prepopulate offer form
         document.getElementById('riderName').value = p.name || '';
         if (p.vehicleModel) document.getElementById('bikeModel').value = p.vehicleModel;
-        if (p.defaultTime) document.getElementById('depTime').value = p.defaultTime;
+        if (p.defaultTime) document.getElementById('depTimePicker').value = p.defaultTime;
         if (p.vehiclePlate) document.getElementById('vehicleReg').value = p.vehiclePlate;
       } else {
-        // Defaults
         document.getElementById('userFullName').value = 'Ashish Rajkumar';
         document.getElementById('userPhone').value = '8788337049';
         document.getElementById('userVehicleModel').value = 'Scooty Pep';
@@ -838,7 +888,7 @@
       setUserRole(savedRole);
     }
 
-    // Drawer and Modal Helpers
+    // Sidebar & Modal controls
     function toggleSidebar(open) {
       const drawer = document.getElementById('side-drawer');
       if (open) drawer.classList.remove('hidden');
@@ -857,12 +907,12 @@
     }
 
     function selectRating(stars) {
-      alert(`Selected ${stars} Stars! Enter any feedback note and hit submit.`);
+      alert(`Selected ${stars} Stars! Enter your feedback and hit submit.`);
     }
 
     function handleFeedbackSubmit(e) {
       e.preventDefault();
-      alert("Thank you! Your feedback has been noted to keep RouteBuddy rides safe.");
+      alert("Thank you! Your feedback has been noted.");
       closeModal('feedback-modal');
       document.getElementById('feedbackText').value = '';
     }
