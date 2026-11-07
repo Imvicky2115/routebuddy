@@ -611,8 +611,8 @@
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
 
-      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id');
-      const mySavedPin = localStorage.getItem('my_active_booked_pin');
+      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
+      const mySavedPin = localStorage.getItem('my_active_booked_pin') || localStorage.getItem('rb_my_booked_pin');
 
       if (!myBookedRideId) {
         banner.classList.add('hidden');
@@ -622,31 +622,31 @@
 
       const bookedRide = allRides.find(r => r.id === myBookedRideId);
 
-      // Clean up when ride ends or is cancelled
+      // Clean up when ride is completed or cancelled by rider
       if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
         localStorage.removeItem('my_active_booked_pin');
+        localStorage.removeItem('rb_my_booked_ride_id');
+        localStorage.removeItem('rb_my_booked_pin');
         banner.classList.add('hidden');
         banner.innerHTML = '';
         return;
       }
 
-      const pin = mySavedPin || bookedRide.safetyPin || '----';
       const cleanFare = formatFare(bookedRide.fare);
       const cleanTime = formatTime(bookedRide.depTime);
-      const isVerified = bookedRide.status === 'VERIFIED';
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
 
       banner.classList.remove('hidden');
 
-      // STATE A: VERIFIED (Onboard with Rider!)
-      if (isVerified) {
+      // STATE A: VERIFIED (Onboard with Rider — NO PIN, NO CANCEL BUTTON!)
+      if (bookedRide.status === 'VERIFIED') {
         banner.innerHTML = `
           <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
             <div class="flex items-center justify-between border-b border-emerald-400/40 pb-2.5">
               <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-emerald-300 animate-ping"></span>
-                <span class="text-xs font-black uppercase tracking-wider text-emerald-200">Trip In Progress</span>
+                <span class="text-xs font-black uppercase tracking-wider text-emerald-200">Trip in Progress</span>
               </div>
               <span class="text-xs bg-emerald-950/60 border border-emerald-400/40 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
@@ -663,24 +663,25 @@
                 <span class="font-bold text-white text-right">${bookedRide.routeEnd}</span>
               </div>
               <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
-                <span class="text-emerald-300">Boarding Handshake:</span>
-                <span class="text-emerald-200 font-mono font-bold">PIN ${pin} Verified</span>
+                <span class="text-emerald-300">Status:</span>
+                <span class="text-emerald-200 font-bold">Boarded on Two-Wheeler</span>
               </div>
             </div>
 
             <div class="flex items-center gap-2 pt-1">
-              <a href="${upiUrl}" class="flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-2.5 rounded-xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
-                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
+              <a href="${upiUrl}" class="flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-3 rounded-2xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="send" class="w-4 h-4"></i> Pay ₹${cleanFare} via UPI
               </a>
-              <a href="tel:8788337049" class="px-3.5 py-2.5 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-xl flex items-center gap-1">
-                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> SOS
+              <a href="tel:8788337049" class="px-4 py-3 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1 shadow-md">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i> SOS
               </a>
             </div>
           </div>
         `;
       } 
-      // STATE B: RESERVED (Waiting to board)
+      // STATE B: RESERVED (Waiting to board — shows PIN and Cancel button)
       else {
+        const pin = mySavedPin || bookedRide.safetyPin || '----';
         banner.innerHTML = `
           <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
             <div class="flex items-center justify-between border-b border-slate-700 pb-2.5">
@@ -727,6 +728,8 @@
 
       localStorage.removeItem('my_active_booked_ride_id');
       localStorage.removeItem('my_active_booked_pin');
+      localStorage.removeItem('rb_my_booked_ride_id');
+      localStorage.removeItem('rb_my_booked_pin');
       renderPillionActiveBanner();
 
       try {
@@ -751,9 +754,23 @@
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       const myProfile = getMyProfile();
-      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id');
+      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
+      const myActiveBookedRide = allRides.find(r => r.id === myBookedRideId);
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      // If pillion is verified and in transit, hide available rides feed completely
+      if (myActiveBookedRide && myActiveBookedRide.status === 'VERIFIED') {
+        container.innerHTML = `
+          <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
+            <p class="text-xs font-bold text-slate-800">Commute In Progress</p>
+            <p class="text-[11px] text-slate-400">You are onboard with ${myActiveBookedRide.riderName}. You cannot book another seat until you are dropped off.</p>
+          </div>
+        `;
+        document.getElementById('verified-count').innerText = `1 active commute`;
+        lucide.createIcons();
+        return;
+      }
 
       const visibleRides = allRides.filter(ride => {
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
@@ -1158,7 +1175,7 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'CANCEL_RIDE', rideId: rideId })
+          body: JSON.stringify({ action: 'COMPLETE_RIDE', rideId: rideId })
         });
       } catch (err) {}
 
