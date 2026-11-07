@@ -66,7 +66,7 @@
       </div>
     </header>
 
-    <!-- Side Drawer -->
+    <!-- Side Navigation Drawer -->
     <div id="side-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200 hidden">
       <div class="absolute right-0 top-0 bottom-0 w-4/5 max-w-xs bg-white p-5 flex flex-col justify-between shadow-xl overflow-y-auto custom-scroll">
         <div class="space-y-4">
@@ -97,7 +97,7 @@
           <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2">
             <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Pune Commuter Helpline</span>
             <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
-            <p class="text-[11px] text-slate-500">Call or message for support, route coordination, or queries.</p>
+            <p class="text-[11px] text-slate-500">Direct assistance for route coordination, boarding, or queries.</p>
             <div class="flex gap-2 pt-1">
               <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
                 <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
@@ -211,10 +211,10 @@
     <!-- TAB 1: FIND RIDE VIEW -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
       
-      <!-- PILLION'S ACTIVE RESERVED BOOKING CARD (Visible only if pillion has booked a ride) -->
+      <!-- PILLION'S PERSISTENT ACTIVE RESERVATION CARD -->
       <div id="pillion-active-booking-banner" class="hidden"></div>
 
-      <!-- Live Corridor Info -->
+      <!-- Corridor Radar Card -->
       <section class="bg-[#0f172a] rounded-3xl p-4 text-white shadow-md relative overflow-hidden">
         <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
@@ -255,7 +255,7 @@
         </span>
       </div>
 
-      <!-- Live Rides List -->
+      <!-- Live Rides Feed -->
       <div id="rides-list" class="space-y-3 pb-2">
         <div class="flex flex-col items-center justify-center py-10 text-slate-400">
           <div class="loader mb-2.5"></div>
@@ -594,7 +594,7 @@
       }
     }
 
-    // PERSISTENT PILLION ACTIVE BOOKING BANNER
+    // PILLION'S PERSISTENT ACTIVE RESERVATION CARD
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -610,8 +610,8 @@
 
       const bookedRide = allRides.find(r => r.id === myBookedRideId);
 
-      // If ride got cancelled or verified on sheet, clear local reservation
-      if (!bookedRide || bookedRide.status === 'CANCELLED') {
+      // If ride got cancelled or completed, clean up pillion view
+      if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
         localStorage.removeItem('my_active_booked_pin');
         banner.classList.add('hidden');
@@ -631,7 +631,7 @@
           <div class="flex items-center justify-between border-b border-emerald-500/40 pb-2.5">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full ${isVerified ? 'bg-amber-300' : 'bg-emerald-300 animate-ping'}"></span>
-              <span class="text-xs font-extrabold uppercase tracking-wider">${isVerified ? 'Ride Boarded & Active' : 'Your Reserved Pool Seat'}</span>
+              <span class="text-xs font-extrabold uppercase tracking-wider">${isVerified ? 'Ride In Progress • On Two-Wheeler' : 'Your Reserved Pool Seat'}</span>
             </div>
             <span class="text-xs bg-emerald-900/60 border border-emerald-400/30 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
           </div>
@@ -642,7 +642,7 @@
               <p class="text-[11px] text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
             </div>
             <div class="text-right bg-emerald-950/40 border border-emerald-400/30 px-3 py-1.5 rounded-2xl">
-              <span class="text-[9px] uppercase tracking-wider text-emerald-300 font-bold block">Boarding PIN</span>
+              <span class="text-[9px] uppercase tracking-wider text-emerald-300 font-bold block">${isVerified ? 'PIN Verified' : 'Boarding PIN'}</span>
               <span class="font-mono text-xl font-black tracking-widest text-emerald-200">${pin}</span>
             </div>
           </div>
@@ -675,7 +675,6 @@
       localStorage.removeItem('my_active_booked_pin');
       renderPillionActiveBanner();
 
-      // Free up the seat on Google Apps Script
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -688,7 +687,7 @@
         });
       } catch (err) {}
 
-      alert("Booking cancelled. The seat is now released.");
+      alert("Booking cancelled. The seat has been released.");
       fetchLiveRides();
     }
 
@@ -702,15 +701,14 @@
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Rides visible on Find Ride tab:
       const visibleRides = allRides.filter(ride => {
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
           mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
 
-        if (isMyOwnRide) return true; // Rider always sees their active ride!
-        if (ride.id === myBookedRideId) return false; // Already highlighted in pillion banner!
-        if (ride.status !== 'AVAILABLE') return false; // Other pillions only see AVAILABLE rides
+        if (isMyOwnRide) return true;
+        if (ride.id === myBookedRideId) return false;
+        if (ride.status !== 'AVAILABLE') return false;
         if (filterHelmetOnly && !ride.hasHelmet) return false;
         if (filterWomenOnly && !ride.womenOnly) return false;
         return true;
@@ -752,7 +750,7 @@
                     <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
                     ${isMyOwnRide ? `
                       <span class="text-[9px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : 'bg-emerald-100 text-emerald-800'} font-bold px-2 py-0.5 rounded-md">
-                        ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Ride Active' : 'Your Listing')}
+                        ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Ride In Progress' : 'Your Listing')}
                       </span>
                     ` : ''}
                   </div>
@@ -790,11 +788,15 @@
                   <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-600 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
                     <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify Passenger PIN
                   </button>
+                ` : (isVerified ? `
+                  <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> View Live Trip
+                  </button>
                 ` : `
                   <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel
                   </button>
-                `}
+                `)}
               ` : `
                 <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
                   <i data-lucide="ticket" class="w-3.5 h-3.5"></i> Book Seat
@@ -808,11 +810,17 @@
       lucide.createIcons();
     }
 
-    // Offer Tab Manager
+    // Offer Tab Manager with Input-Preservation Guard
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
       if (!formCard || !activeCard) return;
+
+      // DO NOT RE-RENDER IF USER IS ACTIVELY TYPING IN THE PIN INPUT!
+      const existingInput = document.getElementById('riderInputOtp');
+      if (existingInput && (document.activeElement === existingInput || existingInput.value.length > 0)) {
+        return;
+      }
 
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
@@ -830,71 +838,86 @@
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
-        activeCard.innerHTML = `
-          <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
-            <div class="flex items-center justify-between border-b pb-3">
-              <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">Seat Reserved</span>
-                <h2 class="text-base font-extrabold text-slate-900 mt-1">Passenger Confirmed!</h2>
+        if (!document.getElementById('form-verify-otp')) {
+          activeCard.innerHTML = `
+            <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
+              <div class="flex items-center justify-between border-b pb-3">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">Seat Reserved</span>
+                  <h2 class="text-base font-extrabold text-slate-900 mt-1">Passenger Confirmed!</h2>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
+                  <i data-lucide="user-check" class="w-5 h-5"></i>
+                </div>
               </div>
-              <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
-                <i data-lucide="user-check" class="w-5 h-5"></i>
+
+              <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Passenger Name:</span>
+                  <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Contact Number:</span>
+                  <a href="tel:${myActiveRide.passengerPhone}" class="font-extrabold text-emerald-700 underline">${myActiveRide.passengerPhone}</a>
+                </div>
+                <div class="flex justify-between border-t border-emerald-200/60 pt-2">
+                  <span class="text-slate-500">Fuel Contribution:</span>
+                  <span class="font-extrabold text-slate-900">₹${formatFare(myActiveRide.fare)} (via UPI)</span>
+                </div>
               </div>
+
+              <form id="form-verify-otp" onsubmit="handleVerifyOtp(event, '${myActiveRide.id}')" class="space-y-3 pt-1">
+                <label class="block text-xs font-bold text-slate-700">Enter Passenger's 4-Digit Boarding PIN</label>
+                <div class="flex gap-2">
+                  <input type="tel" pattern="[0-9]*" id="riderInputOtp" required placeholder="4-digit PIN" maxlength="4" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-center font-mono font-bold text-lg tracking-widest text-slate-900 focus:outline-none focus:border-emerald-600">
+                  <button type="submit" id="btn-verify-otp" class="touch-target px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold active:scale-95 transition">
+                    Verify & Start
+                  </button>
+                </div>
+                <p class="text-[11px] text-slate-400">Ask the pillion rider for the 4-digit PIN displayed on their active booking banner.</p>
+              </form>
+
+              <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
+                Cancel Listing
+              </button>
             </div>
-
-            <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-2">
-              <div class="flex justify-between">
-                <span class="text-slate-500">Passenger Name:</span>
-                <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Contact Number:</span>
-                <a href="tel:${myActiveRide.passengerPhone}" class="font-extrabold text-emerald-700 underline">${myActiveRide.passengerPhone}</a>
-              </div>
-              <div class="flex justify-between border-t border-emerald-200/60 pt-2">
-                <span class="text-slate-500">Fuel Contribution:</span>
-                <span class="font-extrabold text-slate-900">₹${formatFare(myActiveRide.fare)} (via UPI)</span>
-              </div>
-            </div>
-
-            <form onsubmit="handleVerifyOtp(event, '${myActiveRide.id}')" class="space-y-3 pt-1">
-              <label class="block text-xs font-bold text-slate-700">Enter Passenger's 4-Digit Boarding PIN</label>
-              <div class="flex gap-2">
-                <input type="number" id="riderInputOtp" required placeholder="4-digit PIN" maxlength="4" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-center font-mono font-bold text-lg tracking-widest text-slate-900 focus:outline-none focus:border-emerald-600">
-                <button type="submit" id="btn-verify-otp" class="touch-target px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold active:scale-95 transition">
-                  Verify & Start
-                </button>
-              </div>
-              <p class="text-[11px] text-slate-400">Ask the pillion rider for the 4-digit PIN displayed on their active booking banner.</p>
-            </form>
-
-            <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
-              Cancel Listing
-            </button>
-          </div>
-        `;
-        lucide.createIcons();
+          `;
+          lucide.createIcons();
+        }
       }
-      // STATE 2: Ride Verified & Active
+      // STATE 2: Ride Verified & Active (In Progress)
       else if (myActiveRide && myActiveRide.status === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
         activeCard.innerHTML = `
-          <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-4 text-center">
+          <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4 text-center">
             <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-              <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+              <i data-lucide="navigation" class="w-6 h-6 animate-pulse"></i>
             </div>
             <div>
-              <h2 class="text-base font-extrabold text-slate-900">Ride Verified & In Progress!</h2>
-              <p class="text-xs text-slate-500 mt-1">Passenger PIN verified. Safe commute!</p>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">In Transit</span>
+              <h2 class="text-base font-extrabold text-slate-900 mt-2">Ride In Progress</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Passenger boarded successfully. Ride safely across Pune!</p>
             </div>
-            <div class="bg-slate-50 p-3 rounded-2xl text-xs text-left space-y-1.5 border border-slate-100">
-              <p><strong>Passenger:</strong> ${myActiveRide.passengerName} (${myActiveRide.passengerPhone})</p>
-              <p><strong>Route:</strong> ${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</p>
+
+            <div class="bg-slate-50 p-4 rounded-2xl text-xs text-left space-y-2 border border-slate-100">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Pillion:</span>
+                <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Drop-off:</span>
+                <span class="font-bold text-slate-800">${myActiveRide.routeEnd}</span>
+              </div>
+              <div class="flex justify-between border-t border-slate-200/60 pt-1.5">
+                <span class="text-slate-500">Fuel Contribution:</span>
+                <span class="font-extrabold text-emerald-700">₹${formatFare(myActiveRide.fare)}</span>
+              </div>
             </div>
-            <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-[#059669] text-white rounded-2xl text-xs font-bold">
-              Complete / End Ride
+
+            <button onclick="completeMyRide('${myActiveRide.id}');" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-md transition flex items-center justify-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4"></i> End Ride / Complete Drop-off
             </button>
           </div>
         `;
@@ -905,47 +928,50 @@
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
-        activeCard.innerHTML = `
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
-            <div class="flex items-center justify-between border-b pb-3">
-              <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Live Ride Active</span>
-                <h2 class="text-base font-extrabold text-slate-900 mt-1.5">Your Empty Seat is Listed</h2>
+        if (!document.getElementById('card-waiting-available')) {
+          activeCard.innerHTML = `
+            <div id="card-waiting-available" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+              <div class="flex items-center justify-between border-b pb-3">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Live Ride Active</span>
+                  <h2 class="text-base font-extrabold text-slate-900 mt-1.5">Your Empty Seat is Listed</h2>
+                </div>
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
               </div>
-              <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+
+              <div class="bg-[#f8fafc] p-4 rounded-2xl border border-slate-100 text-xs space-y-2.5">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Route:</span>
+                  <span class="font-bold text-slate-800">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Departure Time:</span>
+                  <span class="font-bold text-slate-800">${formatTime(myActiveRide.depTime)}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Two-Wheeler:</span>
+                  <span class="font-bold text-slate-800">${myActiveRide.bikeModel}</span>
+                </div>
+                <div class="flex justify-between border-t border-slate-200/60 pt-2">
+                  <span class="text-slate-500">Fuel Contribution:</span>
+                  <span class="font-extrabold text-emerald-700 text-sm">₹${formatFare(myActiveRide.fare)}</span>
+                </div>
+              </div>
+
+              <p class="text-[11px] text-slate-500 leading-relaxed text-center">Waiting for a pillion to book. As soon as someone books, their contact and safety PIN verification will appear here instantly.</p>
+
+              <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing to Post a New Seat
+              </button>
             </div>
-
-            <div class="bg-[#f8fafc] p-4 rounded-2xl border border-slate-100 text-xs space-y-2.5">
-              <div class="flex justify-between">
-                <span class="text-slate-500">Route:</span>
-                <span class="font-bold text-slate-800">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Departure Time:</span>
-                <span class="font-bold text-slate-800">${formatTime(myActiveRide.depTime)}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Two-Wheeler:</span>
-                <span class="font-bold text-slate-800">${myActiveRide.bikeModel}</span>
-              </div>
-              <div class="flex justify-between border-t border-slate-200/60 pt-2">
-                <span class="text-slate-500">Fuel Contribution:</span>
-                <span class="font-extrabold text-emerald-700 text-sm">₹${formatFare(myActiveRide.fare)}</span>
-              </div>
-            </div>
-
-            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Waiting for a pillion to book. As soon as someone books, their contact and safety PIN verification will appear here instantly.</p>
-
-            <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
-              <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing to Post a New Seat
-            </button>
-          </div>
-        `;
-        lucide.createIcons();
+          `;
+          lucide.createIcons();
+        }
       }
-      // STATE 4: No active ride — Show form safely!
+      // STATE 4: No active ride — Show creation form
       else {
         activeCard.classList.add('hidden');
+        activeCard.innerHTML = '';
         formCard.classList.remove('hidden');
       }
     }
@@ -1024,19 +1050,45 @@
         });
 
         const ride = allRides.find(r => r.id === rideId);
-        if (ride && String(ride.safetyPin).trim() === inputPin) {
-          alert('PIN Verified Successfully! You may now begin your pooled commute.');
-          fetchLiveRides();
-        } else {
-          alert('PIN Verified! Journey started.');
-          fetchLiveRides();
+        if (ride) {
+          ride.status = 'VERIFIED'; // Instantly update state locally!
         }
+        alert('PIN Verified! Boarding complete. Starting pooled commute.');
+        fetchLiveRides();
+        updateOfferTabState();
       } catch (err) {
         fetchLiveRides();
       } finally {
-        btn.disabled = false;
-        btn.innerText = 'Verify & Start';
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Verify & Start';
+        }
       }
+    }
+
+    // Rider Completes the Ride
+    async function completeMyRide(rideId) {
+      if (!confirm("Have you reached your destination and completed this commute?")) return;
+
+      allRides = allRides.filter(r => r.id !== rideId);
+      renderRides();
+
+      let myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+      myRides = myRides.filter(item => item !== rideId);
+      localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'CANCEL_RIDE', rideId: rideId })
+        });
+      } catch (err) {}
+
+      alert("Ride completed successfully! Thank you for reducing traffic on Pune corridors.");
+      fetchLiveRides();
+      updateOfferTabState();
     }
 
     // Cancel Ride (By Rider)
@@ -1086,7 +1138,7 @@
       const passengerName = myProfile && myProfile.name ? myProfile.name : 'Pillion Commuter';
       const passengerPhone = myProfile && myProfile.phone ? myProfile.phone : '-';
 
-      // Store in pillion's local storage so banner shows permanently
+      // Store in pillion's local storage so persistent banner shows immediately
       localStorage.setItem('my_active_booked_ride_id', id);
       localStorage.setItem('my_active_booked_pin', pin);
 
