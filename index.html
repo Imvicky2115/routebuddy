@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>RouteBuddy — Pune Commuter Peer-Pooling</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,9 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
@@ -25,19 +23,10 @@
       margin: 0;
       padding: 0;
     }
-    input, select, textarea, button {
-      font-size: 16px !important;
-    }
-    .touch-target {
-      min-height: 48px;
-    }
-    .custom-scroll::-webkit-scrollbar {
-      display: none;
-    }
-    .custom-scroll {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    input, select, textarea, button { font-size: 16px !important; }
+    .touch-target { min-height: 48px; }
+    .custom-scroll::-webkit-scrollbar { display: none; }
+    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     .loader {
       border: 3px solid #f3f3f3;
       border-radius: 50%;
@@ -46,10 +35,7 @@
       height: 22px;
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="min-h-screen flex justify-center pb-24">
@@ -96,7 +82,7 @@
             </button>
           </div>
 
-          <!-- Unique Profile Badge -->
+          <!-- Profile Badge -->
           <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl cursor-pointer active:scale-98 transition">
             <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0">
               <span id="drawer-avatar-text">U</span>
@@ -111,7 +97,7 @@
           <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2">
             <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Commuter Helpline</span>
             <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
-            <p class="text-[11px] text-slate-500">Call or WhatsApp for assistance, ride queries, or issues.</p>
+            <p class="text-[11px] text-slate-500">Direct assistance for ride queries or corridor routes.</p>
             <div class="flex gap-2 pt-1">
               <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
                 <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
@@ -122,7 +108,7 @@
             </div>
           </div>
 
-          <!-- Menu Links -->
+          <!-- Modals Trigger Links -->
           <div class="space-y-1.5 pt-1">
             <button onclick="openModal('safety-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
@@ -130,24 +116,21 @@
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
-
             <button onclick="openModal('faq-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
-                <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> Frequently Asked Questions
+                <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> Commuter FAQs
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
-
             <button onclick="openModal('feedback-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
-                <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> Share Feedback & Rating
+                <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> Commuter Feedback
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
-
             <button onclick="openModal('about-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
-                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About RouteBuddy & MVA
+                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About RouteBuddy
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
@@ -160,39 +143,25 @@
       </div>
     </div>
 
-    <!-- MODAL 1: SAFETY GUIDELINES -->
+    <!-- Modals -->
     <div id="safety-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3.5 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b pb-2">
           <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Commuter Safety Rules
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Safety Guidelines
           </h3>
           <button onclick="closeModal('safety-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-          <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-            <strong class="text-emerald-900 block font-bold mb-0.5">1. Mandatory ISI Helmets</strong>
-            Both rider and pillion must wear BIS/ISI compliant helmets on all Pune roads.
-          </div>
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-            <strong class="text-slate-900 block font-bold mb-0.5">2. 4-Digit Verification</strong>
-            Confirm the rider's identity and share the 4-digit security PIN before boarding.
-          </div>
-          <div class="bg-rose-50 p-3 rounded-xl border border-rose-100">
-            <strong class="text-rose-900 block font-bold mb-0.5">3. Women-Only Matching</strong>
-            Dedicated matching filter for female tech corridor commuters.
-          </div>
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-            <strong class="text-slate-900 block font-bold mb-0.5">4. Non-Commercial Cost Sharing</strong>
-            Capped at ₹10–₹25 fuel share under Section 66 MVA.
-          </div>
+        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
+          <p><strong>1. ISI Helmets:</strong> Both rider and pillion must wear BIS/ISI compliant helmets.</p>
+          <p><strong>2. PIN Verification:</strong> Exchange the 4-digit boarding PIN before starting.</p>
+          <p><strong>3. Non-Commercial:</strong> Fuel split is capped under Section 66 MVA.</p>
         </div>
       </div>
     </div>
 
-    <!-- MODAL 2: FAQS -->
     <div id="faq-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3.5 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b pb-2">
@@ -203,102 +172,68 @@
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <div class="text-xs text-slate-600 space-y-3">
-          <div>
-            <p class="font-bold text-slate-900">Is bike pooling legal in Maharashtra?</p>
-            <p class="text-slate-500 mt-0.5">Yes, non-commercial peer pooling where riders share fuel expenses without generating profits is permitted under Section 66 MVA.</p>
-          </div>
-          <div class="border-t pt-2">
-            <p class="font-bold text-slate-900">How do I pay fuel share?</p>
-            <p class="text-slate-500 mt-0.5">Directly via UPI (Google Pay, PhonePe, Paytm) to the rider when boarding.</p>
-          </div>
+        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
+          <p><strong>Is this legal?</strong> Yes, peer pooling sharing direct micro fuel expenses is fully compliant under Section 66 MVA.</p>
+          <p><strong>How do I pay?</strong> Directly via UPI (GPay/PhonePe) using the booking pass.</p>
         </div>
       </div>
     </div>
 
-    <!-- MODAL 3: FEEDBACK -->
     <div id="feedback-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center justify-between border-b pb-3">
           <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="star" class="w-4 h-4 text-amber-500 fill-amber-500"></i> Commuter Feedback
+            <i data-lucide="star" class="w-4 h-4 text-amber-500 fill-amber-500"></i> Share Feedback
           </h3>
           <button onclick="closeModal('feedback-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-
         <form onsubmit="handleFeedbackSubmit(event)" class="space-y-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Your Rating</label>
-            <div class="flex justify-between gap-1 text-2xl">
-              <button type="button" onclick="selectRating(1)" class="p-1">⭐</button>
-              <button type="button" onclick="selectRating(2)" class="p-1">⭐</button>
-              <button type="button" onclick="selectRating(3)" class="p-1">⭐</button>
-              <button type="button" onclick="selectRating(4)" class="p-1">⭐</button>
-              <button type="button" onclick="selectRating(5)" class="p-1">⭐</button>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Feedback Note</label>
-            <textarea id="feedbackText" required rows="3" placeholder="How was your route matching or commute experience?" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"></textarea>
-          </div>
-
-          <button type="submit" class="touch-target w-full bg-[#059669] text-white rounded-xl text-xs font-bold shadow-md hover:bg-emerald-700 active:scale-95 transition">
-            Submit Feedback
-          </button>
+          <textarea id="feedbackText" required rows="3" placeholder="Tell us about your pooling experience..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"></textarea>
+          <button type="submit" class="touch-target w-full bg-[#059669] text-white rounded-xl text-xs font-bold">Submit Feedback</button>
         </form>
       </div>
     </div>
 
-    <!-- MODAL 4: ABOUT -->
     <div id="about-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3.5 shadow-2xl">
         <div class="flex items-center justify-between border-b pb-2">
-          <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="info" class="w-4 h-4 text-emerald-600"></i> About RouteBuddy
-          </h3>
+          <h3 class="font-extrabold text-sm text-slate-900">About RouteBuddy</h3>
           <button onclick="closeModal('about-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p><strong>RouteBuddy</strong> is a peer-to-peer bike pooling app connecting Pune commuters on daily tech corridors like Hadapsar, Kharadi, and Viman Nagar.</p>
-        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">RouteBuddy connects Pune commuters across Hadapsar, Kharadi, and Viman Nagar to split fuel expenses safely.</p>
       </div>
     </div>
 
     <!-- TAB 1: FIND RIDE VIEW -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
-      
-      <!-- Dark Radar / Route Card -->
       <section class="bg-[#0f172a] rounded-3xl p-4 text-white shadow-md relative overflow-hidden">
         <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span id="corridor-title">Hadapsar noble hospital → E space, viman nagar</span>
+            <span id="corridor-title">Hadapsar → Kharadi / Viman Nagar</span>
           </div>
           <span class="text-sm font-extrabold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800/60">₹15</span>
         </div>
-
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div>
             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rider's Journey</p>
-            <p class="font-bold text-slate-100 truncate mt-0.5" id="radar-journey">Hadapsar noble ho...</p>
+            <p class="font-bold text-slate-100 truncate mt-0.5" id="radar-journey">Hadapsar</p>
           </div>
           <div>
-            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Your Pickup Segment</p>
-            <p class="font-bold text-slate-100 truncate mt-0.5" id="radar-pickup">E space, viman nagar</p>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Pickup Segment</p>
+            <p class="font-bold text-slate-100 truncate mt-0.5" id="radar-pickup">Kharadi / Viman Nagar</p>
           </div>
         </div>
-
         <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3.5 overflow-hidden">
           <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-2/3 rounded-full"></div>
         </div>
       </section>
 
-      <!-- Pill Toggles & Verification Header -->
+      <!-- Pill Toggles -->
       <div class="flex items-center gap-2 pt-0.5">
         <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition">
           <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-600"></i> Spare Helmet
@@ -309,15 +244,13 @@
       </div>
 
       <div class="flex items-center justify-between px-1">
-        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">
-          Checking live rides...
-        </span>
+        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking live rides...</span>
         <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Google Sheet
         </span>
       </div>
 
-      <!-- Dynamic Live Ride Listings from Google Sheet -->
+      <!-- Live Rides List -->
       <div id="rides-list" class="space-y-3 pb-2">
         <div class="flex flex-col items-center justify-center py-10 text-slate-400">
           <div class="loader mb-2.5"></div>
@@ -330,23 +263,21 @@
     <main id="offer-view" class="flex-1 px-4 py-4 space-y-4 hidden">
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div>
-          <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Two-Wheeler Seat</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Posts to Pune commuters via your live Google Sheet.</p>
+          <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Appears on Pune commuters' devices instantly.</p>
         </div>
 
         <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
-            <input type="text" id="riderName" required placeholder="e.g., Ashish Rajkumar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="riderName" required placeholder="Enter your name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
-              <input type="text" id="bikeModel" required placeholder="e.g., Scooty pep / Hunter 350" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="text" id="bikeModel" required placeholder="e.g., Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
-            
-            <!-- 12-Hour Native Time Selector -->
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time</label>
               <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
@@ -385,7 +316,7 @@
             </label>
           </div>
 
-          <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md shadow-emerald-200/60 transition flex items-center justify-center gap-2 mt-4">
+          <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
             Post Ride to Live Database
           </button>
@@ -396,7 +327,6 @@
     <!-- TAB 3: MY PROFILE VIEW -->
     <main id="profile-view" class="flex-1 px-4 py-4 space-y-4 hidden">
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-5">
-        
         <div class="flex flex-col items-center text-center">
           <div class="relative group">
             <div id="profile-pic-preview" class="w-20 h-20 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center overflow-hidden text-emerald-700 font-extrabold text-2xl shadow-sm">
@@ -426,17 +356,17 @@
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="userFullName" required placeholder="Enter your name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="userFullName" required placeholder="Enter your name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" id="userPhone" placeholder="Your phone number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="tel" id="userPhone" placeholder="Your phone number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
-              <input type="time" id="userDefaultTime" value="09:15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="time" id="userDefaultTime" value="09:15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
           </div>
 
@@ -444,26 +374,25 @@
             <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Vehicle Specifications</span>
             <div class="grid grid-cols-2 gap-2.5">
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter Model</label>
-                <input type="text" id="userVehicleModel" placeholder="Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
+                <input type="text" id="userVehicleModel" placeholder="Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate No.</label>
-                <input type="text" id="userVehiclePlate" placeholder="MH12 SH 5918" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate</label>
+                <input type="text" id="userVehiclePlate" placeholder="MH12 SH 5918" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Primary Pune Corridor</label>
-            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="userCorridor" placeholder="e.g., Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
             <i data-lucide="check" class="w-4 h-4"></i> Save My Profile
           </button>
         </form>
-
       </div>
     </main>
 
@@ -481,7 +410,6 @@
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
-
         <div id="modal-content" class="space-y-4"></div>
       </div>
     </div>
@@ -507,14 +435,15 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweoUyYVeg14c1t-HbU5sdD3vZK0r9ZICOw_3V1ZM2CUKc-CGdIX5VUkvmcqHuAPRmc/exec";
+    // New Live Google Apps Script Endpoint
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySIzhBGMfrVHVyE2rqUzmscsKeW9Ah9lLTvbEgOKzukRCDfoXcOWQl2cjTBhvCbbX6gw/exec";
+    const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
     let filterHelmetOnly = false;
     let filterWomenOnly = false;
     let currentUserRole = 'pillion';
 
-    // 1. Generate or Retrieve Persistent Unique Device/User ID
     function getOrCreateUserId() {
       let uid = localStorage.getItem('routebuddy_user_id');
       if (!uid) {
@@ -559,7 +488,28 @@
       return parseFloat(num) ? Math.round(parseFloat(num)) : 15;
     }
 
-    // 2. Fetch Live Rides from Sheet
+    // Auto-detect GitHub code updates & reload
+    async function checkForAppUpdates() {
+      try {
+        const res = await fetch(GITHUB_REPO_API, {
+          headers: { 'Accept': 'application/vnd.github.v3+json' },
+          cache: 'no-store'
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const latestSha = data.sha;
+        const currentSha = localStorage.getItem('routebuddy_app_sha');
+
+        if (!currentSha) {
+          localStorage.setItem('routebuddy_app_sha', latestSha);
+        } else if (currentSha !== latestSha) {
+          localStorage.setItem('routebuddy_app_sha', latestSha);
+          window.location.href = window.location.pathname + '?v=' + latestSha.substring(0, 7);
+        }
+      } catch (e) {}
+    }
+
+    // Fetch rides from Google Sheet
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
@@ -568,16 +518,17 @@
         const res = await fetch(APPS_SCRIPT_URL);
         const data = await res.json();
         
-        // Deduplicate so each rider only has their newest active listing
+        const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
+        const valid = data.filter(r => !cancelledLocally.includes(r.id));
+
         const map = new Map();
-        data.forEach(r => {
+        valid.forEach(r => {
           if (r.riderName) {
             map.set(r.riderName.trim().toLowerCase(), r);
           }
         });
-        
         allRides = Array.from(map.values());
-        
+
         if (allRides.length > 0) {
           const top = allRides[allRides.length - 1];
           document.getElementById('corridor-title').innerText = `${top.routeStart} → ${top.routeEnd}`;
@@ -593,10 +544,9 @@
       }
     }
 
-    // 3. Render Ride Cards with True Ownership Matching
+    // Render Ride Cards
     function renderRides() {
       const container = document.getElementById('rides-list');
-      const myUid = getOrCreateUserId();
       const myProfile = getMyProfile();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       
@@ -623,15 +573,12 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        // A ride is "mine" ONLY if this device created it:
-        // Checked via stored ride IDs for this phone, or matching unique user profile name
         const isMyOwnRide = mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && ride.riderName && 
            myProfile.name.trim().toLowerCase() === ride.riderName.trim().toLowerCase());
 
         return `
           <div class="bg-white rounded-3xl border border-slate-200/80 p-4 shadow-xs space-y-3">
-            
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-extrabold text-slate-700 text-sm border border-slate-200 shrink-0">
@@ -671,9 +618,8 @@
                 ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
               </div>
 
-              <!-- True Role Separation: Only the rider who created it can cancel; everyone else can Book -->
               ${isMyOwnRide ? `
-                <button onclick="cancelMyRide('${ride.id}')" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition">
+                <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition">
                   Cancel Listing
                 </button>
               ` : `
@@ -690,7 +636,7 @@
       lucide.createIcons();
     }
 
-    // 4. Post Ride: Links the generated Ride ID directly to THIS device
+    // Post a Ride
     async function handlePostRide(e) {
       e.preventDefault();
       const btn = document.getElementById('submit-ride-btn');
@@ -722,14 +668,13 @@
           body: JSON.stringify(payload)
         });
 
-        // Store this ride ID locally so THIS device knows it owns the listing
         const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
         myRides.push(generatedRideId);
         localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
 
-        alert("Your seat has been posted! Pillion riders can now book it.");
+        alert("Your seat has been posted! Pillion commuters can now book it.");
         switchTab('find');
-        setTimeout(fetchLiveRides, 1200);
+        setTimeout(fetchLiveRides, 1500);
       } catch (err) {
         alert("Ride saved!");
         switchTab('find');
@@ -740,24 +685,48 @@
       }
     }
 
-    function cancelMyRide(id) {
-      if (confirm("Remove your seat listing from RouteBuddy?")) {
-        allRides = allRides.filter(r => r.id !== id);
-        let myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
-        myRides = myRides.filter(item => item !== id);
-        localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
-        renderRides();
-        alert("Ride listing cancelled.");
+    // Cancel Ride
+    async function cancelMyRide(id) {
+      if (!confirm("Are you sure you want to cancel this ride listing permanently?")) return;
+
+      const cancelBtn = document.getElementById(`btn-cancel-${id}`);
+      if (cancelBtn) {
+        cancelBtn.disabled = true;
+        cancelBtn.innerText = "Cancelling...";
       }
+
+      allRides = allRides.filter(r => r.id !== id);
+      renderRides();
+
+      const cancelled = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
+      cancelled.push(id);
+      localStorage.setItem('my_cancelled_ride_ids', JSON.stringify(cancelled));
+
+      let myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+      myRides = myRides.filter(item => item !== id);
+      localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'CANCEL_RIDE', rideId: id })
+        });
+      } catch (err) {
+        console.error("Cancel sync error:", err);
+      }
+
+      alert("Listing successfully removed.");
+      fetchLiveRides();
     }
 
-    // 5. Booking Flow & UPI
+    // Booking Pass modal with UPI
     function openBooking(id, rider, start, end, fare) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
       const decodedEnd = decodeURIComponent(end);
       const pin = Math.floor(1000 + Math.random() * 9000);
-
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(decodedRider)}&am=${fare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
 
       document.getElementById('modal-content').innerHTML = `
@@ -801,7 +770,7 @@
       lucide.createIcons();
     }
 
-    // 6. User Profile Management
+    // Profile Management
     function setUserRole(role) {
       currentUserRole = role;
       const pillionBtn = document.getElementById('role-btn-pillion');
@@ -823,7 +792,6 @@
     function handlePhotoUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function(event) {
         const base64 = event.target.result;
@@ -858,7 +826,6 @@
 
       document.getElementById('profile-name-header').innerText = profile.name || 'Commuter';
       document.getElementById('drawer-user-name').innerText = profile.name || 'Guest Commuter';
-      
       document.getElementById('riderName').value = profile.name || '';
       if (profile.vehicleModel) document.getElementById('bikeModel').value = profile.vehicleModel;
       if (profile.defaultTime) document.getElementById('depTimePicker').value = profile.defaultTime;
@@ -891,7 +858,6 @@
 
         document.getElementById('profile-name-header').innerText = p.name || 'Commuter';
         document.getElementById('drawer-user-name').innerText = p.name || 'Guest Commuter';
-
         document.getElementById('riderName').value = p.name || '';
         if (p.vehicleModel) document.getElementById('bikeModel').value = p.vehicleModel;
         if (p.defaultTime) document.getElementById('depTimePicker').value = p.defaultTime;
@@ -901,7 +867,7 @@
       setUserRole(savedRole);
     }
 
-    // Controls
+    // Modal and Drawer Controls
     function toggleSidebar(open) {
       const drawer = document.getElementById('side-drawer');
       if (open) drawer.classList.remove('hidden');
@@ -919,13 +885,9 @@
       document.getElementById(id).classList.add('hidden');
     }
 
-    function selectRating(stars) {
-      alert(`Selected ${stars} Stars! Enter your feedback and hit submit.`);
-    }
-
     function handleFeedbackSubmit(e) {
       e.preventDefault();
-      alert("Thank you! Your feedback has been noted.");
+      alert("Feedback submitted!");
       closeModal('feedback-modal');
       document.getElementById('feedbackText').value = '';
     }
@@ -951,7 +913,6 @@
       const findView = document.getElementById('find-view');
       const offerView = document.getElementById('offer-view');
       const profileView = document.getElementById('profile-view');
-      
       const navFind = document.getElementById('nav-find');
       const navOffer = document.getElementById('nav-offer');
       const navProfile = document.getElementById('nav-profile');
@@ -982,6 +943,8 @@
       lucide.createIcons();
       loadSavedProfile();
       fetchLiveRides();
+      checkForAppUpdates();
+      setInterval(checkForAppUpdates, 60000);
       setInterval(fetchLiveRides, 20000);
     });
   </script>
