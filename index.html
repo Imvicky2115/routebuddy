@@ -261,7 +261,7 @@
 
     <!-- TAB 2: OFFER SEAT VIEW -->
     <main id="offer-view" class="flex-1 px-4 py-4 space-y-4 hidden">
-      <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+      <div id="offer-container" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div>
           <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
           <p class="text-xs text-slate-500 mt-0.5">Appears on Pune commuters' devices instantly.</p>
@@ -436,7 +436,7 @@
 
   <script>
     // Live Google Apps Script Endpoint
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8muNEvEvyIm0pmmtWD3YL2PYcOtiMi5pAlWIzykrZSNDjMhUaqfUPW4VhpeFiDXUC/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhBjXZzLJVNyjtZ2zaBLqhVv3_QcZyDB94zTzbdcfKA7cHOcInm2-fZ5-10t0Ub7hUvw/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
@@ -498,6 +498,38 @@
       return str;
     }
 
+    // Checks if a departure time has passed today (with a 15-minute grace period)
+    function isRideExpired(timeStr, graceMinutes = 15) {
+      if (!timeStr) return false;
+      const now = new Date();
+      const rideDate = new Date();
+      const str = String(timeStr).trim();
+
+      let hours = 0;
+      let minutes = 0;
+
+      if (/am|pm/i.test(str)) {
+        const isPM = /pm/i.test(str);
+        const cleanStr = str.replace(/am|pm/i, '').trim();
+        const parts = cleanStr.split(':');
+        hours = parseInt(parts[0], 10);
+        minutes = parseInt(parts[1] || '0', 10);
+
+        if (isPM && hours < 12) hours += 12;
+        if (!isPM && hours === 12) hours = 0;
+      } else if (str.includes(':')) {
+        const parts = str.split(':');
+        hours = parseInt(parts[0], 10);
+        minutes = parseInt(parts[1] || '0', 10);
+      } else {
+        return false;
+      }
+
+      rideDate.setHours(hours, minutes, 0, 0);
+      const expiryTime = new Date(rideDate.getTime() + graceMinutes * 60000);
+      return now > expiryTime;
+    }
+
     function formatFare(raw) {
       if (!raw) return 15;
       const num = String(raw).replace(/[^0-9.]/g, '');
@@ -537,9 +569,15 @@
         
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const bookedLocally = JSON.parse(localStorage.getItem('my_booked_ride_ids') || '[]');
-        const valid = data.filter(r => !cancelledLocally.includes(r.id) && !bookedLocally.includes(r.id));
 
-        // Deduplicate by creatorUid so different riders never overwrite each other
+        // Filter out cancelled, booked, and expired rides (>15m past departure)
+        const valid = data.filter(r => 
+          !cancelledLocally.includes(r.id) && 
+          !bookedLocally.includes(r.id) && 
+          !isRideExpired(r.depTime, 15)
+        );
+
+        // Deduplicate by creatorUid
         const map = new Map();
         valid.forEach(r => {
           const key = r.creatorUid || r.riderName.trim().toLowerCase();
@@ -555,6 +593,7 @@
         }
 
         renderRides();
+        if (currentActiveTab === 'offer') renderOfferTab();
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
@@ -594,7 +633,6 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        // Accurate ownership check
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
           mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
@@ -658,6 +696,127 @@
       lucide.createIcons();
     }
 
+    // Dynamic Offer Tab: displays active listing management if seat is already live
+    function renderOfferTab() {
+      const container = document.getElementById('offer-view');
+      const myUid = getOrCreateUserId();
+      const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+      const myProfile = getMyProfile();
+      const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      const myActiveRide = allRides.find(r => 
+        (r.creatorUid && r.creatorUid === myUid) || 
+        mySavedRides.includes(r.id) ||
+        (myProfile && myProfile.name && clean(myProfile.name) === clean(r.riderName))
+      );
+
+      if (myActiveRide) {
+        container.innerHTML = `
+          <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Live Ride Active</span>
+                <h2 class="text-base font-extrabold text-slate-900 mt-1.5">Your Empty Seat is Listed</h2>
+              </div>
+              <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+            </div>
+
+            <div class="bg-[#f8fafc] p-4 rounded-2xl border border-slate-100 text-xs space-y-2.5">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Route:</span>
+                <span class="font-bold text-slate-800">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Departure Time:</span>
+                <span class="font-bold text-slate-800">${formatTime(myActiveRide.depTime)}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Two-Wheeler:</span>
+                <span class="font-bold text-slate-800">${myActiveRide.bikeModel}</span>
+              </div>
+              <div class="flex justify-between border-t border-slate-200/60 pt-2">
+                <span class="text-slate-500">Fuel Contribution:</span>
+                <span class="font-extrabold text-emerald-700 text-sm">₹${formatFare(myActiveRide.fare)}</span>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Pillion commuters can view and book this seat. To change departure time or route, cancel this listing first.</p>
+
+            <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
+              <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing to Post a New Seat
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+      } else {
+        container.innerHTML = `
+          <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Appears on Pune commuters' devices instantly.</p>
+            </div>
+
+            <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
+                <input type="text" id="riderName" required placeholder="Enter your name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
+                  <input type="text" id="bikeModel" required placeholder="e.g., Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time</label>
+                  <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Starting Landmark</label>
+                <input type="text" id="routeStart" required placeholder="e.g., Hadapsar noble hospital" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Destination Landmark</label>
+                <input type="text" id="routeEnd" required placeholder="e.g., E space, Viman Nagar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Fuel Contribution (₹)</label>
+                  <input type="number" id="nominalFare" min="10" max="25" value="15" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Reg No.</label>
+                  <input type="text" id="vehicleReg" placeholder="MH12 SH 5918" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-1">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="hasHelmet" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300">
+                  <span class="text-xs font-semibold text-slate-700">Spare helmet available for pillion</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="womenOnly" class="w-4 h-4 text-emerald-600 rounded border-slate-300">
+                  <span class="text-xs font-semibold text-slate-700">Women-only commuter pool</span>
+                </label>
+              </div>
+
+              <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Post Ride to Live Database
+              </button>
+            </form>
+          </div>
+        `;
+        lucide.createIcons();
+        loadSavedProfile();
+      }
+    }
+
     // Post a Ride
     async function handlePostRide(e) {
       e.preventDefault();
@@ -703,8 +862,10 @@
         alert("Ride saved!");
         switchTab('find');
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Live Database`;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Live Database`;
+        }
         lucide.createIcons();
       }
     }
@@ -868,10 +1029,18 @@
 
       document.getElementById('profile-name-header').innerText = profile.name || 'Commuter';
       document.getElementById('drawer-user-name').innerText = profile.name || 'Guest Commuter';
-      document.getElementById('riderName').value = profile.name || '';
-      if (profile.vehicleModel) document.getElementById('bikeModel').value = profile.vehicleModel;
-      if (profile.defaultTime) document.getElementById('depTimePicker').value = profile.defaultTime;
-      if (profile.vehiclePlate) document.getElementById('vehicleReg').value = profile.vehiclePlate;
+      
+      const riderInput = document.getElementById('riderName');
+      if (riderInput) riderInput.value = profile.name || '';
+      
+      const bikeInput = document.getElementById('bikeModel');
+      if (bikeInput && profile.vehicleModel) bikeInput.value = profile.vehicleModel;
+      
+      const timeInput = document.getElementById('depTimePicker');
+      if (timeInput && profile.defaultTime) timeInput.value = profile.defaultTime;
+      
+      const plateInput = document.getElementById('vehicleReg');
+      if (plateInput && profile.vehiclePlate) plateInput.value = profile.vehiclePlate;
 
       renderRides();
       alert("Profile updated!");
@@ -887,7 +1056,9 @@
       const savedRole = localStorage.getItem('routebuddy_role') || 'rider';
 
       if (savedPhoto) renderAvatar(savedPhoto);
-      document.getElementById('depTimePicker').value = "09:15";
+
+      const timePicker = document.getElementById('depTimePicker');
+      if (timePicker) timePicker.value = "09:15";
 
       if (saved) {
         const p = JSON.parse(saved);
@@ -900,16 +1071,25 @@
 
         document.getElementById('profile-name-header').innerText = p.name || 'Ashish Rajkumar';
         document.getElementById('drawer-user-name').innerText = p.name || 'Ashish Rajkumar';
-        document.getElementById('riderName').value = p.name || 'Ashish Rajkumar';
-        document.getElementById('bikeModel').value = p.vehicleModel || 'Scooty Pep';
-        document.getElementById('vehicleReg').value = p.vehiclePlate || 'MH12 SH 5918';
+
+        const rName = document.getElementById('riderName');
+        if (rName) rName.value = p.name || 'Ashish Rajkumar';
+        const bModel = document.getElementById('bikeModel');
+        if (bModel) bModel.value = p.vehicleModel || 'Scooty Pep';
+        const dTime = document.getElementById('depTimePicker');
+        if (dTime && p.defaultTime) dTime.value = p.defaultTime;
+        const vReg = document.getElementById('vehicleReg');
+        if (vReg) vReg.value = p.vehiclePlate || 'MH12 SH 5918';
       } else {
         document.getElementById('userFullName').value = 'Ashish Rajkumar';
         document.getElementById('userPhone').value = '8788337049';
         document.getElementById('userVehicleModel').value = 'Scooty Pep';
         document.getElementById('userVehiclePlate').value = 'MH12 SH 5918';
-        document.getElementById('riderName').value = 'Ashish Rajkumar';
-        document.getElementById('bikeModel').value = 'Scooty Pep';
+        
+        const rName = document.getElementById('riderName');
+        if (rName) rName.value = 'Ashish Rajkumar';
+        const bModel = document.getElementById('bikeModel');
+        if (bModel) bModel.value = 'Scooty Pep';
       }
 
       setUserRole(savedRole);
@@ -981,6 +1161,7 @@
       } else if (tab === 'offer') {
         offerView.classList.remove('hidden');
         navOffer.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
+        renderOfferTab();
       } else if (tab === 'profile') {
         profileView.classList.remove('hidden');
         navProfile.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
