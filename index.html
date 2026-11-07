@@ -93,13 +93,14 @@
             </button>
           </div>
 
+          <!-- Unique Profile Badge -->
           <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl cursor-pointer active:scale-98 transition">
             <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0">
               <span id="drawer-avatar-text">U</span>
             </div>
             <div class="truncate">
               <p class="text-xs font-extrabold text-slate-900 truncate" id="drawer-user-name">Guest Commuter</p>
-              <p class="text-[11px] text-emerald-700 font-semibold" id="drawer-user-role">Set up Profile →</p>
+              <p class="text-[10px] text-slate-400 font-mono" id="drawer-user-id">ID: ...</p>
             </div>
           </div>
 
@@ -118,7 +119,7 @@
             </div>
           </div>
 
-          <!-- Links -->
+          <!-- Menu Links -->
           <div class="space-y-1.5 pt-1">
             <button onclick="openModal('safety-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
@@ -170,19 +171,19 @@
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
           <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
             <strong class="text-emerald-900 block font-bold mb-0.5">1. Mandatory ISI Helmets</strong>
-            Both vehicle rider and pillion must wear BIS/ISI compliant helmets across all Pune city roads.
+            Both rider and pillion must wear BIS/ISI compliant helmets on all Pune roads.
           </div>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-            <strong class="text-slate-900 block font-bold mb-0.5">2. 4-Digit Boarding Verification</strong>
-            Never board the bike until you verify the rider's name and share the 4-digit security PIN generated upon booking.
+            <strong class="text-slate-900 block font-bold mb-0.5">2. 4-Digit Verification</strong>
+            Confirm the rider's identity and share the 4-digit security PIN before boarding.
           </div>
           <div class="bg-rose-50 p-3 rounded-xl border border-rose-100">
-            <strong class="text-rose-900 block font-bold mb-0.5">3. Dedicated Women-Only Matching</strong>
-            Female riders and pillions can choose women-only ride matching for safe tech corridor transit.
+            <strong class="text-rose-900 block font-bold mb-0.5">3. Women-Only Matching</strong>
+            Dedicated matching filter for female tech corridor commuters.
           </div>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-            <strong class="text-slate-900 block font-bold mb-0.5">4. Zero Commercial Profit</strong>
-            Contributions are strictly capped at ₹10–₹25 micro fuel split, maintaining legal Section 66 MVA non-commercial peer pool status.
+            <strong class="text-slate-900 block font-bold mb-0.5">4. Non-Commercial Cost Sharing</strong>
+            Capped at ₹10–₹25 fuel share under Section 66 MVA.
           </div>
         </div>
       </div>
@@ -202,15 +203,11 @@
         <div class="text-xs text-slate-600 space-y-3">
           <div>
             <p class="font-bold text-slate-900">Is bike pooling legal in Maharashtra?</p>
-            <p class="text-slate-500 mt-0.5">Yes. Section 66 of the Motor Vehicles Act permits non-commercial peer pooling where riders share actual fuel expenses without generating commercial taxi profits.</p>
+            <p class="text-slate-500 mt-0.5">Yes, non-commercial peer pooling where riders share fuel expenses without generating profits is permitted under Section 66 MVA.</p>
           </div>
           <div class="border-t pt-2">
-            <p class="font-bold text-slate-900">How do I pay the ₹15 fuel share?</p>
-            <p class="text-slate-500 mt-0.5">Directly via UPI (Google Pay, PhonePe, Paytm, or BHIM) to the rider when boarding.</p>
-          </div>
-          <div class="border-t pt-2">
-            <p class="font-bold text-slate-900">What if I don't have a spare helmet?</p>
-            <p class="text-slate-500 mt-0.5">Check the 'Spare Helmet' badge on the listing. Only book rides where the owner has a secondary helmet available.</p>
+            <p class="font-bold text-slate-900">How do I pay fuel share?</p>
+            <p class="text-slate-500 mt-0.5">Directly via UPI (Google Pay, PhonePe, Paytm) to the rider when boarding.</p>
           </div>
         </div>
       </div>
@@ -264,8 +261,7 @@
           </button>
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p><strong>RouteBuddy</strong> is an open peer-to-peer bike pooling platform built for daily commuters in Pune's IT hubs (Hadapsar, Kharadi, Viman Nagar, Magarpatta).</p>
-          <p>Instead of single-rider two-wheelers clogging Ahmednagar Road and Magarpatta corridors, RouteBuddy connects coworkers going the exact same route to split micro fuel costs safely.</p>
+          <p><strong>RouteBuddy</strong> is a peer-to-peer bike pooling app connecting Pune commuters on daily tech corridors like Hadapsar, Kharadi, and Viman Nagar.</p>
         </div>
       </div>
     </div>
@@ -347,7 +343,7 @@
               <input type="text" id="bikeModel" required placeholder="e.g., Scooty pep / Hunter 350" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
             
-            <!-- Easy 12-Hour Native Time Selector with AM/PM -->
+            <!-- 12-Hour Native Time Selector -->
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time</label>
               <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
@@ -401,19 +397,19 @@
         <div class="flex flex-col items-center text-center">
           <div class="relative group">
             <div id="profile-pic-preview" class="w-20 h-20 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center overflow-hidden text-emerald-700 font-extrabold text-2xl shadow-sm">
-              <span id="avatar-initials">AR</span>
+              <span id="avatar-initials">U</span>
             </div>
             <label for="profile-pic-input" class="absolute bottom-0 right-0 w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-slate-700 transition">
               <i data-lucide="camera" class="w-3.5 h-3.5"></i>
             </label>
             <input type="file" id="profile-pic-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
           </div>
-          <h2 class="text-base font-extrabold text-slate-900 mt-2" id="profile-name-header">Ashish Rajkumar</h2>
-          <p class="text-xs text-slate-500" id="profile-role-sub">Pune Commuter</p>
+          <h2 class="text-base font-extrabold text-slate-900 mt-2" id="profile-name-header">Commuter</h2>
+          <p class="text-[11px] text-slate-400 font-mono" id="profile-device-id">ID: ...</p>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5 text-center">Select Your Primary Commuter Role</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 text-center">Your Commuter Mode</label>
           <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-2xl">
             <button type="button" id="role-btn-pillion" onclick="setUserRole('pillion')" class="py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600">
               <i data-lucide="user" class="w-4 h-4"></i> Pillion Rider
@@ -427,13 +423,13 @@
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="userFullName" required placeholder="Your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="userFullName" required placeholder="Enter your name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" id="userPhone" placeholder="8788337049" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="tel" id="userPhone" placeholder="Your phone number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
@@ -456,12 +452,12 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Favorite Pune Corridor</label>
-            <input type="text" id="userCorridor" placeholder="Hadapsar → Kharadi / Viman Nagar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Primary Pune Corridor</label>
+            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
-            <i data-lucide="check" class="w-4 h-4"></i> Save Profile Details
+            <i data-lucide="check" class="w-4 h-4"></i> Save My Profile
           </button>
         </form>
 
@@ -513,32 +509,44 @@
     let allRides = [];
     let filterHelmetOnly = false;
     let filterWomenOnly = false;
-    let currentUserRole = 'rider';
+    let currentUserRole = 'pillion';
 
-    // Converts 24h time ("14:30") or sheet time strings to clean 12h format ("02:30 PM")
+    // 1. Generate or Retrieve Persistent Unique Device/User ID
+    function getOrCreateUserId() {
+      let uid = localStorage.getItem('routebuddy_user_id');
+      if (!uid) {
+        uid = 'usr_' + Math.random().toString(36).substring(2, 9);
+        localStorage.setItem('routebuddy_user_id', uid);
+      }
+      return uid;
+    }
+
+    function getMyProfile() {
+      const saved = localStorage.getItem('routebuddy_profile');
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+      return null;
+    }
+
     function formatTime(timeStr) {
       if (!timeStr) return "09:00 AM";
-      
-      // If it comes from Google Sheet as an ISO string
       if (typeof timeStr === 'string' && timeStr.includes('T')) {
         const d = new Date(timeStr);
         if (!isNaN(d.getTime())) {
           return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         }
       }
-
-      // If it comes from HTML5 time input "HH:MM"
       if (typeof timeStr === 'string' && timeStr.includes(':') && !timeStr.toLowerCase().includes('m')) {
         const parts = timeStr.split(':');
         let hours = parseInt(parts[0], 10);
         const minutes = parts[1];
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? hours : 12; // 0 becomes 12
+        hours = hours ? hours : 12;
         const paddedHours = hours < 10 ? '0' + hours : hours;
         return `${paddedHours}:${minutes} ${ampm}`;
       }
-
       return timeStr;
     }
 
@@ -548,15 +556,7 @@
       return parseFloat(num) ? Math.round(parseFloat(num)) : 15;
     }
 
-    function getCurrentUserName() {
-      const saved = localStorage.getItem('routebuddy_profile');
-      if (saved) {
-        try { return JSON.parse(saved).name.trim().toLowerCase(); } catch (e) {}
-      }
-      return 'ashish rajkumar';
-    }
-
-    // 1. Fetch Real-Time Rides & Deduplicate/Enforce Single Active Listing Per User
+    // 2. Fetch Live Rides from Sheet
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
@@ -565,16 +565,15 @@
         const res = await fetch(APPS_SCRIPT_URL);
         const data = await res.json();
         
-        // Group by riderName so each user only has 1 active listing card (the most recent one)
-        const uniqueRiderMap = new Map();
-        data.forEach(ride => {
-          if (ride.riderName) {
-            const key = ride.riderName.trim().toLowerCase();
-            uniqueRiderMap.set(key, ride);
+        // Deduplicate so each rider only has their newest active listing
+        const map = new Map();
+        data.forEach(r => {
+          if (r.riderName) {
+            map.set(r.riderName.trim().toLowerCase(), r);
           }
         });
         
-        allRides = Array.from(uniqueRiderMap.values());
+        allRides = Array.from(map.values());
         
         if (allRides.length > 0) {
           const top = allRides[allRides.length - 1];
@@ -591,10 +590,12 @@
       }
     }
 
-    // 2. Render Cards
+    // 3. Render Ride Cards with True Ownership Matching
     function renderRides() {
       const container = document.getElementById('rides-list');
-      const currentUserName = getCurrentUserName();
+      const myUid = getOrCreateUserId();
+      const myProfile = getMyProfile();
+      const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       
       const filtered = allRides.filter(ride => {
         if (filterHelmetOnly && !ride.hasHelmet) return false;
@@ -618,7 +619,12 @@
       container.innerHTML = filtered.map(ride => {
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
-        const isMyOwnRide = (ride.riderName && ride.riderName.trim().toLowerCase() === currentUserName);
+
+        // A ride is "mine" ONLY if this device created it:
+        // Checked via stored ride IDs for this phone, or matching unique user profile name
+        const isMyOwnRide = mySavedRides.includes(ride.id) || 
+          (myProfile && myProfile.name && ride.riderName && 
+           myProfile.name.trim().toLowerCase() === ride.riderName.trim().toLowerCase());
 
         return `
           <div class="bg-white rounded-3xl border border-slate-200/80 p-4 shadow-xs space-y-3">
@@ -631,7 +637,7 @@
                 <div>
                   <div class="flex items-center gap-1.5">
                     <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
-                    ${isMyOwnRide ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">You</span>' : ''}
+                    ${isMyOwnRide ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">Your Ride</span>' : ''}
                   </div>
                   <p class="text-xs text-slate-500 font-medium">${ride.routeEnd}</p>
                 </div>
@@ -662,8 +668,9 @@
                 ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
               </div>
 
+              <!-- True Role Separation: Only the rider who created it can cancel; everyone else can Book -->
               ${isMyOwnRide ? `
-                <button onclick="cancelMyRide('${ride.id}')" class="touch-target px-3 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition">
+                <button onclick="cancelMyRide('${ride.id}')" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition">
                   Cancel Listing
                 </button>
               ` : `
@@ -680,7 +687,7 @@
       lucide.createIcons();
     }
 
-    // 3. Post Ride Handler
+    // 4. Post Ride: Links the generated Ride ID directly to THIS device
     async function handlePostRide(e) {
       e.preventDefault();
       const btn = document.getElementById('submit-ride-btn');
@@ -689,9 +696,11 @@
 
       const rawTime = document.getElementById('depTimePicker').value;
       const formatted12hTime = formatTime(rawTime);
+      const generatedRideId = 'RB-' + Math.floor(100 + Math.random() * 900);
 
       const payload = {
         action: 'CREATE_RIDE',
+        rideId: generatedRideId,
         riderName: document.getElementById('riderName').value,
         bikeModel: document.getElementById('bikeModel').value,
         depTime: formatted12hTime,
@@ -710,7 +719,12 @@
           body: JSON.stringify(payload)
         });
 
-        alert("Your active ride has been updated!");
+        // Store this ride ID locally so THIS device knows it owns the listing
+        const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+        myRides.push(generatedRideId);
+        localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
+
+        alert("Your seat has been posted! Pillion riders can now book it.");
         switchTab('find');
         setTimeout(fetchLiveRides, 1200);
       } catch (err) {
@@ -724,14 +738,17 @@
     }
 
     function cancelMyRide(id) {
-      if (confirm("Are you sure you want to cancel your active ride listing?")) {
+      if (confirm("Remove your seat listing from RouteBuddy?")) {
         allRides = allRides.filter(r => r.id !== id);
+        let myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+        myRides = myRides.filter(item => item !== id);
+        localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
         renderRides();
-        alert("Listing removed from your active feed.");
+        alert("Ride listing cancelled.");
       }
     }
 
-    // 4. Booking Modal & UPI Payment
+    // 5. Booking Flow & UPI
     function openBooking(id, rider, start, end, fare) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
@@ -781,7 +798,7 @@
       lucide.createIcons();
     }
 
-    // Profile Management
+    // 6. User Profile Management
     function setUserRole(role) {
       currentUserRole = role;
       const pillionBtn = document.getElementById('role-btn-pillion');
@@ -792,12 +809,10 @@
         riderBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs";
         pillionBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600";
         vehicleFields.classList.remove('hidden');
-        document.getElementById('profile-role-sub').innerText = "Rider (Bike Owner)";
       } else {
         pillionBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs";
         riderBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600";
         vehicleFields.classList.add('hidden');
-        document.getElementById('profile-role-sub').innerText = "Pillion Commuter";
       }
       localStorage.setItem('routebuddy_role', role);
     }
@@ -827,37 +842,39 @@
     function saveUserProfile(e) {
       e.preventDefault();
       const profile = {
-        name: document.getElementById('userFullName').value,
-        phone: document.getElementById('userPhone').value,
+        name: document.getElementById('userFullName').value.trim(),
+        phone: document.getElementById('userPhone').value.trim(),
         defaultTime: document.getElementById('userDefaultTime').value,
-        vehicleModel: document.getElementById('userVehicleModel').value,
-        vehiclePlate: document.getElementById('userVehiclePlate').value,
-        corridor: document.getElementById('userCorridor').value,
+        vehicleModel: document.getElementById('userVehicleModel').value.trim(),
+        vehiclePlate: document.getElementById('userVehiclePlate').value.trim(),
+        corridor: document.getElementById('userCorridor').value.trim(),
         role: currentUserRole
       };
 
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
 
-      document.getElementById('profile-name-header').innerText = profile.name;
-      document.getElementById('drawer-user-name').innerText = profile.name;
-      document.getElementById('drawer-user-role').innerText = profile.role === 'rider' ? 'Rider with Bike' : 'Pillion Commuter';
+      document.getElementById('profile-name-header').innerText = profile.name || 'Commuter';
+      document.getElementById('drawer-user-name').innerText = profile.name || 'Guest Commuter';
       
-      document.getElementById('riderName').value = profile.name;
+      document.getElementById('riderName').value = profile.name || '';
       if (profile.vehicleModel) document.getElementById('bikeModel').value = profile.vehicleModel;
       if (profile.defaultTime) document.getElementById('depTimePicker').value = profile.defaultTime;
       if (profile.vehiclePlate) document.getElementById('vehicleReg').value = profile.vehiclePlate;
 
-      alert("Profile updated successfully!");
+      renderRides();
+      alert("Profile updated!");
     }
 
     function loadSavedProfile() {
+      const uid = getOrCreateUserId();
+      document.getElementById('profile-device-id').innerText = `Device: ${uid}`;
+      document.getElementById('drawer-user-id').innerText = `ID: ${uid}`;
+
       const saved = localStorage.getItem('routebuddy_profile');
       const savedPhoto = localStorage.getItem('routebuddy_avatar');
-      const savedRole = localStorage.getItem('routebuddy_role') || 'rider';
+      const savedRole = localStorage.getItem('routebuddy_role') || 'pillion';
 
       if (savedPhoto) renderAvatar(savedPhoto);
-
-      // Default time fallback for mobile picker
       document.getElementById('depTimePicker').value = "09:15";
 
       if (saved) {
@@ -869,26 +886,19 @@
         document.getElementById('userVehiclePlate').value = p.vehiclePlate || '';
         document.getElementById('userCorridor').value = p.corridor || '';
 
-        document.getElementById('profile-name-header').innerText = p.name || 'Ashish Rajkumar';
-        document.getElementById('drawer-user-name').innerText = p.name || 'Ashish Rajkumar';
+        document.getElementById('profile-name-header').innerText = p.name || 'Commuter';
+        document.getElementById('drawer-user-name').innerText = p.name || 'Guest Commuter';
 
         document.getElementById('riderName').value = p.name || '';
         if (p.vehicleModel) document.getElementById('bikeModel').value = p.vehicleModel;
         if (p.defaultTime) document.getElementById('depTimePicker').value = p.defaultTime;
         if (p.vehiclePlate) document.getElementById('vehicleReg').value = p.vehiclePlate;
-      } else {
-        document.getElementById('userFullName').value = 'Ashish Rajkumar';
-        document.getElementById('userPhone').value = '8788337049';
-        document.getElementById('userVehicleModel').value = 'Scooty Pep';
-        document.getElementById('userVehiclePlate').value = 'MH12 SH 5918';
-        document.getElementById('riderName').value = 'Ashish Rajkumar';
-        document.getElementById('bikeModel').value = 'Scooty Pep';
       }
 
       setUserRole(savedRole);
     }
 
-    // Sidebar & Modal controls
+    // Controls
     function toggleSidebar(open) {
       const drawer = document.getElementById('side-drawer');
       if (open) drawer.classList.remove('hidden');
