@@ -85,7 +85,7 @@
           <!-- Quick Profile Card -->
           <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl cursor-pointer active:scale-98 transition">
             <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0">
-              <span id="drawer-avatar-text">U</span>
+              <span id="drawer-avatar-text">AR</span>
             </div>
             <div class="truncate">
               <p class="text-xs font-extrabold text-slate-900 truncate" id="drawer-user-name">Ashish Rajkumar</p>
@@ -143,7 +143,7 @@
       </div>
     </div>
 
-    <!-- Modals (Safety, FAQ, Feedback, About) -->
+    <!-- Modals -->
     <div id="safety-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b pb-2">
@@ -210,8 +210,6 @@
 
     <!-- TAB 1: FIND RIDE VIEW -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
-      
-      <!-- Corridor Radar Card -->
       <section class="bg-[#0f172a] rounded-3xl p-4 text-white shadow-md relative overflow-hidden">
         <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
@@ -437,8 +435,8 @@
   </div>
 
   <script>
-    // Live Google Apps Script Endpoint
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySIzhBGMfrVHVyE2rqUzmscsKeW9Ah9lLTvbEgOKzukRCDfoXcOWQl2cjTBhvCbbX6gw/exec";
+    // Configured with your newest Apps Script deployment URL
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMm6gzifoUBGHbdgze9CVbdHFwLVIAuxAGaE9xkyb7rhtYavsYRHOnKAmF6_SvxfdUcg/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
@@ -524,7 +522,6 @@
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const valid = data.filter(r => !cancelledLocally.includes(r.id));
 
-        // Keep 1 latest ride per rider name
         const map = new Map();
         valid.forEach(r => {
           if (r.riderName) {
@@ -548,7 +545,7 @@
       }
     }
 
-    // Render Ride Cards (Accurate Device Ownership Detection)
+    // Render Ride Cards (Ownership check)
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -580,10 +577,10 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        // DETERMINISTIC OWNERSHIP CHECK:
-        // 1. Matches this device's stored ride IDs
-        // 2. OR matches the creator UID saved in Google Sheet
-        // 3. OR matches this device's saved profile name
+        // A ride is owned by this device if:
+        // 1. Saved locally on this browser
+        // 2. OR creatorUid in Sheet matches device UID
+        // 3. OR profile name matches rider name
         const isMyOwnRide = mySavedRides.includes(ride.id) || 
           (ride.creatorUid && ride.creatorUid === myUid) ||
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
@@ -629,7 +626,6 @@
                 ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
               </div>
 
-              <!-- Only the owner sees Cancel; all others see Book Seat -->
               ${isMyOwnRide ? `
                 <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-4 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel Listing
@@ -682,7 +678,6 @@
           body: JSON.stringify(payload)
         });
 
-        // Store this ride ID locally on this device
         const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
         myRides.push(generatedRideId);
         localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
@@ -734,7 +729,7 @@
       fetchLiveRides();
     }
 
-    // Booking modal with UPI
+    // Booking Pass modal with UPI
     function openBooking(id, rider, start, end, fare) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
