@@ -192,7 +192,7 @@
 
         <div id="rider-transit-details" class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100"></div>
 
-        <!-- Single Mandatory Exit Button -->
+        <!-- Single Mandatory Exit Button (No cancel option!) -->
         <button onclick="handleDropOffComplete()" class="touch-target w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-2xl text-sm font-extrabold shadow-lg transition flex items-center justify-center gap-2 py-3.5">
           <i data-lucide="check-circle-2" class="w-5 h-5"></i> Drop-off Done & Payment Received
         </button>
@@ -203,7 +203,7 @@
     <!-- VIEW 2: PILLION RIDER VIEW -->
     <main id="pillion-view" class="flex-1 px-4 py-3 space-y-3 hidden">
       
-      <!-- Pillion In-Transit Banner (Shows 'Onboard' with no cancel button when verified) -->
+      <!-- Pillion In-Transit Banner (Shows 'Onboard' with NO cancel button and NO PIN when verified) -->
       <div id="pillion-status-banner" class="hidden"></div>
 
       <!-- Search Results Header -->
@@ -226,7 +226,7 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNSkGLcB1OK7P6GEw8UoIGGsI9e3XqUuAwefKCF9nZinBxQqTICIuzxOU5383Aq4w-xA/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZy64FKyJfEtPNcGBsQ9V639bbO8t13mJgcveNY_klmaGS80EwSY4dR4Iuqw8HQa57/exec";
     
     let allRides = [];
     let currentRole = 'rider';
@@ -243,10 +243,39 @@
       return uid;
     }
 
+    // Departure time formatting preventing timezone shift & standardizing 24h/12h
+    function formatTime(timeStr) {
+      if (!timeStr) return "09:00 AM";
+      const str = String(timeStr).trim();
+
+      if (/am|pm/i.test(str)) {
+        return str;
+      }
+
+      if (str.includes(':')) {
+        const parts = str.split(':');
+        let hours = parseInt(parts[0], 10);
+        const mins = parts[1] ? parts[1].substring(0, 2) : '00';
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const paddedHours = hours < 10 ? '0' + hours : hours;
+        return `${paddedHours}:${mins} ${ampm}`;
+      }
+
+      return str;
+    }
+
+    // Role Switcher: Locked out if rider or pillion is currently in transit!
     function switchRole(role) {
       const activeRide = getMyActiveRide();
       if (activeRide && activeRide.status === 'VERIFIED') {
         alert("You have an active commute in progress! You must complete your drop-off first.");
+        return;
+      }
+
+      const bookedRide = allRides.find(r => r.id === myBookedRideId);
+      if (bookedRide && bookedRide.status === 'VERIFIED') {
+        alert("You are currently onboard a ride! You cannot switch modes until dropped off.");
         return;
       }
 
@@ -318,10 +347,10 @@
       transitCard.classList.add('hidden');
       roleBar.classList.remove('pointer-events-none', 'opacity-50');
 
-      // STATE 1: In Transit (Fullscreen Lockout)
+      // STATE 1: In Transit (Fullscreen Lockout - No Cancel button!)
       if (activeRide && activeRide.status === 'VERIFIED') {
         transitCard.classList.remove('hidden');
-        roleBar.classList.add('pointer-events-none', 'opacity-50');
+        roleBar.classList.add('pointer-events-none', 'opacity-50'); // Lock out role toggle
 
         document.getElementById('rider-transit-details').innerHTML = `
           <div class="flex justify-between"><span class="text-slate-500">Passenger:</span><strong class="text-slate-900">${activeRide.passengerName}</strong></div>
@@ -346,7 +375,7 @@
         waitingCard.classList.remove('hidden');
         document.getElementById('rider-waiting-details').innerHTML = `
           <div class="flex justify-between"><span class="text-slate-500">Route:</span><strong class="text-slate-800">${activeRide.routeStart} → ${activeRide.routeEnd}</strong></div>
-          <div class="flex justify-between"><span class="text-slate-500">Departure:</span><strong class="text-slate-800">${activeRide.depTime}</strong></div>
+          <div class="flex justify-between"><span class="text-slate-500">Departure:</span><strong class="text-slate-800">${formatTime(activeRide.depTime)}</strong></div>
           <div class="flex justify-between"><span class="text-slate-500">Vehicle:</span><strong class="text-slate-800">${activeRide.bikeModel}</strong></div>
           <div class="flex justify-between border-t border-slate-200/60 pt-1.5"><span class="text-slate-500">Fuel Share:</span><strong class="text-emerald-700">₹${activeRide.fare}</strong></div>
         `;
@@ -372,6 +401,8 @@
 
       const generatedId = 'RB-' + Math.floor(100 + Math.random() * 900);
       const uid = getOrCreateUid();
+      const rawTime = document.getElementById('depTimePicker').value;
+      const formatted12hTime = formatTime(rawTime);
 
       const payload = {
         action: 'CREATE_RIDE',
@@ -382,7 +413,7 @@
         bikeModel: document.getElementById('bikeModel').value.trim(),
         routeStart: document.getElementById('routeStart').value.trim(),
         routeEnd: document.getElementById('routeEnd').value.trim(),
-        depTime: document.getElementById('depTimePicker').value,
+        depTime: formatted12hTime,
         fare: document.getElementById('nominalFare').value
       };
 
@@ -464,12 +495,13 @@
       }
     }
 
-    // Drop-off Complete & Payment Received
+    // Drop-off Complete & Payment Received (Unlocks both phones!)
     async function handleDropOffComplete() {
       const activeRide = getMyActiveRide();
       if (!activeRide) return;
       if (!confirm("Confirm drop-off complete and fuel payment received?")) return;
 
+      const completedId = activeRide.id;
       myOfferedRideId = null;
       localStorage.removeItem('rb_my_offered_ride_id');
 
@@ -478,11 +510,11 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'COMPLETE_RIDE', rideId: activeRide.id })
+          body: JSON.stringify({ action: 'COMPLETE_RIDE', rideId: completedId })
         });
       } catch (e) {}
 
-      alert("Drop-off complete! Thank you for sharing your ride.");
+      alert("Drop-off complete and payment received! Thank you for sharing your ride.");
       fetchLiveRides();
     }
 
@@ -503,7 +535,7 @@
         banner.classList.add('hidden');
       }
 
-      // STATE A: VERIFIED (Onboard with rider — NO CANCEL BUTTON, NO PIN)
+      // STATE A: VERIFIED (Onboard with rider — NO CANCEL BUTTON, NO PIN, CANNOT BOOK ANOTHER)
       if (bookedRide && bookedRide.status === 'VERIFIED') {
         banner.classList.remove('hidden');
         banner.innerHTML = `
@@ -528,6 +560,16 @@
             </a>
           </div>
         `;
+
+        // Pillion cannot book another ride while in transit!
+        listContainer.innerHTML = `
+          <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
+            <i data-lucide="shield-check" class="w-8 h-8 text-emerald-600 mx-auto"></i>
+            <p class="text-xs font-bold text-slate-800">Commute Active</p>
+            <p class="text-[11px] text-slate-400">You cannot book another ride until ${bookedRide.riderName} completes your drop-off.</p>
+          </div>
+        `;
+        return;
       }
       // STATE B: RESERVED (Waiting to board — shows PIN and Cancel button)
       else if (bookedRide && bookedRide.status === 'BOOKED') {
@@ -559,8 +601,15 @@
         banner.classList.add('hidden');
       }
 
-      // Available Rides List for Pillion
-      const availableRides = allRides.filter(r => r.status === 'AVAILABLE' && r.creatorUid !== myUid);
+      // Deduplicate rides: Keep only the most recent listing per rider name
+      const availableRaw = allRides.filter(r => r.status === 'AVAILABLE' && r.creatorUid !== myUid);
+      const riderMap = new Map();
+      availableRaw.forEach(ride => {
+        const key = ride.riderName.trim().toLowerCase();
+        riderMap.set(key, ride);
+      });
+      const availableRides = Array.from(riderMap.values());
+
       document.getElementById('available-count').innerText = `${availableRides.length} Available Seats`;
 
       if (availableRides.length === 0) {
@@ -592,7 +641,7 @@
 
           <div class="bg-[#f8fafc] rounded-2xl p-3 border border-slate-100 text-xs space-y-1">
             <p class="font-bold text-slate-800">${ride.routeStart} → ${ride.routeEnd}</p>
-            <p class="text-slate-500 font-medium">Departure: ${ride.depTime}</p>
+            <p class="text-slate-500 font-medium">Departure: ${formatTime(ride.depTime)}</p>
           </div>
 
           <button onclick="handleBookRide('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${ride.fare})" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5 transition">
@@ -661,7 +710,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       fetchLiveRides();
-      setInterval(fetchLiveRides, 2000); // 2-second ultra-fast real-time poll
+      setInterval(fetchLiveRides, 2000); // 2-second low-latency real-time sync
     });
   </script>
 </body>
