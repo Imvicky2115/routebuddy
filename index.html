@@ -9,7 +9,7 @@
   <title>MyRouteBuddy — Pune Commuter Peer-Pooling</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Supabase JS Client -->
+  <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- QR Code Generator & Scanner CDNs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -60,6 +60,7 @@
     #qr-reader video {
       border-radius: 1rem;
       object-fit: cover;
+      width: 100% !important;
     }
   </style>
 </head>
@@ -110,7 +111,6 @@
           </button>
         </div>
 
-        <!-- Camera Viewfinder -->
         <div id="qr-reader" class="w-full overflow-hidden rounded-2xl bg-black min-h-[260px] flex items-center justify-center text-white text-xs"></div>
 
         <p class="text-[11px] text-slate-400 text-center">Camera scans automatically once ticket is visible.</p>
@@ -606,7 +606,8 @@
   <script>
     // SUPABASE CREDENTIALS & CLIENT INITIALIZATION
     const SUPABASE_URL = "https://yrrgdsnwmlhtwfqvlbpz.supabase.co";
-    const SUPABASE_ANON_KEY = "Sb_publishable_oDuyUYbd5zo3xjlXp5vLWg_t_PrwsvQ";
+    // Clean lowercase prefix for reliable client auth headers
+    const SUPABASE_ANON_KEY = "sb_publishable_oDuyUYbd5zo3xjlXp5vLWg_t_PrwsvQ";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
@@ -623,6 +624,7 @@
     let pendingBookingPayload = null;
     let html5QrScannerInstance = null;
     let activeScanningRideId = null;
+    let realtimeDebounceTimer = null;
 
     // SCREENSHOT COUNTERMEASURE
     window.addEventListener('keyup', (e) => {
@@ -688,7 +690,6 @@
       return cleanTimeFormat(timeStr);
     }
 
-    // STRICT INSTANT EXPIRATION: Unbooked rides drop off immediately
     function isRideExpired(timeStr, graceMinutes = 0) {
       if (!timeStr) return false;
       const now = new Date();
@@ -748,7 +749,7 @@
       } catch (e) {}
     }
 
-    // SUPABASE DATA FETCH (Direct PostgreSQL Query)
+    // DIRECT POSTGRESQL QUERY VIA SUPABASE
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
@@ -760,16 +761,15 @@
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error("Supabase fetch error:", error);
+          console.error("Supabase query error:", error);
           return;
         }
 
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const inTransitId = localStorage.getItem('my_in_transit_ride_id');
 
-        // Map database snake_case to frontend camelCase
         const mapped = (data || []).map(r => ({
-          id: r.id,
+          id: String(r.id),
           creatorUid: r.creator_uid,
           riderName: r.rider_name,
           riderPhone: r.rider_phone,
@@ -780,9 +780,9 @@
           routeStart: r.route_start,
           routeEnd: r.route_end,
           fare: r.fare,
-          hasHelmet: r.has_helmet,
-          womenOnly: r.women_only,
-          status: r.status,
+          hasHelmet: Boolean(r.has_helmet),
+          womenOnly: Boolean(r.women_only),
+          status: (r.status || 'AVAILABLE').toUpperCase(),
           passengerName: r.passenger_name,
           passengerPhone: r.passenger_phone
         }));
@@ -806,20 +806,28 @@
         if (currentActiveTab === 'offer') updateOfferTabState();
         updateNavBadges();
       } catch (err) {
-        console.error("Live fetch error:", err);
+        console.error("fetchLiveRides error:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
       }
     }
 
-    // SUPABASE REALTIME WEBSOCKET SUBSCRIPTION (Sub-100ms Sync)
+    // DEBOUNCED WEBSOCKET REALTIME SUBSCRIPTION
     function setupRealtimeSync() {
       supabase
-        .channel('rides-channel')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, () => {
-          fetchLiveRides();
+        .channel('public:rides')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, (payload) => {
+          // Debounce rapid events to prevent DOM churn
+          clearTimeout(realtimeDebounceTimer);
+          realtimeDebounceTimer = setTimeout(() => {
+            fetchLiveRides();
+          }, 150);
         })
-        .subscribe();
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('MyRouteBuddy Realtime Sync: Connected');
+          }
+        });
     }
 
     function updateNavBadges() {
@@ -883,7 +891,7 @@
       const cleanTime = formatTime(bookedRide.depTime);
       const isVerified = bookedRide.status === 'VERIFIED';
       const waPhone = cleanPhoneForWhatsApp(bookedRide.riderPhone);
-      const vehiclePlate = (bookedRide.vehiclePlate && bookedRide.vehiclePlate.trim()) ? bookedRide.vehiclePlate.trim().toUpperCase() : 'PENDING';
+      const vehiclePlate = (bookedRide.vehiclePlate && bookedRide.vehiclePlate.trim()) ? bookedRide.vehiclePlate.trim().toUpperCase() : 'REGISTERED';
       const riderUpi = (bookedRide.upiId && bookedRide.upiId.trim()) ? bookedRide.upiId.trim() : '8788337049@okaxis';
       
       const upiUrl = `upi://pay?pa=${encodeURIComponent(riderUpi)}&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
@@ -1007,7 +1015,6 @@
           </div>
         `;
 
-        // Render QR Code once
         setTimeout(() => {
           const qrTarget = document.getElementById('pillion-qr-target');
           if (qrTarget && typeof QRCode !== 'undefined') {
@@ -1026,7 +1033,7 @@
       lucide.createIcons();
     }
 
-    // DIRECT 1-TAP BOOKING WITH SUPABASE
+    // DIRECT 1-TAP BOOKING
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1068,7 +1075,6 @@
     async function executeDirectBooking(id, rider, start, end, fare, rawPhone, passengerName, passengerPhone) {
       localStorage.setItem('my_active_booked_ride_id', id);
 
-      // Reset cache so newly booked ride draws cleanly
       lastRenderedPillionRideId = null;
       lastRenderedPillionStatus = null;
 
@@ -1087,7 +1093,7 @@
 
         if (error) throw error;
       } catch (e) {
-        console.error("Supabase booking error:", e);
+        console.error("Booking update failed:", e);
       }
 
       alert(`Seat confirmed with ${decodeURIComponent(rider)}! Show your QR pass to the rider upon boarding.`);
@@ -1467,7 +1473,7 @@
       }
     }
 
-    // IN-APP QR CODE SCANNER CONTROLLER (USING HTML5-QRCODE)
+    // IN-APP QR CODE SCANNER CONTROLLER (CLEAN UNMOUNT & RE-MOUNT)
     function startQrScanner(rideId) {
       activeScanningRideId = rideId;
       document.getElementById('qr-scanner-modal').classList.remove('hidden');
@@ -1479,6 +1485,10 @@
         return;
       }
 
+      // Ensure previous scanner element is clear
+      const readerEl = document.getElementById("qr-reader");
+      if (readerEl) readerEl.innerHTML = '';
+
       html5QrScannerInstance = new Html5Qrcode("qr-reader");
       const config = { fps: 10, qrbox: { width: 220, height: 220 } };
 
@@ -1488,8 +1498,8 @@
         (decodedText) => {
           handleQrScanSuccess(decodedText, activeScanningRideId);
         },
-        (errorMessage) => {
-          // Continuous scanning silent pass
+        () => {
+          // Continuous scanning
         }
       ).catch((err) => {
         console.warn("Camera start failed:", err);
@@ -1515,11 +1525,9 @@
       const cleanText = String(decodedText || '').trim();
       const expectedPayload = `MYROUTEBUDDY:${rideId}`;
 
-      // Authorize on exact match or payload containment
       if (cleanText === expectedPayload || cleanText.includes(rideId)) {
         closeQrScanner();
 
-        // Lock in-transit state immediately
         localStorage.setItem('my_in_transit_ride_id', rideId);
         const ride = allRides.find(r => String(r.id).trim() === String(rideId).trim());
         if (ride) {
@@ -1949,7 +1957,7 @@
       loadSavedProfile();
       populateFormFromProfile();
       fetchLiveRides();
-      setupRealtimeSync(); // Establish WebSocket connection
+      setupRealtimeSync();
       checkForAppUpdates();
       setInterval(checkForAppUpdates, 60000);
     });
