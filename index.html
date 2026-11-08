@@ -14,9 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    *, *::before, *::after { 
-      box-sizing: border-box; 
-    }
+    *, *::before, *::after { box-sizing: border-box; }
     html, body {
       max-width: 100vw;
       overflow-x: hidden !important;
@@ -48,10 +46,10 @@
 </head>
 <body class="min-h-screen flex justify-center pb-24 overflow-x-hidden">
 
-  <!-- Mobile Screen Shell -->
+  <!-- Mobile Viewport Shell -->
   <div class="w-full max-w-md bg-[#fbfcfd] min-h-screen flex flex-col relative shadow-md overflow-x-hidden border-x border-slate-200/60">
 
-    <!-- Top Header: Tightly Packaged & Un-spread -->
+    <!-- Top Header -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-3.5 py-2.5 flex items-center justify-between">
       <div class="flex items-center space-x-2 shrink-0">
         <div class="w-8 h-8 rounded-xl bg-[#059669] flex items-center justify-center text-white shadow-xs">
@@ -64,7 +62,7 @@
       </div>
 
       <div class="flex items-center gap-1.5 shrink-0">
-        <a href="tel:8788337049" class="flex items-center gap-1 border border-rose-200 bg-rose-50/90 text-rose-600 text-[11px] font-bold px-2 py-1.5 rounded-xl active:scale-95 transition">
+        <a href="tel:+918788337049" class="flex items-center gap-1 border border-rose-200 bg-rose-50/90 text-rose-600 text-[11px] font-bold px-2 py-1.5 rounded-xl active:scale-95 transition">
           <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600"></i> SOS
         </a>
         <button onclick="fetchLiveRides()" class="w-8 h-8 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition" title="Refresh Feed">
@@ -109,7 +107,7 @@
             <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
             <p class="text-[11px] text-slate-500">Direct assistance for route coordination, boarding, or queries.</p>
             <div class="flex gap-2 pt-1">
-              <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
+              <a href="tel:+918788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
                 <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
               </a>
               <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="flex-1 bg-slate-900 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
@@ -297,7 +295,7 @@
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Contact Mobile</label>
-              <input type="tel" id="riderPhone" required placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <input type="tel" id="riderPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
@@ -388,7 +386,7 @@
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" id="userPhone" placeholder="e.g. 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+              <input type="tel" id="userPhone" placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
@@ -440,15 +438,21 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation Bar: Locked Inside Max-Width Container -->
+    <!-- Bottom Navigation Bar with Live Commute Pulsing Dot -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-1.5">
       <div class="max-w-md mx-auto grid grid-cols-3 px-3">
-        <button onclick="switchTab('find')" id="nav-find" class="flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1">
-          <i data-lucide="compass" class="w-5 h-5"></i>
+        <button onclick="switchTab('find')" id="nav-find" class="relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1">
+          <div class="relative">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+            <span id="nav-find-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+          </div>
           <span class="text-[11px]">Find Ride</span>
         </button>
-        <button onclick="switchTab('offer')" id="nav-offer" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
-          <i data-lucide="bike" class="w-5 h-5"></i>
+        <button onclick="switchTab('offer')" id="nav-offer" class="relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
+          <div class="relative">
+            <i data-lucide="bike" class="w-5 h-5"></i>
+            <span id="nav-offer-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+          </div>
           <span class="text-[11px]">Offer Seat</span>
         </button>
         <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
@@ -489,9 +493,19 @@
       return null;
     }
 
+    // STRICT COUNTRY CODE (+91) FORMATTERS FOR CALLS & WHATSAPP
+    function cleanPhoneForDial(raw) {
+      if (!raw) return '+918788337049';
+      let cleaned = String(raw).replace(/[^0-9]/g, '');
+      if (cleaned.length === 10) return '+91' + cleaned;
+      if (cleaned.length > 10 && cleaned.startsWith('91')) return '+' + cleaned;
+      if (cleaned.startsWith('+')) return cleaned;
+      return '+91' + cleaned;
+    }
+
     function cleanPhoneForWhatsApp(raw) {
-      if (!raw) return '8788337049';
-      const cleaned = String(raw).replace(/[^0-9]/g, '');
+      if (!raw) return '918788337049';
+      let cleaned = String(raw).replace(/[^0-9]/g, '');
       if (cleaned.length === 10) return '91' + cleaned;
       if (cleaned.length > 10 && cleaned.startsWith('91')) return cleaned;
       return '91' + cleaned;
@@ -615,10 +629,32 @@
         renderPillionActiveBanner();
         renderRides();
         if (currentActiveTab === 'offer') updateOfferTabState();
+        updateNavBadges();
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
+      }
+    }
+
+    // UPDATE BOTTOM NAV ACTIVITY BADGES
+    function updateNavBadges() {
+      const pillionBadge = document.getElementById('nav-find-badge');
+      const riderBadge = document.getElementById('nav-offer-badge');
+      const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
+      const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+      const myUid = getOrCreateUserId();
+
+      const hasActiveBooking = allRides.some(r => r.id === myBookedRideId && (r.status === 'BOOKED' || r.status === 'VERIFIED'));
+      const hasActiveListing = allRides.some(r => (mySavedRides.includes(r.id) || r.creatorUid === myUid) && (r.status === 'AVAILABLE' || r.status === 'BOOKED' || r.status === 'VERIFIED'));
+
+      if (pillionBadge) {
+        if (hasActiveBooking) pillionBadge.classList.remove('hidden');
+        else pillionBadge.classList.add('hidden');
+      }
+      if (riderBadge) {
+        if (hasActiveListing) riderBadge.classList.remove('hidden');
+        else riderBadge.classList.add('hidden');
       }
     }
 
@@ -651,8 +687,10 @@
       const cleanFare = formatFare(bookedRide.fare);
       const cleanTime = formatTime(bookedRide.depTime);
       const isVerified = bookedRide.status === 'VERIFIED';
+      const dialPhone = cleanPhoneForDial(bookedRide.riderPhone);
+      const waPhone = cleanPhoneForWhatsApp(bookedRide.riderPhone);
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
-      const riderWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(bookedRide.riderPhone)}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20MyRouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
+      const riderWhatsAppUrl = `https://wa.me/${waPhone}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20MyRouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
 
       banner.classList.remove('hidden');
 
@@ -674,9 +712,14 @@
                 <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
                 <p class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
               </div>
-              <a href="${riderWhatsAppUrl}" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-500/80 hover:bg-emerald-400 active:scale-95 text-white flex items-center justify-center shadow-md transition" title="Chat on WhatsApp">
-                <i data-lucide="message-circle" class="w-5 h-5"></i>
-              </a>
+              <div class="flex items-center gap-1.5">
+                <a href="tel:${dialPhone}" class="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center border border-white/20 transition" title="Call Rider">
+                  <i data-lucide="phone" class="w-4 h-4"></i>
+                </a>
+                <a href="${riderWhatsAppUrl}" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-500/80 hover:bg-emerald-400 active:scale-95 text-white flex items-center justify-center shadow-md transition" title="Chat on WhatsApp">
+                  <i data-lucide="message-circle" class="w-5 h-5"></i>
+                </a>
+              </div>
             </div>
 
             <div class="bg-emerald-900/60 rounded-2xl p-3.5 text-xs space-y-2 border border-emerald-500/30">
@@ -697,7 +740,7 @@
               <a href="${upiUrl}" class="flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-3 rounded-2xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
               </a>
-              <a href="tel:8788337049" class="px-4 py-3 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1 shadow-md">
+              <a href="tel:+918788337049" class="px-4 py-3 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1 shadow-md">
                 <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> SOS
               </a>
             </div>
@@ -738,14 +781,14 @@
               </p>
             </div>
 
-            <div class="flex items-center gap-2 pt-1">
-              <a href="${riderWhatsAppUrl}" target="_blank" class="px-3 py-2.5 bg-emerald-700/70 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
-                <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-300"></i> Chat
+            <div class="grid grid-cols-3 gap-2 pt-1">
+              <a href="${riderWhatsAppUrl}" target="_blank" class="h-10 bg-emerald-700/80 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300"></i> Chat
               </a>
-              <a href="${upiUrl}" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
+              <a href="${upiUrl}" class="h-10 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-1 transition shadow-sm">
                 <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare}
               </a>
-              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="px-3 py-2.5 bg-slate-800 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition flex items-center gap-1">
+              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="h-10 bg-slate-800 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
               </button>
             </div>
@@ -781,7 +824,7 @@
       fetchLiveRides();
     }
 
-    // Render Ride Cards (Centered, Balanced, and Non-stretching)
+    // ALIGNED & REFINED RIDE CARDS
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -843,7 +886,8 @@
       container.innerHTML = visibleRides.map(ride => {
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
-        const riderWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(ride.riderPhone)}?text=Hi%20${encodeURIComponent(ride.riderName)}%2C%20I%20saw%20your%20MyRouteBuddy%20listing%20from%20${encodeURIComponent(ride.routeStart)}%20to%20${encodeURIComponent(ride.routeEnd)}.`;
+        const waNumber = cleanPhoneForWhatsApp(ride.riderPhone);
+        const riderWhatsAppUrl = `https://wa.me/${waNumber}?text=Hi%20${encodeURIComponent(ride.riderName)}%2C%20I%20saw%20your%20MyRouteBuddy%20listing%20from%20${encodeURIComponent(ride.routeStart)}%20to%20${encodeURIComponent(ride.routeEnd)}.`;
 
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
           mySavedRides.includes(ride.id) || 
@@ -853,9 +897,9 @@
         const isVerified = ride.status === 'VERIFIED';
 
         return `
-          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3.5">
+          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3">
             
-            <!-- Header Row -->
+            <!-- Header Row: Identity, Verified Badge & Pricing -->
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
@@ -863,15 +907,18 @@
                 </div>
                 <div>
                   <div class="flex items-center gap-1.5 flex-wrap">
-                    <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
+                    <h3 class="text-sm font-extrabold text-slate-900 leading-tight">${ride.riderName}</h3>
+                    <span class="inline-flex items-center gap-0.5 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200/80 px-1.5 py-0.5 rounded font-bold">
+                      <i data-lucide="check-check" class="w-3 h-3 text-emerald-600"></i> Verified
+                    </span>
                     ${isMyOwnRide ? `
-                      <span class="inline-flex items-center gap-1 text-[10px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-emerald-100 text-emerald-800 border border-emerald-200')} font-bold px-2 py-0.5 rounded-md">
+                      <span class="inline-flex items-center gap-1 text-[10px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200')} font-bold px-2 py-0.5 rounded-md">
                         <i data-lucide="tag" class="w-3 h-3"></i>
-                        ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Trip In Progress' : 'Your Listing')}
+                        ${isBooked ? 'Booked!' : (isVerified ? 'In Transit' : 'Your Listing')}
                       </span>
                     ` : ''}
                   </div>
-                  <p class="text-xs text-slate-500 font-medium">${ride.bikeModel}</p>
+                  <p class="text-xs text-slate-500 font-medium mt-0.5">${ride.bikeModel}</p>
                 </div>
               </div>
 
@@ -885,7 +932,7 @@
             </div>
 
             <!-- Route Stopovers -->
-            <div class="bg-[#f8fafc] rounded-2xl p-3.5 border border-slate-100 space-y-2.5">
+            <div class="bg-[#f8fafc] rounded-2xl p-3 border border-slate-100 space-y-2">
               <div class="space-y-1.5">
                 <div class="flex items-start gap-2.5">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 shrink-0 ring-4 ring-emerald-100"></span>
@@ -906,7 +953,7 @@
                 </div>
               </div>
 
-              <!-- Date + Departure -->
+              <!-- Date + Departure Schedule -->
               <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
                 <div class="flex items-center gap-1.5 text-slate-600 font-medium">
                   <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -916,47 +963,48 @@
               </div>
             </div>
 
-            <!-- Bottom Actions & Clean Badges -->
-            <div class="flex items-center justify-between pt-1 gap-2">
-              <div class="flex items-center gap-2">
-                ${ride.hasHelmet ? `
-                  <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#059669] bg-emerald-50/90 px-3 py-1.5 rounded-xl border border-emerald-200">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i> Helmet
-                  </span>
-                ` : `
-                  <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200">
-                    No Helmet
-                  </span>
-                `}
+            <!-- Vehicle Tags & Helmet Pill -->
+            <div class="flex items-center justify-between text-xs pt-0.5">
+              <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/70">
+                ${ride.bikeModel}
+              </span>
+              ${ride.hasHelmet ? `
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Spare Helmet
+                </span>
+              ` : `
+                <span class="text-[11px] font-medium text-slate-400 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60">
+                  No Helmet
+                </span>
+              `}
+            </div>
 
-                ${!isMyOwnRide ? `
-                  <a href="${riderWhatsAppUrl}" target="_blank" class="h-9 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center gap-1.5 text-xs font-bold active:scale-95 transition" title="Chat on WhatsApp">
+            <!-- Structured Bottom Action Bar: Aligned Height & Clean Touch Targets -->
+            <div class="pt-1">
+              ${isMyOwnRide ? `
+                ${isBooked ? `
+                  <button onclick="switchTab('offer')" class="touch-target w-full bg-emerald-600 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="key" class="w-4 h-4"></i> Passenger Booked • Verify PIN
+                  </button>
+                ` : (isVerified ? `
+                  <button onclick="switchTab('offer')" class="touch-target w-full bg-teal-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="navigation" class="w-4 h-4"></i> Commute In Progress • Controls
+                  </button>
+                ` : `
+                  <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target w-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold active:scale-98 transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel This Listing
+                  </button>
+                `)}
+              ` : `
+                <div class="grid grid-cols-2 gap-2">
+                  <a href="${riderWhatsAppUrl}" target="_blank" class="touch-target bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bold active:scale-98 transition flex items-center justify-center gap-1.5 shadow-2xs">
                     <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i> WhatsApp
                   </a>
-                ` : ''}
-              </div>
-
-              <div>
-                ${isMyOwnRide ? `
-                  ${isBooked ? `
-                    <button onclick="switchTab('offer')" class="h-9 px-4 bg-emerald-600 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
-                      <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify PIN
-                    </button>
-                  ` : (isVerified ? `
-                    <button onclick="switchTab('offer')" class="h-9 px-4 bg-teal-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
-                      <i data-lucide="navigation" class="w-3.5 h-3.5"></i> In Transit
-                    </button>
-                  ` : `
-                    <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="h-9 px-3.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5">
-                      <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel
-                    </button>
-                  `)}
-                ` : `
-                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="h-9 px-4 bg-[#059669] active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
-                    <i data-lucide="ticket" class="w-3.5 h-3.5"></i> Book Seat
+                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="touch-target bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="ticket" class="w-4 h-4"></i> Book Seat
                   </button>
-                `}
-              </div>
+                </div>
+              `}
             </div>
 
           </div>
@@ -1002,7 +1050,9 @@
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
-        const passengerWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(myActiveRide.passengerPhone)}?text=Hi%20${encodeURIComponent(myActiveRide.passengerName)}%2C%20I%20am%20your%20MyRouteBuddy%20rider.%20I%20am%20arriving%20at%20pickup.`;
+        const passengerDialPhone = cleanPhoneForDial(myActiveRide.passengerPhone);
+        const passengerWaPhone = cleanPhoneForWhatsApp(myActiveRide.passengerPhone);
+        const passengerWhatsAppUrl = `https://wa.me/${passengerWaPhone}?text=Hi%20${encodeURIComponent(myActiveRide.passengerName)}%2C%20I%20am%20your%20MyRouteBuddy%20rider.%20I%20am%20arriving%20at%20pickup.`;
 
         activeCard.innerHTML = `
           <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
@@ -1022,9 +1072,9 @@
                 <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-500">Contact & WhatsApp:</span>
+                <span class="text-slate-500">Call / Chat:</span>
                 <div class="flex items-center gap-2">
-                  <a href="tel:${myActiveRide.passengerPhone}" class="font-extrabold text-emerald-700 underline">${myActiveRide.passengerPhone}</a>
+                  <a href="tel:${passengerDialPhone}" class="font-extrabold text-emerald-700 underline">${passengerDialPhone}</a>
                   <a href="${passengerWhatsAppUrl}" target="_blank" class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center active:scale-95 transition" title="Chat on WhatsApp">
                     <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                   </a>
@@ -1323,14 +1373,15 @@
       updateOfferTabState();
     }
 
-    // Open Booking Pass with WhatsApp
+    // Open Booking Pass with WhatsApp & Dial-ready phone links
     async function openBooking(id, rider, start, end, fare, rawPhone) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
       const decodedEnd = decodeURIComponent(end);
       const pin = Math.floor(1000 + Math.random() * 9000);
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(decodedRider)}&am=${fare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
-      const riderWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(decodeURIComponent(rawPhone || ''))}?text=Hi%20${encodeURIComponent(decodedRider)}%2C%20I%20just%20booked%20your%20pool%20ride%20from%20${encodeURIComponent(decodedStart)}%20to%20${encodeURIComponent(decodedEnd)}.%20My%20PIN%20is%20${pin}.`;
+      const waNumber = cleanPhoneForWhatsApp(decodeURIComponent(rawPhone || ''));
+      const riderWhatsAppUrl = `https://wa.me/${waNumber}?text=Hi%20${encodeURIComponent(decodedRider)}%2C%20I%20just%20booked%20your%20pool%20ride%20from%20${encodeURIComponent(decodedStart)}%20to%20${encodeURIComponent(decodedEnd)}.%20My%20PIN%20is%20${pin}.`;
       const myProfile = getMyProfile();
 
       const passengerName = (myProfile && myProfile.name) ? myProfile.name : 'Pillion Commuter';
@@ -1521,6 +1572,7 @@
       setUserRole(savedRole);
     }
 
+    // Drawer and Modal Controls
     function toggleSidebar(open) {
       const drawer = document.getElementById('side-drawer');
       if (open) drawer.classList.remove('hidden');
@@ -1614,17 +1666,17 @@
       offerView.classList.add('hidden');
       profileView.classList.add('hidden');
 
-      navFind.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
-      navOffer.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navFind.className = 'relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navOffer.className = 'relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
       navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
 
       if (tab === 'find') {
         findView.classList.remove('hidden');
-        navFind.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
+        navFind.className = 'relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
         fetchLiveRides();
       } else if (tab === 'offer') {
         offerView.classList.remove('hidden');
-        navOffer.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
+        navOffer.className = 'relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
         lastRenderedOfferStatus = null;
         updateOfferTabState();
         populateFormFromProfile();
@@ -1632,6 +1684,7 @@
         profileView.classList.remove('hidden');
         navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
       }
+      updateNavBadges();
       lucide.createIcons();
     }
 
