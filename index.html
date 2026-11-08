@@ -54,8 +54,8 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <a href="tel:8788337049" class="flex items-center gap-1 border border-rose-200 bg-rose-50/80 text-rose-600 text-xs font-bold px-2.5 py-1.5 rounded-xl active:scale-95 transition">
-          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> SOS
+        <a href="tel:8788337049" class="flex items-center gap-1.5 border border-rose-200 bg-rose-50/80 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl active:scale-95 transition">
+          <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i> SOS
         </a>
         <button onclick="fetchLiveRides()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition">
           <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
@@ -99,10 +99,10 @@
             <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
             <p class="text-[11px] text-slate-500">Direct assistance for route coordination, boarding, or queries.</p>
             <div class="flex gap-2 pt-1">
-              <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
+              <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
                 <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
               </a>
-              <a href="https://wa.me/918788337049?text=Hi%20RouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="flex-1 bg-slate-900 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
+              <a href="https://wa.me/918788337049?text=Hi%20RouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="flex-1 bg-slate-900 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
                 <i data-lucide="message-square" class="w-3.5 h-3.5"></i> WhatsApp
               </a>
             </div>
@@ -173,7 +173,7 @@
           </button>
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for ₹15 fuel share.</p>
+          <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for fuel share.</p>
           <p><strong>How do I verify boarding?</strong> Show the 4-digit PIN on your active booking banner to the rider.</p>
         </div>
       </div>
@@ -226,11 +226,11 @@
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div>
             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rider's Journey</p>
-            <p class="font-bold text-slate-100 truncate mt-0.5" id="radar-journey">Hadapsar</p>
+            <p class="font-bold text-slate-100 mt-0.5 leading-snug" id="radar-journey">Hadapsar</p>
           </div>
           <div>
             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Pickup Segment</p>
-            <p class="font-bold text-slate-100 truncate mt-0.5" id="radar-pickup">Kharadi / Viman Nagar</p>
+            <p class="font-bold text-slate-100 mt-0.5 leading-snug" id="radar-pickup">Kharadi / Viman Nagar</p>
           </div>
         </div>
         <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3.5 overflow-hidden">
@@ -240,23 +240,23 @@
 
       <!-- Pill Filters -->
       <div id="pill-filter-bar" class="flex items-center gap-2 pt-0.5">
-        <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition">
-          <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-600"></i> Spare Helmet
+        <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition">
+          <i data-lucide="shield" class="w-4 h-4 text-emerald-600"></i> Spare Helmet
         </button>
-        <button id="toggle-women" onclick="toggleFilter('women')" class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition">
-          <i data-lucide="users" class="w-3.5 h-3.5 text-rose-500"></i> Women Only
+        <button id="toggle-women" onclick="toggleFilter('women')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition">
+          <i data-lucide="users" class="w-4 h-4 text-rose-500"></i> Women Only
         </button>
       </div>
 
       <div id="rides-feed-header" class="flex items-center justify-between px-1">
         <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking live rides...</span>
-        <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Google Sheet
+        <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Google Sheet
         </span>
       </div>
 
       <!-- Live Rides Feed -->
-      <div id="rides-list" class="space-y-3 pb-2">
+      <div id="rides-list" class="space-y-3.5 pb-2">
         <div class="flex flex-col items-center justify-center py-10 text-slate-400">
           <div class="loader mb-2.5"></div>
           <p class="text-xs font-semibold text-slate-500">Connecting to Google Sheet...</p>
@@ -304,12 +304,12 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Starting Landmark</label>
-            <input type="text" id="routeStart" required placeholder="e.g. Noble Hospital, Hadapsar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="routeStart" required placeholder="e.g. JSPM Gate No 2, Kale Padal" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Destination Landmark</label>
-            <input type="text" id="routeEnd" required placeholder="e.g. E space, Viman Nagar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="text" id="routeEnd" required placeholder="e.g. Noble Hospital, Hadapsar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div>
@@ -566,14 +566,12 @@
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const inTransitId = localStorage.getItem('my_in_transit_ride_id');
 
-        // Never expire active booked or verified rides
         const valid = (data || []).filter(r => {
           if (cancelledLocally.includes(r.id)) return false;
           if (r.status === 'BOOKED' || r.status === 'VERIFIED') return true;
           return !isRideExpired(r.depTime, 15);
         });
 
-        // Ensure local in-transit state persists seamlessly
         valid.forEach(r => {
           if (inTransitId && r.id === inTransitId) {
             r.status = 'VERIFIED';
@@ -654,12 +652,15 @@
               <p class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
             </div>
 
-            <div class="bg-emerald-900/60 rounded-2xl p-3 text-xs space-y-1.5 border border-emerald-500/30">
-              <div class="flex justify-between">
-                <span class="text-emerald-300 font-semibold">Drop-off Destination:</span>
-                <span class="font-bold text-white text-right">${bookedRide.routeEnd}</span>
+            <div class="bg-emerald-900/60 rounded-2xl p-3.5 text-xs space-y-2 border border-emerald-500/30">
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
+                <div>
+                  <span class="text-[10px] uppercase font-bold text-emerald-300 block">Drop-off Destination</span>
+                  <span class="font-bold text-white leading-snug">${bookedRide.routeEnd}</span>
+                </div>
               </div>
-              <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
+              <div class="flex justify-between border-t border-emerald-700/50 pt-2">
                 <span class="text-emerald-300">Status:</span>
                 <span class="text-emerald-200 font-bold">Boarded on Two-Wheeler</span>
               </div>
@@ -700,9 +701,14 @@
               </div>
             </div>
 
-            <div class="bg-slate-800/80 rounded-2xl p-2.5 text-xs space-y-1 border border-slate-700">
-              <p class="truncate"><span class="text-slate-400 font-semibold">Route:</span> ${bookedRide.routeStart} → ${bookedRide.routeEnd}</p>
-              <p><span class="text-slate-400 font-semibold">Departure:</span> ${cleanTime}</p>
+            <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-2 border border-slate-700">
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
+                <span class="text-slate-200 font-medium leading-snug">${bookedRide.routeStart} → ${bookedRide.routeEnd}</span>
+              </div>
+              <p class="text-slate-400 border-t border-slate-700/80 pt-1.5 flex items-center gap-1.5">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Departure: <strong class="text-white">${cleanTime}</strong>
+              </p>
             </div>
 
             <div class="flex items-center gap-2 pt-1">
@@ -745,7 +751,7 @@
       fetchLiveRides();
     }
 
-    // Render Ride Cards (Find Ride tab)
+    // REFINED RIDE CARD RENDERER
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -804,6 +810,9 @@
         return;
       }
 
+      // Current calendar date label
+      const todayDateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
       container.innerHTML = visibleRides.map(ride => {
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
@@ -816,71 +825,106 @@
         const isVerified = ride.status === 'VERIFIED';
 
         return `
-          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/80 shadow-xs'} p-4 space-y-3">
-            <div class="flex items-start justify-between">
+          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3.5">
+            
+            <!-- Header Row: Rider Identity, Status Badge, & Price -->
+            <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
                   ${ride.riderName ? ride.riderName.charAt(0).toUpperCase() : 'R'}
                 </div>
                 <div>
-                  <div class="flex items-center gap-1.5">
+                  <div class="flex items-center gap-1.5 flex-wrap">
                     <h3 class="text-sm font-extrabold text-slate-900 leading-snug">${ride.riderName}</h3>
                     ${isMyOwnRide ? `
-                      <span class="text-[9px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-emerald-100 text-emerald-800')} font-bold px-2 py-0.5 rounded-md">
+                      <span class="inline-flex items-center gap-1 text-[10px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-emerald-100 text-emerald-800 border border-emerald-200')} font-bold px-2 py-0.5 rounded-md">
+                        <i data-lucide="tag" class="w-3 h-3"></i>
                         ${isBooked ? 'Passenger Booked!' : (isVerified ? 'Trip In Progress' : 'Your Listing')}
                       </span>
                     ` : ''}
                   </div>
-                  <p class="text-xs text-slate-500 font-medium">${ride.routeEnd}</p>
+                  <p class="text-xs text-slate-500 font-medium">${ride.bikeModel}</p>
                 </div>
               </div>
 
-              <div class="bg-[#e6f4ea] text-[#137333] border border-[#ceead6] px-3 py-1 rounded-xl text-right">
-                <div class="text-base font-extrabold leading-tight">₹${cleanFare}</div>
-                <div class="text-[9px] font-semibold uppercase tracking-wider text-[#137333]/80">per ride</div>
+              <!-- Price Box with Dedicated Icon -->
+              <div class="bg-emerald-50 text-emerald-800 border border-emerald-200/90 px-3 py-1 rounded-2xl text-right shrink-0">
+                <div class="text-base font-extrabold leading-tight flex items-center justify-end gap-0.5">
+                  <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-700"></i>${cleanFare}
+                </div>
+                <div class="text-[9px] font-semibold uppercase tracking-wider text-emerald-700/80">per ride</div>
               </div>
             </div>
 
-            <div class="bg-[#f8fafc] rounded-2xl p-3 border border-slate-100 text-xs space-y-1.5">
-              <div>
-                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">RIDER ROUTE</span>
-                <p class="font-bold text-slate-800 truncate">${ride.routeStart} → ${ride.routeEnd}</p>
+            <!-- Full Unclipped Route Box with Visual Itinerary Stops & Date -->
+            <div class="bg-[#f8fafc] rounded-2xl p-3.5 border border-slate-100 space-y-2.5">
+              <div class="space-y-1.5">
+                <div class="flex items-start gap-2.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 shrink-0 ring-4 ring-emerald-100"></span>
+                  <div class="leading-tight">
+                    <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Pickup</span>
+                    <p class="text-xs font-bold text-slate-800 break-words">${ride.routeStart}</p>
+                  </div>
+                </div>
+
+                <div class="ml-1 pl-2 border-l border-dashed border-slate-300 h-2"></div>
+
+                <div class="flex items-start gap-2.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1 shrink-0 ring-4 ring-rose-100"></span>
+                  <div class="leading-tight">
+                    <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Drop-off</span>
+                    <p class="text-xs font-bold text-slate-800 break-words">${ride.routeEnd}</p>
+                  </div>
+                </div>
               </div>
-              <div class="flex items-center justify-between pt-1 border-t border-slate-200/60 text-slate-600">
-                <span class="text-[11px] font-medium">Departure: <strong class="text-slate-800">${cleanTime}</strong></span>
-                ${ride.womenOnly ? '<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">Women Only</span>' : ''}
+
+              <!-- Schedule Row: Date + Time -->
+              <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
+                <div class="flex items-center gap-1.5 text-slate-600 font-medium">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span>${todayDateStr} • <strong class="text-slate-800 font-bold">${cleanTime}</strong></span>
+                </div>
+                ${ride.womenOnly ? '<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> Women Only</span>' : ''}
               </div>
             </div>
 
-            <!-- Action Area -->
-            <div class="flex items-center justify-between pt-1">
-              <div class="flex items-center gap-2">
-                <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200/70">
-                  ${ride.bikeModel}
-                </span>
-                ${ride.hasHelmet ? '<span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet</span>' : ''}
-              </div>
-
-              ${isMyOwnRide ? `
-                ${isBooked ? `
-                  <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-600 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
-                    <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify Passenger PIN
-                  </button>
-                ` : (isVerified ? `
-                  <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-teal-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
-                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> Drop-off Controls
-                  </button>
+            <!-- Bottom Action Row: Metadata Badges + Full Touch Buttons -->
+            <div class="flex items-center justify-between pt-1 gap-2">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${ride.hasHelmet ? `
+                  <span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet
+                  </span>
                 ` : `
-                  <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel
+                  <span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                    No Helmet
+                  </span>
+                `}
+              </div>
+
+              <div>
+                ${isMyOwnRide ? `
+                  ${isBooked ? `
+                    <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-600 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                      <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify PIN
+                    </button>
+                  ` : (isVerified ? `
+                    <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-teal-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                      <i data-lucide="navigation" class="w-3.5 h-3.5"></i> In Transit
+                    </button>
+                  ` : `
+                    <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-4 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5 shadow-2xs">
+                      <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel
+                    </button>
+                  `)}
+                ` : `
+                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
+                    <i data-lucide="ticket" class="w-4 h-4"></i> Book Seat
                   </button>
-                `)}
-              ` : `
-                <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
-                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i> Book Seat
-                </button>
-              `}
+                `}
+              </div>
             </div>
+
           </div>
         `;
       }).join('');
@@ -1088,7 +1132,6 @@
       const bModel = document.getElementById('bikeModel').value.trim();
       const vPlate = document.getElementById('vehicleReg').value.trim();
 
-      // Silently auto-save or update profile for future visits
       let profile = getMyProfile() || {};
       profile.name = rName;
       profile.phone = rPhone;
@@ -1146,7 +1189,6 @@
       btn.disabled = true;
       btn.innerText = 'Verifying...';
 
-      // 1. Immediately lock into in-transit state locally
       localStorage.setItem('my_in_transit_ride_id', rideId);
       const ride = allRides.find(r => r.id === rideId);
       if (ride) {
@@ -1464,14 +1506,14 @@
         filterHelmetOnly = !filterHelmetOnly;
         const btn = document.getElementById('toggle-helmet');
         btn.className = filterHelmetOnly 
-          ? "flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition"
-          : "flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
+          ? "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition"
+          : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
       } else {
         filterWomenOnly = !filterWomenOnly;
         const btn = document.getElementById('toggle-women');
         btn.className = filterWomenOnly 
-          ? "flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-rose-500 bg-rose-50/70 text-rose-800 text-xs font-bold transition"
-          : "flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
+          ? "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-rose-500 bg-rose-50/70 text-rose-800 text-xs font-bold transition"
+          : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
       }
       renderRides();
     }
