@@ -642,7 +642,6 @@
       return cleanTimeFormat(timeStr);
     }
 
-    // STRICT INSTANT EXPIRATION: Unbooked rides drop off immediately
     function isRideExpired(timeStr, graceMinutes = 0) {
       if (!timeStr) return false;
       const now = new Date();
@@ -758,7 +757,7 @@
       }
     }
 
-    // PILLION BANNER (CLEAN STACKED LAYOUT — NO COLLISION, FULL PLATE REVEALED)
+    // PILLION BANNER (UPI ID REMOVED FROM DEPARTURE LINE)
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -835,8 +834,8 @@
                 <span class="font-bold text-white text-right break-words">${bookedRide.routeEnd}</span>
               </div>
               <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
-                <span class="text-emerald-300">UPI Handle:</span>
-                <span class="font-mono text-emerald-200 font-bold">${riderUpi}</span>
+                <span class="text-emerald-300">Payment:</span>
+                <span class="text-emerald-200 font-bold">100% Online UPI</span>
               </div>
             </div>
 
@@ -851,7 +850,7 @@
           </div>
         `;
       } 
-      // STATE B: RESERVED (UNCOLLIDED BOARDING TICKET WITH FULL PLATE)
+      // STATE B: RESERVED
       else {
         const pin = mySavedPin || bookedRide.safetyPin || '----';
         banner.innerHTML = `
@@ -864,14 +863,12 @@
               <span class="text-xs bg-slate-800 border border-slate-600 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
-            <!-- Stacked Rider Info with Clean Plate Badge -->
             <div class="space-y-1.5">
               <div class="flex items-center justify-between">
                 <div>
                   <h3 class="text-base font-extrabold tracking-tight">${bookedRide.riderName}</h3>
                   <p class="text-[11px] text-slate-300 font-medium">${bookedRide.bikeModel}</p>
                 </div>
-                <!-- Clean Uncollided Vehicle Plate Tag -->
                 <div class="bg-slate-800/90 border border-emerald-500/40 px-3 py-1 rounded-xl text-center">
                   <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Bike Plate</span>
                   <span class="font-mono text-xs font-extrabold text-emerald-300 uppercase tracking-widest">${vehiclePlate}</span>
@@ -879,7 +876,6 @@
               </div>
             </div>
 
-            <!-- Centered, Uncollided Boarding Ticket PIN Badge -->
             <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-emerald-950/90 border border-emerald-500/50 p-3 rounded-2xl text-center shadow-inner">
               <span class="text-[10px] uppercase font-bold text-emerald-300 tracking-wider flex items-center justify-center gap-1 mb-0.5">
                 <i data-lucide="key" class="w-3.5 h-3.5"></i> Boarding Verification PIN
@@ -890,7 +886,7 @@
               <span class="text-[10px] text-slate-400 block mt-0.5">Share with rider to begin trip</span>
             </div>
 
-            <!-- Route Details -->
+            <!-- Route Details (UPI ID removed from departure row) -->
             <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-1.5 border border-slate-700">
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
@@ -902,11 +898,10 @@
               </div>
               <div class="flex items-center justify-between border-t border-slate-700/80 pt-1.5 text-slate-300">
                 <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Departs: <strong class="text-white">${cleanTime}</strong></span>
-                <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded-md font-bold text-emerald-300 font-mono">${riderUpi}</span>
+                <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded-md font-bold text-emerald-300">Online UPI</span>
               </div>
             </div>
 
-            <!-- Action Buttons: WhatsApp & UPI Pay -->
             <div class="grid grid-cols-2 gap-2 pt-1">
               <a href="${riderWhatsAppUrl}" target="_blank" class="h-11 px-3.5 bg-emerald-700/90 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
                 <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300 shrink-0"></i> WhatsApp Rider
@@ -921,7 +916,7 @@
       lucide.createIcons();
     }
 
-    // DIRECT BOOKING (VALIDATES IDENTITY, APPLIES UPI DEFAULT)
+    // DIRECT 1-TAP BOOKING
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -961,7 +956,7 @@
     }
 
     async function executeDirectBooking(id, rider, start, end, fare, rawPhone, passengerName, passengerPhone) {
-      const pin = Math.floor(1000 + Math.random() * 9000);
+      const pin = String(Math.floor(1000 + Math.random() * 9000));
       localStorage.setItem('my_active_booked_ride_id', id);
       localStorage.setItem('my_active_booked_pin', pin);
 
@@ -989,7 +984,7 @@
       fetchLiveRides();
     }
 
-    // RENDER RIDE CARDS (UNCLUTTERED FEED)
+    // RENDER RIDE CARDS
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -1092,7 +1087,6 @@
               </div>
             </div>
 
-            <!-- Clean Route Segment -->
             <div class="bg-[#f8fafc] rounded-2xl p-3 border border-slate-100 space-y-2">
               <div class="space-y-1.5">
                 <div class="flex items-start gap-2.5">
@@ -1123,7 +1117,6 @@
               </div>
             </div>
 
-            <!-- Spare Helmet Indicator -->
             <div class="flex items-center justify-between text-xs pt-0.5">
               ${ride.hasHelmet ? `
                 <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
@@ -1165,7 +1158,7 @@
       lucide.createIcons();
     }
 
-    // RIDER DASHBOARD (MINIMAL "VERIFY PIN" BUTTON & ROBUST VERIFICATION LOGIC)
+    // RIDER DASHBOARD
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
@@ -1216,7 +1209,6 @@
               </div>
             </div>
 
-            <!-- Passenger Details (WhatsApp Only) -->
             <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-3">
               <div class="flex justify-between items-center">
                 <div>
@@ -1233,7 +1225,6 @@
               </div>
             </div>
 
-            <!-- Full Unclipped Route View for Rider -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
               <div class="space-y-1">
                 <div>
@@ -1247,7 +1238,6 @@
               </div>
             </div>
 
-            <!-- Contextual Rider Safety Notice -->
             <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5">
               <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
               <p class="text-[11px] text-amber-900 leading-tight">
@@ -1255,14 +1245,13 @@
               </p>
             </div>
 
-            <!-- Strict PIN Verification Form with Minimal Button Label -->
+            <!-- Verification form passing rideId directly -->
             <form id="form-verify-otp" onsubmit="handleVerifyOtp(event, '${myActiveRide.id}')" class="space-y-3 pt-1">
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Enter Passenger's 4-Digit Boarding PIN</label>
                 <input type="tel" pattern="[0-9]*" id="riderInputOtp" required placeholder="• • • •" maxlength="4" class="w-full h-12 bg-slate-50 border-2 border-slate-300 rounded-2xl text-center font-mono font-black text-2xl tracking-[0.4em] text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
               </div>
 
-              <!-- Minimal Clean Button as requested -->
               <button type="submit" id="btn-verify-otp" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
                 <i data-lucide="shield-check" class="w-4 h-4"></i> Verify PIN
               </button>
@@ -1292,7 +1281,6 @@
               </div>
             </div>
 
-            <!-- Full Unclipped Destination View -->
             <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100">
               <div class="flex justify-between">
                 <span class="text-slate-500">Passenger:</span>
@@ -1308,7 +1296,6 @@
               </div>
             </div>
 
-            <!-- Minimal Drop-off Button for Rider -->
             <button onclick="completeMyRide('${myActiveRide.id}');" class="h-12 w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-2">
               <i data-lucide="check" class="w-4 h-4"></i> Complete Drop-off
             </button>
@@ -1316,7 +1303,7 @@
         `;
         lucide.createIcons();
       }
-      // STATE 3: Ride Available (Waiting)
+      // STATE 3: Ride Available
       else if (targetState === 'AVAILABLE') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1373,7 +1360,7 @@
       }
     }
 
-    // STRICT RIDER OFFER HANDLER WITH UPI ID INTEGRATION
+    // STRICT RIDER OFFER HANDLER
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1461,20 +1448,23 @@
       }
     }
 
-    // STRICT ACCURATE PIN VALIDATION HANDSHAKE
+    // BULLETPROOF PIN VALIDATION WITH DIRECT DIGIT NORMALIZATION
     async function handleVerifyOtp(e, rideId) {
       e.preventDefault();
       const inputEl = document.getElementById('riderInputOtp');
-      const inputPin = inputEl.value.trim();
+      const inputPin = String(inputEl.value || '').replace(/\D/g, '').trim();
       const btn = document.getElementById('btn-verify-otp');
 
-      // Look up target ride in the current state
+      // Look up target ride in local memory
       const ride = allRides.find(r => String(r.id).trim() === String(rideId).trim());
-      const expectedPin = ride ? String(ride.safetyPin).trim() : '';
+      const localSavedPin = String(localStorage.getItem('my_active_booked_pin') || '').replace(/\D/g, '').trim();
+      const sheetPin = ride ? String(ride.safetyPin || '').replace(/\D/g, '').trim() : '';
 
-      // Strict validation: Reject if mismatch or empty
-      if (!inputPin || (expectedPin && inputPin !== expectedPin && expectedPin !== '-')) {
-        alert("Invalid PIN. The PIN you entered does not match the passenger's boarding PIN. Please check the 4 digits on the passenger's pass.");
+      // Match against sheet pin OR local booking pass pin
+      const isValid = (sheetPin && inputPin === sheetPin) || (localSavedPin && inputPin === localSavedPin);
+
+      if (!inputPin || inputPin.length !== 4 || !isValid) {
+        alert("Invalid PIN. Enter the exact 4-digit PIN displayed on your passenger's active booking pass.");
         inputEl.value = '';
         inputEl.focus();
         return;
@@ -1483,6 +1473,7 @@
       btn.disabled = true;
       btn.innerText = 'Verifying...';
 
+      // Lock in-transit state locally immediately
       localStorage.setItem('my_in_transit_ride_id', rideId);
       if (ride) {
         ride.status = 'VERIFIED';
