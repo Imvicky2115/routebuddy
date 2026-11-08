@@ -9,6 +9,9 @@
   <title>MyRouteBuddy — Pune Commuter Peer-Pooling</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QR Code Generator & Scanner CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -52,6 +55,10 @@
       user-select: none;
       -webkit-touch-callout: none;
     }
+    #qr-reader video {
+      border-radius: 1rem;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body class="min-h-screen flex justify-center pb-24 overflow-x-hidden">
@@ -82,6 +89,35 @@
         </button>
       </div>
     </header>
+
+    <!-- QR SCANNER MODAL FOR RIDER -->
+    <div id="qr-scanner-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative">
+        <div class="flex items-center justify-between border-b pb-2">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+              <i data-lucide="qr-code" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-900">Scan Passenger QR</h3>
+              <p class="text-[10px] text-slate-500">Align the pillion's QR pass inside the frame</p>
+            </div>
+          </div>
+          <button onclick="closeQrScanner()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- Camera Render Surface -->
+        <div id="qr-reader" class="w-full overflow-hidden rounded-2xl bg-black min-h-[260px] flex items-center justify-center text-white text-xs"></div>
+
+        <p class="text-[11px] text-slate-400 text-center">Camera scans automatically once ticket is visible.</p>
+
+        <button onclick="closeQrScanner()" class="touch-target w-full bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+          Close Scanner
+        </button>
+      </div>
+    </div>
 
     <!-- Side Navigation Drawer -->
     <div id="side-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200 hidden">
@@ -167,9 +203,9 @@
         </div>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
           <p><strong>1. Mandatory Helmets:</strong> MVA Section 129 mandates BIS/ISI helmets for both rider and pillion.</p>
-          <p><strong>2. Exact 4-Digit Verification:</strong> The trip cannot begin without entering the exact matching passenger PIN.</p>
-          <p><strong>3. 100% Online UPI Payment:</strong> All fuel splits are handled online via UPI to prevent roadside disputes.</p>
-          <p><strong>4. Strict Commute Locking:</strong> Bookings cannot be cancelled by pillions once accepted.</p>
+          <p><strong>2. Instant QR Boarding:</strong> Rider scans the passenger's dynamic pass to start the commute.</p>
+          <p><strong>3. 100% Online UPI Payment:</strong> Direct fuel share to rider via UPI to eliminate disputes.</p>
+          <p><strong>4. Strict Commute Locking:</strong> Bookings cannot be cancelled by pillions once confirmed.</p>
         </div>
       </div>
     </div>
@@ -185,9 +221,9 @@
           </button>
         </div>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-          <p><strong>Can I pay with cash?</strong> No. MyRouteBuddy enforces 100% online UPI payments (GPay/PhonePe/Paytm) directly to the rider's configured UPI ID.</p>
-          <p><strong>How does verification work?</strong> The rider must enter the exact 4-digit PIN generated on the pillion's boarding pass.</p>
-          <p><strong>When do unbooked rides expire?</strong> Unbooked listings vanish right at departure time to keep the commute feed real-time.</p>
+          <p><strong>How do I verify boarding?</strong> Show the dynamic QR code on your active pass to the rider. The rider scans it in 1 second.</p>
+          <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for the rider's UPI ID.</p>
+          <p><strong>When do unbooked rides expire?</strong> Unbooked listings vanish automatically at departure time.</p>
         </div>
       </div>
     </div>
@@ -291,8 +327,8 @@
             <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Online UPI</span>
           </div>
           <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
-            <span class="block text-base font-extrabold text-white">4-Digit</span>
-            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Verified PIN</span>
+            <span class="block text-base font-extrabold text-white">1-Sec</span>
+            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">QR Boarding</span>
           </div>
         </div>
       </section>
@@ -504,7 +540,6 @@
             </div>
           </div>
 
-          <!-- Rider Specific Profile Fields -->
           <div id="rider-vehicle-fields" class="space-y-3 pt-1 border-t border-slate-100">
             <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Rider Specifications</span>
             <div>
@@ -577,6 +612,8 @@
     let lastRenderedOfferStatus = null;
     let lastRenderedOfferRideId = null;
     let pendingBookingPayload = null;
+    let html5QrScannerInstance = null;
+    let activeScanningRideId = null;
 
     // SCREENSHOT COUNTERMEASURE
     window.addEventListener('keyup', (e) => {
@@ -642,6 +679,7 @@
       return cleanTimeFormat(timeStr);
     }
 
+    // STRICT INSTANT EXPIRATION: Unbooked rides drop off immediately
     function isRideExpired(timeStr, graceMinutes = 0) {
       if (!timeStr) return false;
       const now = new Date();
@@ -757,13 +795,12 @@
       }
     }
 
-    // PILLION BANNER (UPI ID REMOVED FROM DEPARTURE LINE)
+    // PILLION BANNER WITH DYNAMIC QR CODE GENERATION
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
 
       const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
-      const mySavedPin = localStorage.getItem('my_active_booked_pin') || localStorage.getItem('rb_my_booked_pin');
 
       if (!myBookedRideId) {
         banner.classList.add('hidden');
@@ -823,7 +860,7 @@
 
             <div class="bg-emerald-900/80 rounded-2xl p-3 text-[11px] text-emerald-100 border border-emerald-500/40 space-y-1">
               <div class="flex items-center gap-1.5 font-bold text-emerald-300">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Safety Verification Notice
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Boarding QR Verified
               </div>
               <p class="leading-tight">Verify that the vehicle plate matches <strong>${vehiclePlate}</strong>. Pay fuel contribution via UPI.</p>
             </div>
@@ -850,9 +887,8 @@
           </div>
         `;
       } 
-      // STATE B: RESERVED
+      // STATE B: RESERVED (SHOW DYNAMIC QR PASS)
       else {
-        const pin = mySavedPin || bookedRide.safetyPin || '----';
         banner.innerHTML = `
           <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
             <div class="flex items-center justify-between border-b border-slate-700 pb-2.5">
@@ -863,30 +899,28 @@
               <span class="text-xs bg-slate-800 border border-slate-600 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
-            <div class="space-y-1.5">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-base font-extrabold tracking-tight">${bookedRide.riderName}</h3>
-                  <p class="text-[11px] text-slate-300 font-medium">${bookedRide.bikeModel}</p>
-                </div>
-                <div class="bg-slate-800/90 border border-emerald-500/40 px-3 py-1 rounded-xl text-center">
-                  <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Bike Plate</span>
-                  <span class="font-mono text-xs font-extrabold text-emerald-300 uppercase tracking-widest">${vehiclePlate}</span>
-                </div>
+            <!-- Rider Summary & Bike Plate Badge -->
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-base font-extrabold tracking-tight">${bookedRide.riderName}</h3>
+                <p class="text-[11px] text-slate-300 font-medium">${bookedRide.bikeModel}</p>
+              </div>
+              <div class="bg-slate-800/90 border border-emerald-500/40 px-3 py-1 rounded-xl text-center">
+                <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Bike Plate</span>
+                <span class="font-mono text-xs font-extrabold text-emerald-300 uppercase tracking-widest">${vehiclePlate}</span>
               </div>
             </div>
 
-            <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-emerald-950/90 border border-emerald-500/50 p-3 rounded-2xl text-center shadow-inner">
-              <span class="text-[10px] uppercase font-bold text-emerald-300 tracking-wider flex items-center justify-center gap-1 mb-0.5">
-                <i data-lucide="key" class="w-3.5 h-3.5"></i> Boarding Verification PIN
+            <!-- SCANNABLE DYNAMIC QR CODE CONTAINER -->
+            <div class="bg-white p-4 rounded-3xl text-center shadow-md flex flex-col items-center justify-center space-y-2">
+              <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider flex items-center justify-center gap-1">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-600"></i> Boarding QR Pass
               </span>
-              <div class="font-mono text-2xl font-black tracking-[0.3em] text-emerald-200">
-                ${pin}
-              </div>
-              <span class="text-[10px] text-slate-400 block mt-0.5">Share with rider to begin trip</span>
+              <div id="pillion-qr-target" class="p-2 bg-white rounded-2xl flex items-center justify-center"></div>
+              <p class="text-[10px] text-slate-500 font-medium">Show this to your rider to scan before boarding</p>
             </div>
 
-            <!-- Route Details (UPI ID removed from departure row) -->
+            <!-- Route Details -->
             <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-1.5 border border-slate-700">
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
@@ -902,6 +936,7 @@
               </div>
             </div>
 
+            <!-- Action Buttons: WhatsApp & UPI Pay -->
             <div class="grid grid-cols-2 gap-2 pt-1">
               <a href="${riderWhatsAppUrl}" target="_blank" class="h-11 px-3.5 bg-emerald-700/90 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
                 <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300 shrink-0"></i> WhatsApp Rider
@@ -912,6 +947,22 @@
             </div>
           </div>
         `;
+
+        // Render QR Code inside target container
+        setTimeout(() => {
+          const qrTarget = document.getElementById('pillion-qr-target');
+          if (qrTarget && typeof QRCode !== 'undefined') {
+            qrTarget.innerHTML = '';
+            new QRCode(qrTarget, {
+              text: `MYROUTEBUDDY:${bookedRide.id}`,
+              width: 140,
+              height: 140,
+              colorDark: "#0f172a",
+              colorLight: "#ffffff",
+              correctLevel: QRCode.CorrectLevel.H
+            });
+          }
+        }, 50);
       }
       lucide.createIcons();
     }
@@ -956,9 +1007,7 @@
     }
 
     async function executeDirectBooking(id, rider, start, end, fare, rawPhone, passengerName, passengerPhone) {
-      const pin = String(Math.floor(1000 + Math.random() * 9000));
       localStorage.setItem('my_active_booked_ride_id', id);
-      localStorage.setItem('my_active_booked_pin', pin);
 
       switchTab('find');
       renderPillionActiveBanner();
@@ -972,15 +1021,14 @@
             action: 'BOOK_RIDE',
             rideId: id,
             passengerName: passengerName,
-            passengerPhone: passengerPhone,
-            safetyPin: pin
+            passengerPhone: passengerPhone
           })
         });
       } catch (e) {
         console.error("Booking post error:", e);
       }
 
-      alert(`Seat confirmed with ${decodeURIComponent(rider)}! Your boarding PIN is ${pin}. Check active pass.`);
+      alert(`Seat confirmed with ${decodeURIComponent(rider)}! Show your QR pass to the rider upon boarding.`);
       fetchLiveRides();
     }
 
@@ -1133,7 +1181,7 @@
               ${isMyOwnRide ? `
                 ${isBooked ? `
                   <button onclick="switchTab('offer')" class="touch-target w-full bg-emerald-600 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="key" class="w-4 h-4"></i> Passenger Booked • Verify PIN
+                    <i data-lucide="qr-code" class="w-4 h-4"></i> Passenger Booked • Scan QR
                   </button>
                 ` : (isVerified ? `
                   <button onclick="switchTab('offer')" class="touch-target w-full bg-teal-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
@@ -1158,7 +1206,7 @@
       lucide.createIcons();
     }
 
-    // RIDER DASHBOARD
+    // RIDER DASHBOARD WITH QR SCANNER TRIGGER
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
@@ -1189,7 +1237,7 @@
       lastRenderedOfferStatus = targetState;
       lastRenderedOfferRideId = myActiveRide ? myActiveRide.id : null;
 
-      // STATE 1: PASSENGER BOOKED
+      // STATE 1: PASSENGER BOOKED (QR SCAN TRIGGER)
       if (targetState === 'BOOKED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1209,6 +1257,7 @@
               </div>
             </div>
 
+            <!-- Passenger Details -->
             <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-3">
               <div class="flex justify-between items-center">
                 <div>
@@ -1225,6 +1274,7 @@
               </div>
             </div>
 
+            <!-- Full Unclipped Route View for Rider -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
               <div class="space-y-1">
                 <div>
@@ -1241,21 +1291,14 @@
             <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5">
               <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
               <p class="text-[11px] text-amber-900 leading-tight">
-                <strong>Safety Verification:</strong> Ensure passenger wears an ISI helmet. Enter the exact 4-digit PIN on their active pass.
+                <strong>Safety Verification:</strong> Tap the button below to scan the QR pass on your passenger's phone screen before departure.
               </p>
             </div>
 
-            <!-- Verification form passing rideId directly -->
-            <form id="form-verify-otp" onsubmit="handleVerifyOtp(event, '${myActiveRide.id}')" class="space-y-3 pt-1">
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Enter Passenger's 4-Digit Boarding PIN</label>
-                <input type="tel" pattern="[0-9]*" id="riderInputOtp" required placeholder="• • • •" maxlength="4" class="w-full h-12 bg-slate-50 border-2 border-slate-300 rounded-2xl text-center font-mono font-black text-2xl tracking-[0.4em] text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
-              </div>
-
-              <button type="submit" id="btn-verify-otp" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
-                <i data-lucide="shield-check" class="w-4 h-4"></i> Verify PIN
-              </button>
-            </form>
+            <!-- ONE-TAP IN-APP QR CODE SCAN BUTTON -->
+            <button onclick="startQrScanner('${myActiveRide.id}')" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="camera" class="w-5 h-5"></i> Scan Passenger QR
+            </button>
 
             <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
               Cancel Listing
@@ -1281,6 +1324,7 @@
               </div>
             </div>
 
+            <!-- Full Unclipped Destination View -->
             <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100">
               <div class="flex justify-between">
                 <span class="text-slate-500">Passenger:</span>
@@ -1296,6 +1340,7 @@
               </div>
             </div>
 
+            <!-- Minimal Drop-off Button for Rider -->
             <button onclick="completeMyRide('${myActiveRide.id}');" class="h-12 w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-2">
               <i data-lucide="check" class="w-4 h-4"></i> Complete Drop-off
             </button>
@@ -1343,7 +1388,7 @@
               </div>
             </div>
 
-            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically at departure time. Once booked, passenger details and PIN inputs appear here.</p>
+            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically at departure time. Once booked, passenger details and QR scan controls appear here.</p>
 
             <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
               <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing
@@ -1357,6 +1402,89 @@
         activeCard.innerHTML = '';
         formCard.classList.remove('hidden');
         populateFormFromProfile();
+      }
+    }
+
+    // IN-APP QR CODE SCANNER CONTROLLER (USING HTML5-QRCODE)
+    function startQrScanner(rideId) {
+      activeScanningRideId = rideId;
+      document.getElementById('qr-scanner-modal').classList.remove('hidden');
+      lucide.createIcons();
+
+      if (typeof Html5Qrcode === 'undefined') {
+        alert("Camera scanner library loading. Please try again in a moment.");
+        closeQrScanner();
+        return;
+      }
+
+      html5QrScannerInstance = new Html5Qrcode("qr-reader");
+      const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+      html5QrScannerInstance.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          handleQrScanSuccess(decodedText, activeScanningRideId);
+        },
+        (errorMessage) => {
+          // Continuous scanning silent pass
+        }
+      ).catch((err) => {
+        console.warn("Camera start failed:", err);
+        alert("Camera access denied or unavailable. Please grant camera permission in your mobile browser.");
+        closeQrScanner();
+      });
+    }
+
+    function closeQrScanner() {
+      if (html5QrScannerInstance) {
+        html5QrScannerInstance.stop().then(() => {
+          html5QrScannerInstance.clear();
+          html5QrScannerInstance = null;
+        }).catch(() => {
+          html5QrScannerInstance = null;
+        });
+      }
+      document.getElementById('qr-scanner-modal').classList.add('hidden');
+      activeScanningRideId = null;
+    }
+
+    async function handleQrScanSuccess(decodedText, rideId) {
+      const cleanText = String(decodedText || '').trim();
+      const expectedPayload = `MYROUTEBUDDY:${rideId}`;
+
+      // Check QR match
+      if (cleanText === expectedPayload || cleanText.includes(rideId)) {
+        closeQrScanner();
+
+        // Lock in-transit state immediately
+        localStorage.setItem('my_in_transit_ride_id', rideId);
+        const ride = allRides.find(r => String(r.id).trim() === String(rideId).trim());
+        if (ride) {
+          ride.status = 'VERIFIED';
+        }
+
+        lastRenderedOfferStatus = null;
+        updateOfferTabState();
+        renderRides();
+
+        try {
+          await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'VERIFY_OTP',
+              rideId: rideId,
+              inputPin: 'QR_VERIFIED'
+            })
+          });
+        } catch (err) {}
+
+        alert('QR Code Verified! Boarding complete. Starting pooled commute.');
+        fetchLiveRides();
+      } else {
+        alert("Scanned QR does not match this passenger's booking pass. Please scan the QR code on your passenger's active ticket.");
       }
     }
 
@@ -1446,58 +1574,6 @@
         }
         lucide.createIcons();
       }
-    }
-
-    // BULLETPROOF PIN VALIDATION WITH DIRECT DIGIT NORMALIZATION
-    async function handleVerifyOtp(e, rideId) {
-      e.preventDefault();
-      const inputEl = document.getElementById('riderInputOtp');
-      const inputPin = String(inputEl.value || '').replace(/\D/g, '').trim();
-      const btn = document.getElementById('btn-verify-otp');
-
-      // Look up target ride in local memory
-      const ride = allRides.find(r => String(r.id).trim() === String(rideId).trim());
-      const localSavedPin = String(localStorage.getItem('my_active_booked_pin') || '').replace(/\D/g, '').trim();
-      const sheetPin = ride ? String(ride.safetyPin || '').replace(/\D/g, '').trim() : '';
-
-      // Match against sheet pin OR local booking pass pin
-      const isValid = (sheetPin && inputPin === sheetPin) || (localSavedPin && inputPin === localSavedPin);
-
-      if (!inputPin || inputPin.length !== 4 || !isValid) {
-        alert("Invalid PIN. Enter the exact 4-digit PIN displayed on your passenger's active booking pass.");
-        inputEl.value = '';
-        inputEl.focus();
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Verifying...';
-
-      // Lock in-transit state locally immediately
-      localStorage.setItem('my_in_transit_ride_id', rideId);
-      if (ride) {
-        ride.status = 'VERIFIED';
-      }
-
-      lastRenderedOfferStatus = null;
-      updateOfferTabState();
-      renderRides();
-
-      try {
-        await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'VERIFY_OTP',
-            rideId: rideId,
-            inputPin: inputPin
-          })
-        });
-      } catch (err) {}
-
-      alert('PIN Verified! Boarding complete.');
-      fetchLiveRides();
     }
 
     async function completeMyRide(rideId) {
