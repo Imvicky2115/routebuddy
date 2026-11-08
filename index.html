@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>RouteBuddy — Pune Commuter Peer-Pooling</title>
+  <title>MyRouteBuddy — Pune Commuter Peer-Pooling</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@
           <i data-lucide="zap" class="w-5 h-5 fill-current"></i>
         </div>
         <div>
-          <h1 class="text-base font-extrabold tracking-tight text-slate-900 leading-tight">RouteBuddy</h1>
+          <h1 class="text-base font-extrabold tracking-tight text-slate-900 leading-tight">MyRouteBuddy</h1>
           <p class="text-[11px] font-semibold text-slate-500">Pune Peer Pool</p>
         </div>
       </div>
@@ -75,7 +75,7 @@
               <div class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
                 <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
               </div>
-              <span class="font-extrabold text-slate-900 text-sm">RouteBuddy Menu</span>
+              <span class="font-extrabold text-slate-900 text-sm">MyRouteBuddy Menu</span>
             </div>
             <button onclick="toggleSidebar(false)" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
               <i data-lucide="x" class="w-4 h-4"></i>
@@ -102,7 +102,7 @@
               <a href="tel:8788337049" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
                 <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
               </a>
-              <a href="https://wa.me/918788337049?text=Hi%20RouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="flex-1 bg-slate-900 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
+              <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="flex-1 bg-slate-900 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
                 <i data-lucide="message-square" class="w-3.5 h-3.5"></i> WhatsApp
               </a>
             </div>
@@ -130,7 +130,7 @@
             </button>
             <button onclick="openModal('about-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
-                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About RouteBuddy & MVA
+                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About MyRouteBuddy & MVA
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
@@ -138,7 +138,7 @@
         </div>
 
         <div class="text-center text-[10px] text-slate-400 border-t border-slate-100 pt-3 mt-4">
-          RouteBuddy Pune • Clean Pune Commute
+          MyRouteBuddy Pune • Clean Pune Commute
         </div>
       </div>
     </div>
@@ -174,11 +174,13 @@
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
           <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for fuel share.</p>
+          <p><strong>How do I chat?</strong> Tap the WhatsApp button to chat directly with your pool buddy for pickup coordination.</p>
           <p><strong>How do I verify boarding?</strong> Show the 4-digit PIN on your active booking banner to the rider.</p>
         </div>
       </div>
     </div>
 
+    <!-- Enhanced Commuter Feedback Modal -->
     <div id="feedback-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl">
         <div class="flex items-center justify-between border-b pb-3">
@@ -191,7 +193,9 @@
         </div>
         <form onsubmit="handleFeedbackSubmit(event)" class="space-y-3">
           <textarea id="feedbackText" required rows="3" placeholder="Tell us how your ride or route matching went..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"></textarea>
-          <button type="submit" class="touch-target w-full bg-[#059669] text-white rounded-xl text-xs font-bold">Submit Feedback</button>
+          <button type="submit" id="btn-submit-feedback" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Send to Team
+          </button>
         </form>
       </div>
     </div>
@@ -199,7 +203,7 @@
     <div id="about-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl">
         <div class="flex items-center justify-between border-b pb-2">
-          <h3 class="font-extrabold text-sm text-slate-900">About RouteBuddy</h3>
+          <h3 class="font-extrabold text-sm text-slate-900">About MyRouteBuddy</h3>
           <button onclick="closeModal('about-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
@@ -251,7 +255,7 @@
       <div id="rides-feed-header" class="flex items-center justify-between px-1">
         <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking live rides...</span>
         <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Google Sheet
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Database
         </span>
       </div>
 
@@ -259,7 +263,7 @@
       <div id="rides-list" class="space-y-3.5 pb-2">
         <div class="flex flex-col items-center justify-center py-10 text-slate-400">
           <div class="loader mb-2.5"></div>
-          <p class="text-xs font-semibold text-slate-500">Connecting to Google Sheet...</p>
+          <p class="text-xs font-semibold text-slate-500">Connecting to MyRouteBuddy...</p>
         </div>
       </div>
     </main>
@@ -447,7 +451,7 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybpHyoelx15GXGjiG5XxW8xE0viWk7rGljJ2fipH5Apgn9gjn6SlGqGQ0OQEAXv6iW/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby13mxX9Lz76TrjJ8Jw2lyza9bOGXzUfQUqZU3ZW_LhCpXpJBzZHw1k72YWPQa9NUHN/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
@@ -473,6 +477,14 @@
         try { return JSON.parse(saved); } catch (e) {}
       }
       return null;
+    }
+
+    function cleanPhoneForWhatsApp(raw) {
+      if (!raw) return '8788337049';
+      const cleaned = String(raw).replace(/[^0-9]/g, '');
+      if (cleaned.length === 10) return '91' + cleaned;
+      if (cleaned.length > 10 && cleaned.startsWith('91')) return cleaned;
+      return '91' + cleaned;
     }
 
     function cleanTimeFormat(timeInput) {
@@ -616,7 +628,6 @@
 
       const bookedRide = allRides.find(r => r.id === myBookedRideId);
 
-      // Clean up when ride is completed or cancelled by rider
       if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
         localStorage.removeItem('my_active_booked_pin');
@@ -630,7 +641,8 @@
       const cleanFare = formatFare(bookedRide.fare);
       const cleanTime = formatTime(bookedRide.depTime);
       const isVerified = bookedRide.status === 'VERIFIED';
-      const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
+      const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
+      const riderWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(bookedRide.riderPhone)}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20MyRouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
 
       banner.classList.remove('hidden');
 
@@ -646,10 +658,15 @@
               <span class="text-xs bg-emerald-950/60 border border-emerald-400/40 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
-            <div>
-              <p class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">You are onboard with</p>
-              <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
-              <p class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">You are onboard with</p>
+                <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
+                <p class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
+              </div>
+              <a href="${riderWhatsAppUrl}" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-500/80 hover:bg-emerald-400 active:scale-95 text-white flex items-center justify-center shadow-md transition">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
+              </a>
             </div>
 
             <div class="bg-emerald-900/60 rounded-2xl p-3.5 text-xs space-y-2 border border-emerald-500/30">
@@ -677,7 +694,7 @@
           </div>
         `;
       } 
-      // STATE B: RESERVED (Waiting to board — shows PIN and Cancel button)
+      // STATE B: RESERVED (Waiting to board — shows PIN, Cancel, and WhatsApp)
       else {
         const pin = mySavedPin || bookedRide.safetyPin || '----';
         banner.innerHTML = `
@@ -712,10 +729,13 @@
             </div>
 
             <div class="flex items-center gap-2 pt-1">
-              <a href="${upiUrl}" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
-                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
+              <a href="${riderWhatsAppUrl}" target="_blank" class="px-3.5 py-2.5 bg-emerald-700/70 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300"></i> Chat
               </a>
-              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="px-3.5 py-2.5 bg-slate-800 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition flex items-center gap-1">
+              <a href="${upiUrl}" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare}
+              </a>
+              <button onclick="cancelMyPillionBooking('${bookedRide.id}')" class="px-3 py-2.5 bg-slate-800 hover:bg-rose-900 active:scale-95 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition flex items-center gap-1">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
               </button>
             </div>
@@ -751,7 +771,7 @@
       fetchLiveRides();
     }
 
-    // REFINED RIDE CARD RENDERER
+    // Refined Ride Cards with Full Itinerary and WhatsApp Buttons
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -810,12 +830,12 @@
         return;
       }
 
-      // Current calendar date label
       const todayDateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 
       container.innerHTML = visibleRides.map(ride => {
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
+        const riderWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(ride.riderPhone)}?text=Hi%20${encodeURIComponent(ride.riderName)}%2C%20I%20saw%20your%20MyRouteBuddy%20listing%20from%20${encodeURIComponent(ride.routeStart)}%20to%20${encodeURIComponent(ride.routeEnd)}.`;
 
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
           mySavedRides.includes(ride.id) || 
@@ -827,7 +847,7 @@
         return `
           <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3.5">
             
-            <!-- Header Row: Rider Identity, Status Badge, & Price -->
+            <!-- Header Row: Identity & Fare -->
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
@@ -847,7 +867,7 @@
                 </div>
               </div>
 
-              <!-- Price Box with Dedicated Icon -->
+              <!-- Price Box -->
               <div class="bg-emerald-50 text-emerald-800 border border-emerald-200/90 px-3 py-1 rounded-2xl text-right shrink-0">
                 <div class="text-base font-extrabold leading-tight flex items-center justify-end gap-0.5">
                   <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-700"></i>${cleanFare}
@@ -856,7 +876,7 @@
               </div>
             </div>
 
-            <!-- Full Unclipped Route Box with Visual Itinerary Stops & Date -->
+            <!-- Full Unclipped Route Box with Stopover Indicators -->
             <div class="bg-[#f8fafc] rounded-2xl p-3.5 border border-slate-100 space-y-2.5">
               <div class="space-y-1.5">
                 <div class="flex items-start gap-2.5">
@@ -888,7 +908,7 @@
               </div>
             </div>
 
-            <!-- Bottom Action Row: Metadata Badges + Full Touch Buttons -->
+            <!-- Action Area: Helmet Badges, WhatsApp Chat & Booking Controls -->
             <div class="flex items-center justify-between pt-1 gap-2">
               <div class="flex items-center gap-1.5 flex-wrap">
                 ${ride.hasHelmet ? `
@@ -900,6 +920,11 @@
                     No Helmet
                   </span>
                 `}
+                ${!isMyOwnRide ? `
+                  <a href="${riderWhatsAppUrl}" target="_blank" class="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center active:scale-95 transition" title="Chat on WhatsApp">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                  </a>
+                ` : ''}
               </div>
 
               <div>
@@ -918,7 +943,7 @@
                     </button>
                   `)}
                 ` : `
-                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare})" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
+                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
                     <i data-lucide="ticket" class="w-4 h-4"></i> Book Seat
                   </button>
                 `}
@@ -968,6 +993,8 @@
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
+        const passengerWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(myActiveRide.passengerPhone)}?text=Hi%20${encodeURIComponent(myActiveRide.passengerName)}%2C%20I%20am%20your%20MyRouteBuddy%20rider.%20I%20am%20arriving%20at%20pickup.`;
+
         activeCard.innerHTML = `
           <div class="bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
@@ -980,14 +1007,19 @@
               </div>
             </div>
 
-            <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-2">
-              <div class="flex justify-between">
+            <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-2.5">
+              <div class="flex justify-between items-center">
                 <span class="text-slate-500">Passenger Name:</span>
                 <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Contact Number:</span>
-                <a href="tel:${myActiveRide.passengerPhone}" class="font-extrabold text-emerald-700 underline">${myActiveRide.passengerPhone}</a>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500">Contact & Chat:</span>
+                <div class="flex items-center gap-2">
+                  <a href="tel:${myActiveRide.passengerPhone}" class="font-extrabold text-emerald-700 underline">${myActiveRide.passengerPhone}</a>
+                  <a href="${passengerWhatsAppUrl}" target="_blank" class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center active:scale-95 transition" title="Chat on WhatsApp">
+                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  </a>
+                </div>
               </div>
               <div class="flex justify-between border-t border-emerald-200/60 pt-2">
                 <span class="text-slate-500">Fuel Contribution:</span>
@@ -1283,13 +1315,14 @@
       updateOfferTabState();
     }
 
-    // Booking modal with UPI & Backend Status Update (BOOK_RIDE)
-    async function openBooking(id, rider, start, end, fare) {
+    // Booking modal with UPI & WhatsApp Handshake (BOOK_RIDE)
+    async function openBooking(id, rider, start, end, fare, rawPhone) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
       const decodedEnd = decodeURIComponent(end);
       const pin = Math.floor(1000 + Math.random() * 9000);
-      const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(decodedRider)}&am=${fare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
+      const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(decodedRider)}&am=${fare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
+      const riderWhatsAppUrl = `https://wa.me/${cleanPhoneForWhatsApp(decodeURIComponent(rawPhone || ''))}?text=Hi%20${encodeURIComponent(decodedRider)}%2C%20I%20just%20booked%20your%20pool%20ride%20from%20${encodeURIComponent(decodedStart)}%20to%20${encodeURIComponent(decodedEnd)}.%20My%20PIN%20is%20${pin}.`;
       const myProfile = getMyProfile();
 
       const passengerName = (myProfile && myProfile.name) ? myProfile.name : 'Pillion Commuter';
@@ -1342,6 +1375,10 @@
         </div>
 
         <div class="space-y-2 pt-2">
+          <a href="${riderWhatsAppUrl}" target="_blank" class="touch-target w-full bg-[#128c7e] hover:bg-[#075e54] active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md flex items-center justify-center gap-2">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            Coordinate Pickup on WhatsApp
+          </a>
           <a href="${upiUrl}" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md flex items-center justify-center gap-2">
             <i data-lucide="send" class="w-4 h-4"></i>
             Pay ₹${fare} Fuel Share via UPI (GPay / PhonePe)
@@ -1494,11 +1531,50 @@
       document.getElementById(id).classList.add('hidden');
     }
 
-    function handleFeedbackSubmit(e) {
+    // Submit Feedback to Backend (Logs in Sheet and Emails rajkumarashish75@gmail.com)
+    async function handleFeedbackSubmit(e) {
       e.preventDefault();
-      alert("Feedback submitted!");
+      const feedbackInput = document.getElementById('feedbackText');
+      const feedbackText = feedbackInput ? feedbackInput.value.trim() : '';
+      if (!feedbackText) return;
+
+      const btn = document.getElementById('btn-submit-feedback');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<div class="loader mr-2"></div> Sending...`;
+      }
+
+      const profile = getMyProfile() || {};
+      const deviceId = getOrCreateUserId();
+
+      const payload = {
+        action: 'SUBMIT_FEEDBACK',
+        userName: profile.name || 'Guest Commuter',
+        userPhone: profile.phone || '-',
+        userDeviceId: deviceId,
+        feedback: feedbackText
+      };
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error("Feedback post error:", err);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i> Send to Team`;
+        }
+        lucide.createIcons();
+      }
+
+      alert("Thank you! Your feedback has been received.");
       closeModal('feedback-modal');
-      document.getElementById('feedbackText').value = '';
+      if (feedbackInput) feedbackInput.value = '';
     }
 
     function toggleFilter(type) {
