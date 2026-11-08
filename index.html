@@ -56,7 +56,6 @@
 </head>
 <body class="min-h-screen flex justify-center pb-24 overflow-x-hidden">
 
-  <!-- Mobile Screen Shell -->
   <div class="w-full max-w-md bg-[#fbfcfd] min-h-screen flex flex-col relative shadow-md overflow-x-hidden border-x border-slate-200/60">
 
     <!-- Top Sticky Header -->
@@ -100,7 +99,6 @@
             </button>
           </div>
 
-          <!-- Quick Profile Card -->
           <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl cursor-pointer active:scale-98 transition">
             <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0">
               <span id="drawer-avatar-text">U</span>
@@ -111,19 +109,17 @@
             </div>
           </div>
 
-          <!-- Helpline Card -->
           <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2">
-            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Pune Commuter Helpline</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Pune Helpline</span>
             <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
             <p class="text-[11px] text-slate-500">Direct coordination assistance for Pune peer riders and pillions.</p>
-            <div class="flex gap-2 pt-1">
-              <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
+            <div class="pt-1">
+              <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="w-full bg-emerald-600 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
                 <i data-lucide="message-square" class="w-4 h-4"></i> WhatsApp Helpline
               </a>
             </div>
           </div>
 
-          <!-- Navigation Links -->
           <div class="space-y-1.5 pt-1">
             <button onclick="openModal('safety-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
@@ -145,7 +141,7 @@
             </button>
             <button onclick="openModal('about-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
               <span class="flex items-center gap-2">
-                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About MyRouteBuddy & MVA
+                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About MyRouteBuddy
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
@@ -170,10 +166,10 @@
           </button>
         </div>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-          <p><strong>1. Mandatory ISI Helmets:</strong> Both rider and pillion must wear BIS/ISI compliant helmets across Pune corridors.</p>
-          <p><strong>2. 4-Digit Verification PIN:</strong> Pillion shares the boarding verification PIN with the rider before departure.</p>
-          <p><strong>3. Section 66 MVA Compliance:</strong> Strict peer-to-peer fuel cost sharing (₹10–₹25 max) with zero commercial taxi markup.</p>
-          <p><strong>4. Strict Commute Locking:</strong> Bookings cannot be cancelled by pillions to prevent leaving pooled riders stranded.</p>
+          <p><strong>1. Mandatory Helmets:</strong> MVA Section 129 mandates BIS/ISI helmets for both rider and pillion.</p>
+          <p><strong>2. Exact 4-Digit Verification:</strong> The trip cannot begin without entering the exact matching passenger PIN.</p>
+          <p><strong>3. 100% Online UPI Payment:</strong> All fuel splits are handled online via UPI to prevent roadside disputes.</p>
+          <p><strong>4. Strict Commute Locking:</strong> Bookings cannot be cancelled by pillions once accepted.</p>
         </div>
       </div>
     </div>
@@ -189,9 +185,9 @@
           </button>
         </div>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-          <p><strong>Why are phone numbers hidden?</strong> To safeguard your privacy, direct mobile numbers are hidden. Confirmed commuters coordinate pickup via WhatsApp with +91 pre-filled.</p>
-          <p><strong>What payment methods are supported?</strong> You can pay directly via UPI (Google Pay, PhonePe, Paytm) or handover exact Cash (₹10–₹25 max) to your co-rider at drop-off.</p>
-          <p><strong>What happens when departure time passes?</strong> Unbooked rides expire instantly at departure time to ensure search feeds stay 100% active and accurate.</p>
+          <p><strong>Can I pay with cash?</strong> No. MyRouteBuddy enforces 100% online UPI payments (GPay/PhonePe/Paytm) to guarantee clear, dispute-free records.</p>
+          <p><strong>What if the rider enters a wrong PIN?</strong> The app verifies the exact 4 digits. If mismatched, the ride will not start.</p>
+          <p><strong>Why are unbooked rides removed?</strong> As soon as the departure clock passes, unbooked listings are removed to keep the feed fresh.</p>
         </div>
       </div>
     </div>
@@ -224,29 +220,9 @@
             <input type="tel" id="gatePhone" required placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
-          <!-- Mode of Payment Choice -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Preferred Mode of Payment</label>
-            <div class="grid grid-cols-2 gap-2">
-              <label class="flex items-center justify-center gap-1.5 p-2.5 border rounded-xl cursor-pointer bg-emerald-50/70 border-emerald-500 text-emerald-900 text-xs font-bold">
-                <input type="radio" name="gatePayMode" value="UPI" checked class="hidden">
-                <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-600"></i> UPI App
-              </label>
-              <label class="flex items-center justify-center gap-1.5 p-2.5 border rounded-xl cursor-pointer bg-slate-50 border-slate-200 text-slate-700 text-xs font-bold">
-                <input type="radio" name="gatePayMode" value="CASH" class="hidden">
-                <i data-lucide="banknote" class="w-3.5 h-3.5 text-slate-600"></i> Exact Cash
-              </label>
-            </div>
-          </div>
-
-          <!-- Spare Helmet Need Toggle -->
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <label class="flex items-center justify-between cursor-pointer">
-              <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <i data-lucide="shield" class="w-4 h-4 text-emerald-600"></i> I need a spare helmet
-              </span>
-              <input type="checkbox" id="gateNeedHelmet" checked class="w-4 h-4 text-emerald-600 rounded">
-            </label>
+          <div class="bg-emerald-50/80 p-3 rounded-xl border border-emerald-200 text-xs text-emerald-900 space-y-1">
+            <p class="font-bold flex items-center gap-1.5"><i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-700"></i> Payment: 100% Online UPI</p>
+            <p class="text-[11px] text-emerald-800">Direct ₹15–₹25 fuel share paid to rider via GPay / PhonePe / Paytm.</p>
           </div>
 
           <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-md transition flex items-center justify-center gap-2 mt-2">
@@ -288,10 +264,8 @@
       </div>
     </div>
 
-    <!-- TAB 0: HOME VIEW (WELCOME DASHBOARD) -->
+    <!-- TAB 0: HOME VIEW -->
     <main id="home-view" class="flex-1 px-4 py-3.5 space-y-4 overflow-x-hidden">
-      
-      <!-- Welcome Hero Banner -->
       <section class="bg-gradient-to-br from-emerald-700 via-emerald-800 to-slate-900 rounded-3xl p-5 text-white shadow-lg space-y-3 relative overflow-hidden">
         <div class="flex items-center justify-between">
           <span class="inline-flex items-center gap-1.5 bg-emerald-500/30 border border-emerald-400/40 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full text-emerald-200">
@@ -307,24 +281,22 @@
           <p class="text-xs text-emerald-100/90 mt-1 leading-relaxed">Share empty two-wheeler seats across Pune tech corridors. Save petrol, cut traffic, and commute together.</p>
         </div>
 
-        <!-- Metric Badges -->
         <div class="grid grid-cols-3 gap-2 pt-2 border-t border-emerald-600/50 text-center">
           <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
             <span class="block text-base font-extrabold text-emerald-300">₹25 max</span>
             <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Fuel Split</span>
           </div>
           <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
-            <span class="block text-base font-extrabold text-teal-300">0%</span>
-            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Commission</span>
+            <span class="block text-base font-extrabold text-teal-300">100%</span>
+            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Online UPI</span>
           </div>
           <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
             <span class="block text-base font-extrabold text-white">4-Digit</span>
-            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Safety PIN</span>
+            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Verified PIN</span>
           </div>
         </div>
       </section>
 
-      <!-- Quick Action Jumpers -->
       <div class="grid grid-cols-2 gap-2.5">
         <button onclick="switchTab('find')" class="touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-3.5 text-left shadow-2xs active:scale-98 transition flex flex-col justify-between">
           <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-2">
@@ -347,7 +319,6 @@
         </button>
       </div>
 
-      <!-- Popular Pune Tech Corridors -->
       <section class="bg-white rounded-3xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
         <div class="flex items-center justify-between">
           <h3 class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
@@ -372,57 +343,15 @@
             </div>
             <span class="text-xs font-extrabold text-emerald-700">₹15</span>
           </div>
-
-          <div onclick="applyCorridorPreset('Kale Padal, Hadapsar', 'Yerwada Commerzone')" class="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/70 rounded-2xl cursor-pointer active:scale-98 transition">
-            <div class="text-xs">
-              <span class="font-bold text-slate-800">Kale Padal → Yerwada</span>
-              <span class="block text-[10px] text-slate-400 mt-0.5">Via Gadital & Camp • 35 mins</span>
-            </div>
-            <span class="text-xs font-extrabold text-emerald-700">₹20</span>
-          </div>
         </div>
-      </section>
-
-      <!-- Peer Trust & Safety Notice -->
-      <section class="bg-amber-50/80 border border-amber-200/80 rounded-3xl p-4 text-xs space-y-1.5">
-        <div class="flex items-center gap-1.5 text-amber-900 font-extrabold">
-          <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i> Reciprocal Peer Responsibility
-        </div>
-        <p class="text-[11px] text-amber-800 leading-relaxed">
-          MyRouteBuddy operates strictly on mutual trust. Once a pillion reserves a seat, the rider counts on that pickup. Please show up on time and verify the 4-digit PIN prior to rolling.
-        </p>
       </section>
     </main>
 
-    <!-- TAB 1: FIND RIDE VIEW -->
+    <!-- TAB 1: FIND RIDE VIEW (MINIMALIST & CLUTTER-FREE) -->
     <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5 overflow-x-hidden hidden">
       
       <!-- PILLION ACTIVE TRANSIT BANNER -->
       <div id="pillion-active-booking-banner" class="hidden"></div>
-
-      <!-- Corridor Radar Card -->
-      <section id="corridor-radar-section" class="bg-[#0f172a] rounded-3xl p-4 text-white shadow-md relative overflow-hidden">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
-          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span id="corridor-title">Hadapsar → Kharadi / Viman Nagar</span>
-          </div>
-          <span class="text-xs font-extrabold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800/60">₹15</span>
-        </div>
-        <div class="grid grid-cols-2 gap-3 text-xs">
-          <div>
-            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rider's Journey</p>
-            <p class="font-bold text-slate-100 mt-0.5 leading-snug break-words" id="radar-journey">Hadapsar</p>
-          </div>
-          <div>
-            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Pickup Segment</p>
-            <p class="font-bold text-slate-100 mt-0.5 leading-snug break-words" id="radar-pickup">Kharadi / Viman Nagar</p>
-          </div>
-        </div>
-        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3.5 overflow-hidden">
-          <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-2/3 rounded-full"></div>
-        </div>
-      </section>
 
       <!-- Pill Filters -->
       <div id="pill-filter-bar" class="grid grid-cols-2 gap-2 pt-0.5">
@@ -434,10 +363,10 @@
         </button>
       </div>
 
-      <div id="rides-feed-header" class="flex items-center justify-between px-1">
-        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking live rides...</span>
+      <div class="flex items-center justify-between px-1">
+        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking seats...</span>
         <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Feed
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active Corridors
         </span>
       </div>
 
@@ -457,7 +386,7 @@
       <div id="offer-form-card" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div>
           <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
-          <p class="text-xs text-slate-500 mt-0.5">All details are strictly required to ensure commuter safety.</p>
+          <p class="text-xs text-slate-500 mt-0.5">All fields required. Plate number is protected until booking.</p>
         </div>
 
         <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
@@ -468,7 +397,7 @@
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Contact WhatsApp <span class="text-rose-500">*</span></label>
+              <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Number <span class="text-rose-500">*</span></label>
               <input type="tel" id="riderPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
             <div>
@@ -518,8 +447,7 @@
           </div>
 
           <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            Post Ride to Live Database
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Post Ride to Database
           </button>
         </form>
       </div>
@@ -566,7 +494,7 @@
               <input type="tel" id="userPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Default Daily Time</label>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Daily Departure</label>
               <input type="time" id="userDefaultTime" value="09:15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
           </div>
@@ -597,7 +525,7 @@
       </div>
     </main>
 
-    <!-- Bottom Navigation Bar: 4 Primary Tabs (Home, Find, Offer, Profile) -->
+    <!-- Bottom Navigation Bar: 4 Primary Tabs -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-1.5">
       <div class="max-w-md mx-auto grid grid-cols-4 px-2">
         <button onclick="switchTab('home')" id="nav-home" class="relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1">
@@ -640,7 +568,7 @@
     let lastRenderedOfferRideId = null;
     let pendingBookingPayload = null;
 
-    // SCREENSHOT & PERSONAL DATA CLIPBOARD COUNTERMEASURES
+    // SCREENSHOT COUNTERMEASURE
     window.addEventListener('keyup', (e) => {
       if (e.key === 'PrintScreen') {
         navigator.clipboard.writeText('');
@@ -704,7 +632,7 @@
       return cleanTimeFormat(timeStr);
     }
 
-    // STRICT INSTANT EXPIRATION: Grace period set to 0 minutes for unbooked rides
+    // STRICT INSTANT EXPIRATION: Unbooked rides drop off immediately
     function isRideExpired(timeStr, graceMinutes = 0) {
       if (!timeStr) return false;
       const now = new Date();
@@ -777,7 +705,6 @@
 
         const valid = (data || []).filter(r => {
           if (cancelledLocally.includes(r.id)) return false;
-          // Booked and Verified rides do not vanish; unbooked rides expire instantly at 0 mins
           if (r.status === 'BOOKED' || r.status === 'VERIFIED') return true;
           return !isRideExpired(r.depTime, 0);
         });
@@ -789,16 +716,6 @@
         });
 
         allRides = valid;
-
-        if (allRides.length > 0) {
-          const top = allRides[allRides.length - 1];
-          const cTitle = document.getElementById('corridor-title');
-          const rJourney = document.getElementById('radar-journey');
-          const rPickup = document.getElementById('radar-pickup');
-          if (cTitle) cTitle.innerText = `${top.routeStart} → ${top.routeEnd}`;
-          if (rJourney) rJourney.innerText = top.routeStart;
-          if (rPickup) rPickup.innerText = top.routeEnd;
-        }
 
         renderPillionActiveBanner();
         renderRides();
@@ -831,7 +748,7 @@
       }
     }
 
-    // PILLION BANNER (PHONE NUMBERS HIDDEN, WHATSAPP ONLY, BOARDING PIN ICON REFINED)
+    // PILLION BANNER (PHONE HIDDEN, ONLINE UPI ENFORCED, PIN BADGE REFINED)
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -862,13 +779,12 @@
       const isVerified = bookedRide.status === 'VERIFIED';
       const waPhone = cleanPhoneForWhatsApp(bookedRide.riderPhone);
       const vehiclePlate = bookedRide.vehiclePlate || 'MH12 Registered';
-      const myPaymentMode = localStorage.getItem('routebuddy_pay_mode') || 'UPI';
       const upiUrl = `upi://pay?pa=8788337049@okaxis&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
       const riderWhatsAppUrl = `https://wa.me/${waPhone}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20MyRouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
 
       banner.classList.remove('hidden');
 
-      // STATE A: VERIFIED (ONBOARD — ZERO CANCEL, ZERO PIN, NO PHONE NUMBER)
+      // STATE A: VERIFIED (ONBOARD)
       if (isVerified) {
         banner.innerHTML = `
           <div class="privacy-guard bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
@@ -882,7 +798,7 @@
 
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">You are onboard with</p>
+                <p class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">Onboard with</p>
                 <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
                 <div class="flex items-center gap-2 mt-1">
                   <span class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</span>
@@ -894,35 +810,37 @@
               </a>
             </div>
 
-            <div class="bg-emerald-900/60 rounded-2xl p-3.5 text-xs space-y-2 border border-emerald-500/30">
-              <div class="flex items-start gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
-                <div>
-                  <span class="text-[10px] uppercase font-bold text-emerald-300 block">Drop-off Destination</span>
-                  <span class="font-bold text-white leading-snug break-words">${bookedRide.routeEnd}</span>
-                </div>
+            <!-- Contextual Pillion Safety Warning -->
+            <div class="bg-emerald-900/80 rounded-2xl p-3 text-[11px] text-emerald-100 border border-emerald-500/40 space-y-1">
+              <div class="flex items-center gap-1.5 font-bold text-emerald-300">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Safety Verification Notice
               </div>
-              <div class="flex justify-between border-t border-emerald-700/50 pt-2">
-                <span class="text-emerald-300">Status:</span>
-                <span class="text-emerald-200 font-bold">Boarded on Two-Wheeler</span>
+              <p class="leading-tight">Verify that the vehicle plate matches <strong>${vehiclePlate}</strong>. Pay fuel contribution via UPI.</p>
+            </div>
+
+            <div class="bg-emerald-900/60 rounded-2xl p-3 text-xs space-y-1.5 border border-emerald-500/30">
+              <div class="flex justify-between">
+                <span class="text-emerald-300">Drop-off:</span>
+                <span class="font-bold text-white text-right break-words">${bookedRide.routeEnd}</span>
+              </div>
+              <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
+                <span class="text-emerald-300">Payment:</span>
+                <span class="text-emerald-200 font-bold">100% Online UPI</span>
               </div>
             </div>
 
-            <div class="pt-1">
-              ${myPaymentMode === 'UPI' ? `
-                <a href="${upiUrl}" class="touch-target w-full bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-3 rounded-2xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
-                  <i data-lucide="send" class="w-4 h-4"></i> Pay ₹${cleanFare} via UPI (GPay/PhonePe)
-                </a>
-              ` : `
-                <div class="bg-emerald-950/60 border border-emerald-400/40 rounded-2xl p-3 text-center text-xs font-bold text-emerald-100 flex items-center justify-center gap-2">
-                  <i data-lucide="banknote" class="w-4 h-4 text-emerald-300"></i> Mode: Exact Cash on Drop-off (₹${cleanFare})
-                </div>
-              `}
+            <div class="pt-1 flex gap-2">
+              <a href="${upiUrl}" class="touch-target flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-3 rounded-2xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="send" class="w-4 h-4"></i> Pay ₹${cleanFare} via UPI
+              </a>
+              <a href="tel:+918788337049" class="px-4 py-3 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1 shadow-md">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i> SOS
+              </a>
             </div>
           </div>
         `;
       } 
-      // STATE B: RESERVED (BOARDING PIN TICKET DESIGN REFINED)
+      // STATE B: RESERVED (TICKET STYLE PIN BADGE & WARNING)
       else {
         const pin = mySavedPin || bookedRide.safetyPin || '----';
         banner.innerHTML = `
@@ -945,7 +863,7 @@
                 </div>
               </div>
 
-              <!-- REFINED BOARDING PIN BADGE -->
+              <!-- Refined Boarding PIN Badge -->
               <div class="bg-gradient-to-br from-emerald-950 to-slate-900 border-2 border-emerald-400/60 px-4 py-2.5 rounded-2xl shadow-inner text-center">
                 <div class="flex items-center justify-center gap-1 text-[9px] uppercase tracking-wider text-emerald-300 font-bold mb-0.5">
                   <i data-lucide="key" class="w-3 h-3"></i> Boarding PIN
@@ -954,39 +872,39 @@
               </div>
             </div>
 
+            <!-- Route Summary (Unclipped) -->
             <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-2 border border-slate-700">
-              <div class="flex items-start gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
-                <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeStart} → ${bookedRide.routeEnd}</span>
+              <div class="space-y-1">
+                <div class="flex items-start gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
+                  <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeStart}</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="w-2 h-2 rounded-full bg-rose-400 mt-1 shrink-0"></span>
+                  <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeEnd}</span>
+                </div>
               </div>
               <div class="flex items-center justify-between border-t border-slate-700/80 pt-1.5 text-slate-300">
                 <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Departs: <strong class="text-white">${cleanTime}</strong></span>
-                <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded-md font-bold text-emerald-300">Pay: ${myPaymentMode}</span>
+                <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded-md font-bold text-emerald-300">100% Online UPI</span>
               </div>
             </div>
 
-            <!-- Non-Cancellable Warning -->
+            <!-- Non-Cancellable Peer Safety Alert -->
             <div class="bg-amber-950/40 border border-amber-500/40 rounded-xl p-2.5 flex items-start gap-2">
-              <i data-lucide="lock" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
               <p class="text-[10px] text-amber-200 leading-snug">
-                <strong>Non-Cancellable Peer Commute:</strong> Your seat is confirmed. Your co-rider coordinates exclusively via WhatsApp.
+                <strong>Safety & Reliability:</strong> Cancellations locked. Ensure helmet is worn before boarding. Coordinate exclusively via WhatsApp.
               </p>
             </div>
 
-            <!-- ACTION BUTTONS: WHATSAPP-ONLY & PAYMENT (NO PHONE NUMBERS) -->
             <div class="grid grid-cols-2 gap-2 pt-1">
               <a href="${riderWhatsAppUrl}" target="_blank" class="h-11 px-3.5 bg-emerald-700/90 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
                 <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300 shrink-0"></i> WhatsApp Rider
               </a>
-              ${myPaymentMode === 'UPI' ? `
-                <a href="${upiUrl}" class="h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm">
-                  <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} (UPI)
-                </a>
-              ` : `
-                <div class="h-11 bg-slate-800 border border-slate-600 text-slate-200 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5">
-                  <i data-lucide="banknote" class="w-3.5 h-3.5 text-emerald-400"></i> Cash at Drop
-                </div>
-              `}
+              <a href="${upiUrl}" class="h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} (UPI)
+              </a>
             </div>
           </div>
         `;
@@ -994,7 +912,7 @@
       lucide.createIcons();
     }
 
-    // DIRECT 1-TAP BOOKING WITH PROFILE VALIDATION & PAYMENT PREFERENCE
+    // DIRECT BOOKING (VALIDATES IDENTITY, APPLIES UPI DEFAULT)
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1013,8 +931,6 @@
       e.preventDefault();
       const name = document.getElementById('gateFullName').value.trim();
       const phone = document.getElementById('gatePhone').value.trim();
-      const selectedPayMode = document.querySelector('input[name="gatePayMode"]:checked')?.value || 'UPI';
-      const needHelmet = document.getElementById('gateNeedHelmet').checked;
 
       if (!name || phone.length < 10) {
         alert('Please enter a valid full name and 10-digit WhatsApp number.');
@@ -1024,9 +940,7 @@
       let profile = getMyProfile() || {};
       profile.name = name;
       profile.phone = phone;
-      profile.needHelmet = needHelmet;
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
-      localStorage.setItem('routebuddy_pay_mode', selectedPayMode);
 
       closeModal('profile-gate-modal');
 
@@ -1062,11 +976,11 @@
         console.error("Booking post error:", e);
       }
 
-      alert(`Seat confirmed with ${decodeURIComponent(rider)}! Your boarding PIN is ${pin}. Co-ordinate via WhatsApp on your active pass.`);
+      alert(`Seat confirmed with ${decodeURIComponent(rider)}! Your boarding PIN is ${pin}. Check active pass.`);
       fetchLiveRides();
     }
 
-    // RENDER RIDE CARDS (EXPIRED UNBOOKED RIDES ARE STRICTLY FILTERED OUT)
+    // RENDER RIDE CARDS (UNCLUTTERED FEED)
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -1081,7 +995,7 @@
         container.innerHTML = `
           <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
             <p class="text-xs font-bold text-slate-800">Commute In Progress</p>
-            <p class="text-[11px] text-slate-400">You are onboard with ${myActiveBookedRide.riderName}. You cannot book another seat until you are dropped off.</p>
+            <p class="text-[11px] text-slate-400">You are onboard with ${myActiveBookedRide.riderName}. Dual bookings are locked until drop-off.</p>
           </div>
         `;
         document.getElementById('verified-count').innerText = `1 active commute`;
@@ -1110,13 +1024,13 @@
       });
 
       const visibleRides = Array.from(riderMap.values());
-      document.getElementById('verified-count').innerText = `${visibleRides.length} active seats`;
+      document.getElementById('verified-count').innerText = `${visibleRides.length} available seats`;
 
       if (visibleRides.length === 0) {
         container.innerHTML = `
           <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-slate-200 p-6">
             <p class="text-xs font-bold text-slate-700">No active seats right now</p>
-            <p class="text-[11px] text-slate-400 mt-1">Rides vanish once departure time passes. Tap 'Offer Seat' to list a commute!</p>
+            <p class="text-[11px] text-slate-400 mt-1">Unbooked rides expire automatically at departure time.</p>
           </div>
         `;
         lucide.createIcons();
@@ -1165,10 +1079,11 @@
                 <div class="text-base font-extrabold leading-tight flex items-center justify-end gap-0.5">
                   <i data-lucide="indian-rupee" class="w-3.5 h-3.5 text-emerald-700"></i>${cleanFare}
                 </div>
-                <div class="text-[9px] font-semibold uppercase tracking-wider text-emerald-700/80">fuel split</div>
+                <div class="text-[9px] font-semibold uppercase tracking-wider text-emerald-700/80">fuel share</div>
               </div>
             </div>
 
+            <!-- Clean Route Segment -->
             <div class="bg-[#f8fafc] rounded-2xl p-3 border border-slate-100 space-y-2">
               <div class="space-y-1.5">
                 <div class="flex items-start gap-2.5">
@@ -1199,15 +1114,15 @@
               </div>
             </div>
 
-            <!-- Spare Helmet Indicator Tag -->
+            <!-- Spare Helmet Indicator -->
             <div class="flex items-center justify-between text-xs pt-0.5">
               ${ride.hasHelmet ? `
                 <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Spare Helmet: Yes
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Spare Helmet Included
                 </span>
               ` : `
-                <span class="text-[11px] font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60">
-                  Spare Helmet: Not Available
+                <span class="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60">
+                  Helmet Not Provided
                 </span>
               `}
             </div>
@@ -1220,11 +1135,11 @@
                   </button>
                 ` : (isVerified ? `
                   <button onclick="switchTab('offer')" class="touch-target w-full bg-teal-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="navigation" class="w-4 h-4"></i> Commute In Progress • Controls
+                    <i data-lucide="navigation" class="w-4 h-4"></i> Commute In Progress
                   </button>
                 ` : `
                   <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target w-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold active:scale-98 transition flex items-center justify-center gap-1.5">
-                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel This Listing
+                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel Listing
                   </button>
                 `)}
               ` : `
@@ -1241,7 +1156,7 @@
       lucide.createIcons();
     }
 
-    // RIDER DASHBOARD (VERIFY BUTTON UNCROWDED, PHONE NUMBERS HIDDEN — WHATSAPP ONLY)
+    // RIDER DASHBOARD (STRICT PIN VALIDATION, FULL ROUTE, MINIMAL DROP-OFF)
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
@@ -1272,7 +1187,7 @@
       lastRenderedOfferStatus = targetState;
       lastRenderedOfferRideId = myActiveRide ? myActiveRide.id : null;
 
-      // STATE 1: PASSENGER BOOKED (UNCROWDED PIN INPUT + VERIFY BUTTON, NO VISIBLE PHONE NUMBER)
+      // STATE 1: PASSENGER BOOKED
       if (targetState === 'BOOKED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1285,32 +1200,54 @@
             <div class="flex items-center justify-between border-b pb-3">
               <div>
                 <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">Seat Reserved</span>
-                <h2 class="text-base font-extrabold text-slate-900 mt-1">Passenger Confirmed!</h2>
+                <h2 class="text-base font-extrabold text-slate-900 mt-1">Passenger Confirmed</h2>
               </div>
               <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
                 <i data-lucide="user-check" class="w-5 h-5"></i>
               </div>
             </div>
 
-            <!-- PASSENGER CARD WITH PHONE NUMBER REMOVED — WHATSAPP CHAT ONLY -->
+            <!-- Passenger Details (WhatsApp Only) -->
             <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-3">
               <div class="flex justify-between items-center">
                 <div>
-                  <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Confirmed Passenger</span>
+                  <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Passenger</span>
                   <span class="font-extrabold text-slate-900 text-sm">${myActiveRide.passengerName}</span>
                 </div>
-                <a href="${passengerWhatsAppUrl}" target="_blank" class="h-10 px-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-sm transition" title="Coordinate on WhatsApp">
+                <a href="${passengerWhatsAppUrl}" target="_blank" class="h-10 px-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-sm transition">
                   <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
                 </a>
               </div>
               <div class="flex justify-between items-center border-t border-emerald-200/60 pt-2 text-slate-600">
-                <span>Fuel Split Contribution:</span>
-                <span class="font-extrabold text-slate-900 text-sm">₹${formatFare(myActiveRide.fare)}</span>
+                <span>Fuel Split:</span>
+                <span class="font-extrabold text-slate-900 text-sm">₹${formatFare(myActiveRide.fare)} (Online UPI)</span>
               </div>
             </div>
 
-            <!-- SPACIOUS, UNCROWDED PIN INPUT & VERIFY BUTTON -->
-            <form id="form-verify-otp" onsubmit="handleVerifyOtp(event, '${myActiveRide.id}')" class="space-y-3 pt-1">
+            <!-- Full Unclipped Route View for Rider -->
+            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
+              <div class="space-y-1">
+                <div>
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Pickup Location</span>
+                  <p class="font-bold text-slate-900 leading-snug break-words">${myActiveRide.routeStart}</p>
+                </div>
+                <div class="border-t border-slate-200 pt-1 mt-1">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Drop-off Destination</span>
+                  <p class="font-bold text-slate-900 leading-snug break-words">${myActiveRide.routeEnd}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contextual Rider Safety Notice -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5">
+              <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+              <p class="text-[11px] text-amber-900 leading-tight">
+                <strong>Safety Verification:</strong> Ensure passenger wears an ISI helmet before rolling. Enter the exact 4-digit PIN displayed on their active pass.
+              </p>
+            </div>
+
+            <!-- Strict PIN Verification Form -->
+            <form id="form-verify-otp" onsubmit="handleVerifyOtp(event, '${myActiveRide.id}', '${myActiveRide.safetyPin}')" class="space-y-3 pt-1">
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Enter Passenger's 4-Digit Boarding PIN</label>
                 <input type="tel" pattern="[0-9]*" id="riderInputOtp" required placeholder="• • • •" maxlength="4" class="w-full h-12 bg-slate-50 border-2 border-slate-300 rounded-2xl text-center font-mono font-black text-2xl tracking-[0.4em] text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
@@ -1319,7 +1256,6 @@
               <button type="submit" id="btn-verify-otp" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
                 <i data-lucide="shield-check" class="w-5 h-5"></i> Verify PIN & Start Commute
               </button>
-              <p class="text-[11px] text-slate-400 text-center">Ask the passenger for the 4-digit PIN on their active ticket.</p>
             </form>
 
             <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
@@ -1329,7 +1265,7 @@
         `;
         lucide.createIcons();
       }
-      // STATE 2: RIDER IN TRANSIT (LOCKED)
+      // STATE 2: RIDER IN TRANSIT (MINIMAL DROP-OFF CONTROL)
       else if (targetState === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1346,33 +1282,25 @@
               </div>
             </div>
 
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-3">
-              <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
-              <div class="text-xs text-amber-900">
-                <p class="font-bold">Active Commute Locked</p>
-                <p class="text-[11px] text-amber-700 mt-0.5 leading-snug">
-                  You cannot list or accept another ride until you drop off <strong>${myActiveRide.passengerName}</strong> at their destination.
-                </p>
-              </div>
-            </div>
-
+            <!-- Full Unclipped Destination View -->
             <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100">
               <div class="flex justify-between">
-                <span class="text-slate-500 font-semibold">Passenger:</span>
+                <span class="text-slate-500">Passenger:</span>
                 <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500 font-semibold">Destination:</span>
-                <span class="font-bold text-slate-800 break-words">${myActiveRide.routeEnd}</span>
+              <div class="border-t border-slate-200 pt-2">
+                <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Destination</span>
+                <p class="font-bold text-slate-900 text-sm mt-0.5 leading-snug break-words">${myActiveRide.routeEnd}</p>
               </div>
               <div class="flex justify-between border-t border-slate-200/60 pt-2">
-                <span class="text-slate-500 font-semibold">Fuel Contribution:</span>
+                <span class="text-slate-500">Online UPI Fuel Split:</span>
                 <span class="font-extrabold text-emerald-700">₹${formatFare(myActiveRide.fare)}</span>
               </div>
             </div>
 
-            <button onclick="completeMyRide('${myActiveRide.id}');" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-md transition flex items-center justify-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> Drop-off Complete / End Ride
+            <!-- Minimal Drop-off Button for Rider -->
+            <button onclick="completeMyRide('${myActiveRide.id}');" class="h-12 w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="check" class="w-4 h-4"></i> Complete Drop-off
             </button>
           </div>
         `;
@@ -1394,21 +1322,19 @@
             </div>
 
             <div class="bg-[#f8fafc] p-4 rounded-2xl border border-slate-100 text-xs space-y-2.5">
-              <div class="flex justify-between">
-                <span class="text-slate-500">Route:</span>
-                <span class="font-bold text-slate-800 break-words">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</span>
+              <div class="space-y-1">
+                <div>
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Route</span>
+                  <p class="font-bold text-slate-800 break-words">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</p>
+                </div>
               </div>
-              <div class="flex justify-between">
+              <div class="flex justify-between border-t border-slate-200/60 pt-2">
                 <span class="text-slate-500">Departure Time:</span>
                 <span class="font-bold text-slate-800">${formatTime(myActiveRide.depTime)}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-500">Two-Wheeler:</span>
-                <span class="font-bold text-slate-800">${myActiveRide.bikeModel}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Plate Number:</span>
-                <span class="font-bold text-slate-800 uppercase font-mono">${myActiveRide.vehiclePlate || 'MH12 Registered'}</span>
+                <span class="font-bold text-slate-800">${myActiveRide.bikeModel} (${myActiveRide.vehiclePlate || 'Plate Listed'})</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-500">Spare Helmet:</span>
@@ -1416,11 +1342,11 @@
               </div>
               <div class="flex justify-between border-t border-slate-200/60 pt-2">
                 <span class="text-slate-500">Fuel Contribution:</span>
-                <span class="font-extrabold text-emerald-700 text-sm">₹${formatFare(myActiveRide.fare)}</span>
+                <span class="font-extrabold text-emerald-700 text-sm">₹${formatFare(myActiveRide.fare)} (Online UPI)</span>
               </div>
             </div>
 
-            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically at departure time. Once booked, passenger identity and PIN inputs appear here.</p>
+            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically at departure time. Once booked, passenger details and PIN inputs appear here.</p>
 
             <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
               <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing
@@ -1511,17 +1437,27 @@
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Live Database`;
+          btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Database`;
         }
         lucide.createIcons();
       }
     }
 
-    // VERIFY OTP HANDSHAKE
-    async function handleVerifyOtp(e, rideId) {
+    // STRICT BOARDING PIN VALIDATION (BLOCKS INCORRECT PIN)
+    async function handleVerifyOtp(e, rideId, expectedPin) {
       e.preventDefault();
-      const inputPin = document.getElementById('riderInputOtp').value.trim();
+      const inputEl = document.getElementById('riderInputOtp');
+      const inputPin = inputEl.value.trim();
       const btn = document.getElementById('btn-verify-otp');
+
+      // INDEPENDENT PREMISE VERIFICATION: Check entered PIN against exact saved PIN
+      if (String(inputPin) !== String(expectedPin)) {
+        alert("Invalid PIN. The PIN you entered does not match the passenger's boarding PIN. Please ask the passenger for the exact 4-digit PIN on their active ticket.");
+        inputEl.value = '';
+        inputEl.focus();
+        return;
+      }
+
       btn.disabled = true;
       btn.innerText = 'Verifying...';
 
@@ -1574,7 +1510,7 @@
         });
       } catch (err) {}
 
-      alert("Drop-off complete! Thank you for reducing traffic on Pune tech corridors.");
+      alert("Drop-off complete! Thank you for pooling.");
       updateOfferTabState();
       renderRides();
       fetchLiveRides();
@@ -1625,7 +1561,6 @@
       if (endInput) endInput.value = end;
     }
 
-    // Profile Management
     function setUserRole(role) {
       currentUserRole = role;
       const pillionBtn = document.getElementById('role-btn-pillion');
