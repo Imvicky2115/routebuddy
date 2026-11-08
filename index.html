@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>MyRouteBuddy — Pune Commuter Peer-Pooling</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Pinned Stable Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- QR Code Generator & Scanner CDNs -->
@@ -606,7 +607,6 @@
   <script>
     // SUPABASE CREDENTIALS & CLIENT INITIALIZATION
     const SUPABASE_URL = "https://yrrgdsnwmlhtwfqvlbpz.supabase.co";
-    // Clean lowercase prefix for reliable client auth headers
     const SUPABASE_ANON_KEY = "sb_publishable_oDuyUYbd5zo3xjlXp5vLWg_t_PrwsvQ";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -642,6 +642,13 @@
         }
       }
     });
+
+    // SAFE ICON RENDERER (Ensures icons render under all browser timings)
+    function safeRenderIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
 
     function getOrCreateUserId() {
       let uid = localStorage.getItem('routebuddy_user_id');
@@ -809,6 +816,7 @@
         console.error("fetchLiveRides error:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
+        safeRenderIcons();
       }
     }
 
@@ -816,8 +824,7 @@
     function setupRealtimeSync() {
       supabase
         .channel('public:rides')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, (payload) => {
-          // Debounce rapid events to prevent DOM churn
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, () => {
           clearTimeout(realtimeDebounceTimer);
           realtimeDebounceTimer = setTimeout(() => {
             fetchLiveRides();
@@ -1030,7 +1037,7 @@
           }
         }, 50);
       }
-      lucide.createIcons();
+      safeRenderIcons();
     }
 
     // DIRECT 1-TAP BOOKING
@@ -1119,7 +1126,7 @@
           </div>
         `;
         document.getElementById('verified-count').innerText = `1 active commute`;
-        lucide.createIcons();
+        safeRenderIcons();
         return;
       }
 
@@ -1153,7 +1160,7 @@
             <p class="text-[11px] text-slate-400 mt-1">Unbooked rides expire automatically at departure time.</p>
           </div>
         `;
-        lucide.createIcons();
+        safeRenderIcons();
         return;
       }
 
@@ -1271,7 +1278,7 @@
         `;
       }).join('');
 
-      lucide.createIcons();
+      safeRenderIcons();
     }
 
     // RIDER DASHBOARD WITH QR SCANNER TRIGGER
@@ -1373,7 +1380,7 @@
             </button>
           </div>
         `;
-        lucide.createIcons();
+        safeRenderIcons();
       }
       // STATE 2: RIDER IN TRANSIT
       else if (targetState === 'VERIFIED') {
@@ -1414,7 +1421,7 @@
             </button>
           </div>
         `;
-        lucide.createIcons();
+        safeRenderIcons();
       }
       // STATE 3: Ride Available
       else if (targetState === 'AVAILABLE') {
@@ -1463,7 +1470,7 @@
             </button>
           </div>
         `;
-        lucide.createIcons();
+        safeRenderIcons();
       }
       else {
         activeCard.classList.add('hidden');
@@ -1477,7 +1484,7 @@
     function startQrScanner(rideId) {
       activeScanningRideId = rideId;
       document.getElementById('qr-scanner-modal').classList.remove('hidden');
-      lucide.createIcons();
+      safeRenderIcons();
 
       if (typeof Html5Qrcode === 'undefined') {
         alert("Camera scanner library loading. Please try again in a moment.");
@@ -1485,7 +1492,6 @@
         return;
       }
 
-      // Ensure previous scanner element is clear
       const readerEl = document.getElementById("qr-reader");
       if (readerEl) readerEl.innerHTML = '';
 
@@ -1635,7 +1641,7 @@
           btn.disabled = false;
           btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Database`;
         }
-        lucide.createIcons();
+        safeRenderIcons();
       }
     }
 
@@ -1839,13 +1845,13 @@
       const drawer = document.getElementById('side-drawer');
       if (open) drawer.classList.remove('hidden');
       else drawer.classList.add('hidden');
-      lucide.createIcons();
+      safeRenderIcons();
     }
 
     function openModal(id) {
       toggleSidebar(false);
       document.getElementById(id).classList.remove('hidden');
-      lucide.createIcons();
+      safeRenderIcons();
     }
 
     function closeModal(id) {
@@ -1888,7 +1894,7 @@
           btn.disabled = false;
           btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i> Send to Team`;
         }
-        lucide.createIcons();
+        safeRenderIcons();
       }
     }
 
@@ -1949,16 +1955,17 @@
         navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
       }
       updateNavBadges();
-      lucide.createIcons();
+      safeRenderIcons();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
+      safeRenderIcons();
       loadSavedProfile();
       populateFormFromProfile();
       fetchLiveRides();
       setupRealtimeSync();
       checkForAppUpdates();
+      setTimeout(safeRenderIcons, 250);
       setInterval(checkForAppUpdates, 60000);
     });
   </script>
