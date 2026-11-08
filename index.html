@@ -108,7 +108,7 @@
           </button>
         </div>
 
-        <!-- Camera Render Surface -->
+        <!-- Camera Viewfinder -->
         <div id="qr-reader" class="w-full overflow-hidden rounded-2xl bg-black min-h-[260px] flex items-center justify-center text-white text-xs"></div>
 
         <p class="text-[11px] text-slate-400 text-center">Camera scans automatically once ticket is visible.</p>
@@ -540,6 +540,7 @@
             </div>
           </div>
 
+          <!-- Rider Specific Profile Fields -->
           <div id="rider-vehicle-fields" class="space-y-3 pt-1 border-t border-slate-100">
             <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Rider Specifications</span>
             <div>
@@ -611,6 +612,8 @@
     let currentActiveTab = 'home';
     let lastRenderedOfferStatus = null;
     let lastRenderedOfferRideId = null;
+    let lastRenderedPillionStatus = null;
+    let lastRenderedPillionRideId = null;
     let pendingBookingPayload = null;
     let html5QrScannerInstance = null;
     let activeScanningRideId = null;
@@ -795,7 +798,7 @@
       }
     }
 
-    // PILLION BANNER WITH DYNAMIC QR CODE GENERATION
+    // PILLION BANNER WITH DYNAMIC QR PASS & FLICKER CACHE GUARDS
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -803,8 +806,12 @@
       const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
 
       if (!myBookedRideId) {
-        banner.classList.add('hidden');
-        banner.innerHTML = '';
+        if (lastRenderedPillionRideId !== null) {
+          banner.classList.add('hidden');
+          banner.innerHTML = '';
+          lastRenderedPillionRideId = null;
+          lastRenderedPillionStatus = null;
+        }
         return;
       }
 
@@ -817,8 +824,18 @@
         localStorage.removeItem('rb_my_booked_pin');
         banner.classList.add('hidden');
         banner.innerHTML = '';
+        lastRenderedPillionRideId = null;
+        lastRenderedPillionStatus = null;
         return;
       }
+
+      // STATE GUARD: Prevent rebuilding the DOM on repeat polls if state is unchanged
+      if (lastRenderedPillionRideId === bookedRide.id && lastRenderedPillionStatus === bookedRide.status) {
+        return;
+      }
+
+      lastRenderedPillionRideId = bookedRide.id;
+      lastRenderedPillionStatus = bookedRide.status;
 
       const cleanFare = formatFare(bookedRide.fare);
       const cleanTime = formatTime(bookedRide.depTime);
@@ -916,7 +933,7 @@
               <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider flex items-center justify-center gap-1">
                 <i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-600"></i> Boarding QR Pass
               </span>
-              <div id="pillion-qr-target" class="p-2 bg-white rounded-2xl flex items-center justify-center"></div>
+              <div id="pillion-qr-target" class="p-2 bg-white rounded-2xl flex items-center justify-center min-w-[140px] min-h-[140px]"></div>
               <p class="text-[10px] text-slate-500 font-medium">Show this to your rider to scan before boarding</p>
             </div>
 
@@ -948,7 +965,7 @@
           </div>
         `;
 
-        // Render QR Code inside target container
+        // Render QR Code once
         setTimeout(() => {
           const qrTarget = document.getElementById('pillion-qr-target');
           if (qrTarget && typeof QRCode !== 'undefined') {
@@ -1008,6 +1025,10 @@
 
     async function executeDirectBooking(id, rider, start, end, fare, rawPhone, passengerName, passengerPhone) {
       localStorage.setItem('my_active_booked_ride_id', id);
+
+      // Reset cache so newly booked ride draws cleanly without delay
+      lastRenderedPillionRideId = null;
+      lastRenderedPillionStatus = null;
 
       switchTab('find');
       renderPillionActiveBanner();
@@ -1453,7 +1474,7 @@
       const cleanText = String(decodedText || '').trim();
       const expectedPayload = `MYROUTEBUDDY:${rideId}`;
 
-      // Check QR match
+      // Authorize on exact match or payload containment
       if (cleanText === expectedPayload || cleanText.includes(rideId)) {
         closeQrScanner();
 
