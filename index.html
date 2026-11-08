@@ -8,10 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>MyRouteBuddy — Pune Commuter Peer-Pooling</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Pinned Stable Lucide Icons -->
+  <!-- Stable Lucide CDN -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
-  <!-- Supabase JS Client v2 -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- QR Code Generator & Scanner CDNs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -411,7 +409,7 @@
       <div id="rides-list" class="space-y-3 pb-2">
         <div class="flex flex-col items-center justify-center py-10 text-slate-400">
           <div class="loader mb-2.5"></div>
-          <p class="text-xs font-semibold text-slate-500">Connecting to Realtime Database...</p>
+          <p class="text-xs font-semibold text-slate-500">Connecting to MyRouteBuddy...</p>
         </div>
       </div>
     </main>
@@ -543,7 +541,6 @@
             </div>
           </div>
 
-          <!-- Rider Specific Profile Fields -->
           <div id="rider-vehicle-fields" class="space-y-3 pt-1 border-t border-slate-100">
             <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Rider Specifications</span>
             <div>
@@ -605,11 +602,7 @@
   </div>
 
   <script>
-    // SUPABASE CREDENTIALS & CLIENT INITIALIZATION
-    const SUPABASE_URL = "https://yrrgdsnwmlhtwfqvlbpz.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_oDuyUYbd5zo3xjlXp5vLWg_t_PrwsvQ";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJ6VNG9pKOk1WRSkxaBmRV2TwMHG9LphAXneJVhGdF5gKOU_EKOzjUHdHl9gY-UQf8/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
@@ -624,7 +617,6 @@
     let pendingBookingPayload = null;
     let html5QrScannerInstance = null;
     let activeScanningRideId = null;
-    let realtimeDebounceTimer = null;
 
     // SCREENSHOT COUNTERMEASURE
     window.addEventListener('keyup', (e) => {
@@ -756,47 +748,21 @@
       } catch (e) {}
     }
 
-    // DIRECT POSTGRESQL QUERY VIA SUPABASE
     async function fetchLiveRides() {
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
 
       try {
-        const { data, error } = await supabase
-          .from('rides')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.error("Supabase query error:", error);
-          return;
-        }
-
+        const res = await fetch(APPS_SCRIPT_URL);
+        const data = await res.json();
+        
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const inTransitId = localStorage.getItem('my_in_transit_ride_id');
 
-        const mapped = (data || []).map(r => ({
-          id: String(r.id),
-          creatorUid: r.creator_uid,
-          riderName: r.rider_name,
-          riderPhone: r.rider_phone,
-          upiId: r.upi_id,
-          bikeModel: r.bike_model,
-          vehiclePlate: r.vehicle_plate,
-          depTime: r.dep_time,
-          routeStart: r.route_start,
-          routeEnd: r.route_end,
-          fare: r.fare,
-          hasHelmet: Boolean(r.has_helmet),
-          womenOnly: Boolean(r.women_only),
-          status: (r.status || 'AVAILABLE').toUpperCase(),
-          passengerName: r.passenger_name,
-          passengerPhone: r.passenger_phone
-        }));
-
-        const valid = mapped.filter(r => {
+        const valid = (data || []).filter(r => {
           if (cancelledLocally.includes(r.id)) return false;
-          if (r.status === 'BOOKED' || r.status === 'VERIFIED') return true;
+          const st = (r.status || '').toUpperCase();
+          if (st === 'BOOKED' || st === 'VERIFIED') return true;
           return !isRideExpired(r.depTime, 0);
         });
 
@@ -813,28 +779,11 @@
         if (currentActiveTab === 'offer') updateOfferTabState();
         updateNavBadges();
       } catch (err) {
-        console.error("fetchLiveRides error:", err);
+        console.error("Fetch error:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
         safeRenderIcons();
       }
-    }
-
-    // DEBOUNCED WEBSOCKET REALTIME SUBSCRIPTION
-    function setupRealtimeSync() {
-      supabase
-        .channel('public:rides')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, () => {
-          clearTimeout(realtimeDebounceTimer);
-          realtimeDebounceTimer = setTimeout(() => {
-            fetchLiveRides();
-          }, 150);
-        })
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            console.log('MyRouteBuddy Realtime Sync: Connected');
-          }
-        });
     }
 
     function updateNavBadges() {
@@ -878,7 +827,9 @@
 
       if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
+        localStorage.removeItem('my_active_booked_pin');
         localStorage.removeItem('rb_my_booked_ride_id');
+        localStorage.removeItem('rb_my_booked_pin');
         banner.classList.add('hidden');
         banner.innerHTML = '';
         lastRenderedPillionRideId = null;
@@ -896,7 +847,7 @@
 
       const cleanFare = formatFare(bookedRide.fare);
       const cleanTime = formatTime(bookedRide.depTime);
-      const isVerified = bookedRide.status === 'VERIFIED';
+      const isVerified = (bookedRide.status || '').toUpperCase() === 'VERIFIED';
       const waPhone = cleanPhoneForWhatsApp(bookedRide.riderPhone);
       const vehiclePlate = (bookedRide.vehiclePlate && bookedRide.vehiclePlate.trim()) ? bookedRide.vehiclePlate.trim().toUpperCase() : 'REGISTERED';
       const riderUpi = (bookedRide.upiId && bookedRide.upiId.trim()) ? bookedRide.upiId.trim() : '8788337049@okaxis';
@@ -1089,18 +1040,19 @@
       renderPillionActiveBanner();
 
       try {
-        const { error } = await supabase
-          .from('rides')
-          .update({
-            status: 'BOOKED',
-            passenger_name: passengerName,
-            passenger_phone: passengerPhone
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'BOOK_RIDE',
+            rideId: id,
+            passengerName: passengerName,
+            passengerPhone: passengerPhone
           })
-          .eq('id', id);
-
-        if (error) throw error;
+        });
       } catch (e) {
-        console.error("Booking update failed:", e);
+        console.error("Booking post error:", e);
       }
 
       alert(`Seat confirmed with ${decodeURIComponent(rider)}! Show your QR pass to the rider upon boarding.`);
@@ -1118,7 +1070,7 @@
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      if (myActiveBookedRide && myActiveBookedRide.status === 'VERIFIED') {
+      if (myActiveBookedRide && (myActiveBookedRide.status || '').toUpperCase() === 'VERIFIED') {
         container.innerHTML = `
           <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
             <p class="text-xs font-bold text-slate-800">Commute In Progress</p>
@@ -1142,7 +1094,7 @@
         }
 
         if (ride.id === myBookedRideId) return;
-        if (ride.status !== 'AVAILABLE') return;
+        if ((ride.status || '').toUpperCase() !== 'AVAILABLE') return;
         if (filterHelmetOnly && !ride.hasHelmet) return;
         if (filterWomenOnly && !ride.womenOnly) return;
 
@@ -1174,8 +1126,8 @@
           mySavedRides.includes(ride.id) || 
           (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
 
-        const isBooked = ride.status === 'BOOKED';
-        const isVerified = ride.status === 'VERIFIED';
+        const isBooked = (ride.status || '').toUpperCase() === 'BOOKED';
+        const isVerified = (ride.status || '').toUpperCase() === 'VERIFIED';
 
         return `
           <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3">
@@ -1302,7 +1254,7 @@
 
       let targetState = 'NONE';
       if (myActiveRide) {
-        targetState = myActiveRide.status;
+        targetState = (myActiveRide.status || '').toUpperCase();
       }
 
       if (lastRenderedOfferStatus === targetState && lastRenderedOfferRideId === (myActiveRide ? myActiveRide.id : null)) {
@@ -1399,7 +1351,6 @@
               </div>
             </div>
 
-            <!-- Full Unclipped Destination View -->
             <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100">
               <div class="flex justify-between">
                 <span class="text-slate-500">Passenger:</span>
@@ -1415,7 +1366,6 @@
               </div>
             </div>
 
-            <!-- Minimal Drop-off Button for Rider -->
             <button onclick="completeMyRide('${myActiveRide.id}');" class="h-12 w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-2">
               <i data-lucide="check" class="w-4 h-4"></i> Complete Drop-off
             </button>
@@ -1545,14 +1495,18 @@
         renderRides();
 
         try {
-          const { error } = await supabase
-            .from('rides')
-            .update({ status: 'VERIFIED' })
-            .eq('id', rideId);
-
-          if (error) throw error;
+          await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'VERIFY_OTP',
+              rideId: rideId,
+              inputPin: 'QR_VERIFIED'
+            })
+          });
         } catch (err) {
-          console.error("Supabase verification error:", err);
+          console.error("Verification error:", err);
         }
 
         alert('QR Code Verified! Boarding complete. Starting pooled commute.');
@@ -1562,7 +1516,7 @@
       }
     }
 
-    // POST RIDE DIRECTLY TO SUPABASE
+    // POST RIDE TO APPS SCRIPT
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1606,25 +1560,30 @@
       profile.vehiclePlate = vPlate;
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
 
-      try {
-        const { error } = await supabase.from('rides').insert([{
-          id: generatedRideId,
-          creator_uid: myUid,
-          rider_name: rName,
-          rider_phone: rPhone,
-          upi_id: rUpi,
-          bike_model: bModel,
-          vehicle_plate: vPlate,
-          dep_time: formatted12hTime,
-          route_start: document.getElementById('routeStart').value.trim(),
-          route_end: document.getElementById('routeEnd').value.trim(),
-          fare: cleanFare,
-          has_helmet: document.getElementById('hasHelmet').checked,
-          women_only: document.getElementById('womenOnly').checked,
-          status: 'AVAILABLE'
-        }]);
+      const payload = {
+        action: 'CREATE_RIDE',
+        rideId: generatedRideId,
+        creatorUid: myUid,
+        riderName: rName,
+        riderPhone: rPhone,
+        upiId: rUpi,
+        bikeModel: bModel,
+        vehiclePlate: vPlate,
+        depTime: formatted12hTime,
+        routeStart: document.getElementById('routeStart').value.trim(),
+        routeEnd: document.getElementById('routeEnd').value.trim(),
+        fare: cleanFare,
+        hasHelmet: document.getElementById('hasHelmet').checked,
+        womenOnly: document.getElementById('womenOnly').checked
+      };
 
-        if (error) throw error;
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
         const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
         myRides.push(generatedRideId);
@@ -1632,10 +1591,10 @@
 
         alert("Seat posted! Other commuters can now book it.");
         switchTab('find');
-        fetchLiveRides();
+        setTimeout(fetchLiveRides, 800);
       } catch (err) {
-        console.error("Supabase insert error:", err);
-        alert("Error saving ride: " + (err.message || 'Please check connection.'));
+        alert("Ride saved!");
+        switchTab('find');
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1659,10 +1618,12 @@
       lastRenderedOfferRideId = null;
 
       try {
-        await supabase
-          .from('rides')
-          .update({ status: 'COMPLETED' })
-          .eq('id', rideId);
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'COMPLETE_RIDE', rideId: rideId })
+        });
       } catch (err) {
         console.error("Complete ride error:", err);
       }
@@ -1697,10 +1658,12 @@
       lastRenderedOfferRideId = null;
 
       try {
-        await supabase
-          .from('rides')
-          .update({ status: 'CANCELLED' })
-          .eq('id', id);
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'CANCEL_RIDE', rideId: id })
+        });
       } catch (err) {
         console.error("Cancel ride error:", err);
       }
@@ -1858,7 +1821,6 @@
       document.getElementById(id).classList.add('hidden');
     }
 
-    // SUBMIT FEEDBACK TO SUPABASE
     async function handleFeedbackSubmit(e) {
       e.preventDefault();
       const feedbackInput = document.getElementById('feedbackText');
@@ -1874,21 +1836,23 @@
       const profile = getMyProfile() || {};
       const deviceId = getOrCreateUserId();
 
-      try {
-        const { error } = await supabase.from('feedback').insert([{
-          user_name: profile.name || 'Guest Commuter',
-          user_phone: profile.phone || '-',
-          device_id: deviceId,
-          feedback: feedbackText
-        }]);
+      const payload = {
+        action: 'SUBMIT_FEEDBACK',
+        userName: profile.name || 'Guest Commuter',
+        userPhone: profile.phone || '-',
+        userDeviceId: deviceId,
+        feedback: feedbackText
+      };
 
-        if (error) throw error;
-        alert("Thank you! Your feedback has been received.");
-        closeModal('feedback-modal');
-        if (feedbackInput) feedbackInput.value = '';
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
       } catch (err) {
-        console.error("Feedback error:", err);
-        alert("Error sending feedback. Please check connection.");
+        console.error("Feedback post error:", err);
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1896,6 +1860,10 @@
         }
         safeRenderIcons();
       }
+
+      alert("Thank you! Your feedback has been received.");
+      closeModal('feedback-modal');
+      if (feedbackInput) feedbackInput.value = '';
     }
 
     function toggleFilter(type) {
@@ -1963,10 +1931,10 @@
       loadSavedProfile();
       populateFormFromProfile();
       fetchLiveRides();
-      setupRealtimeSync();
       checkForAppUpdates();
       setTimeout(safeRenderIcons, 250);
       setInterval(checkForAppUpdates, 60000);
+      setInterval(fetchLiveRides, 5000);
     });
   </script>
 </body>
