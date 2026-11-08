@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="overflow-x-hidden">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -14,12 +14,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+    }
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      overscroll-behavior-x: none;
+      -webkit-font-smoothing: antialiased;
+    }
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
       color: #0f172a;
-      background-color: #f8fafc;
+      background-color: #f1f5f9;
       margin: 0;
       padding: 0;
     }
@@ -38,30 +46,32 @@
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
-<body class="min-h-screen flex justify-center pb-24">
+<body class="min-h-screen flex justify-center pb-24 overflow-x-hidden">
 
-  <div class="w-full max-w-md bg-[#fbfcfd] min-h-screen flex flex-col relative shadow-sm">
+  <!-- Mobile Screen Shell -->
+  <div class="w-full max-w-md bg-[#fbfcfd] min-h-screen flex flex-col relative shadow-md overflow-x-hidden border-x border-slate-200/60">
 
-    <!-- Top Header -->
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-2.5">
-        <div class="w-9 h-9 rounded-full bg-[#059669] flex items-center justify-center text-white shadow-xs">
-          <i data-lucide="zap" class="w-5 h-5 fill-current"></i>
+    <!-- Top Header: Tightly Packaged & Un-spread -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-3.5 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2 shrink-0">
+        <div class="w-8 h-8 rounded-xl bg-[#059669] flex items-center justify-center text-white shadow-xs">
+          <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
         </div>
         <div>
-          <h1 class="text-base font-extrabold tracking-tight text-slate-900 leading-tight">MyRouteBuddy</h1>
-          <p class="text-[11px] font-semibold text-slate-500">Pune Peer Pool</p>
+          <h1 class="text-sm font-extrabold tracking-tight text-slate-900 leading-none">MyRouteBuddy</h1>
+          <p class="text-[10px] font-semibold text-slate-500 mt-0.5">Pune Peer Pool</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <a href="tel:8788337049" class="flex items-center gap-1.5 border border-rose-200 bg-rose-50/80 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl active:scale-95 transition">
-          <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i> SOS
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <a href="tel:8788337049" class="flex items-center gap-1 border border-rose-200 bg-rose-50/90 text-rose-600 text-[11px] font-bold px-2 py-1.5 rounded-xl active:scale-95 transition">
+          <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600"></i> SOS
         </a>
-        <button onclick="fetchLiveRides()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition">
-          <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
+        <button onclick="fetchLiveRides()" class="w-8 h-8 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition" title="Refresh Feed">
+          <i data-lucide="refresh-cw" id="refresh-icon" class="w-3.5 h-3.5"></i>
         </button>
-        <button onclick="toggleSidebar(true)" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition">
-          <i data-lucide="menu" class="w-5 h-5"></i>
+        <button onclick="toggleSidebar(true)" class="w-8 h-8 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition" title="Menu">
+          <i data-lucide="menu" class="w-4 h-4"></i>
         </button>
       </div>
     </header>
@@ -174,13 +184,13 @@
         </div>
         <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
           <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for fuel share.</p>
-          <p><strong>How do I chat?</strong> Tap the WhatsApp button to chat directly with your pool buddy for pickup coordination.</p>
+          <p><strong>How do I chat?</strong> Tap the WhatsApp button to coordinate pickup with your route buddy.</p>
           <p><strong>How do I verify boarding?</strong> Show the 4-digit PIN on your active booking banner to the rider.</p>
         </div>
       </div>
     </div>
 
-    <!-- Enhanced Commuter Feedback Modal -->
+    <!-- Feedback Modal -->
     <div id="feedback-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl">
         <div class="flex items-center justify-between border-b pb-3">
@@ -213,9 +223,9 @@
     </div>
 
     <!-- TAB 1: FIND RIDE VIEW -->
-    <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5">
+    <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5 overflow-x-hidden">
       
-      <!-- PILLION'S PERSISTENT ACTIVE RESERVATION & TRANSIT CARD -->
+      <!-- PILLION ACTIVE TRANSIT BANNER -->
       <div id="pillion-active-booking-banner" class="hidden"></div>
 
       <!-- Corridor Radar Card -->
@@ -225,16 +235,16 @@
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
             <span id="corridor-title">Hadapsar → Kharadi / Viman Nagar</span>
           </div>
-          <span class="text-sm font-extrabold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800/60">₹15</span>
+          <span class="text-xs font-extrabold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800/60">₹15</span>
         </div>
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div>
             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rider's Journey</p>
-            <p class="font-bold text-slate-100 mt-0.5 leading-snug" id="radar-journey">Hadapsar</p>
+            <p class="font-bold text-slate-100 mt-0.5 leading-snug break-words" id="radar-journey">Hadapsar</p>
           </div>
           <div>
             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Pickup Segment</p>
-            <p class="font-bold text-slate-100 mt-0.5 leading-snug" id="radar-pickup">Kharadi / Viman Nagar</p>
+            <p class="font-bold text-slate-100 mt-0.5 leading-snug break-words" id="radar-pickup">Kharadi / Viman Nagar</p>
           </div>
         </div>
         <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3.5 overflow-hidden">
@@ -243,19 +253,19 @@
       </section>
 
       <!-- Pill Filters -->
-      <div id="pill-filter-bar" class="flex items-center gap-2 pt-0.5">
-        <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition">
-          <i data-lucide="shield" class="w-4 h-4 text-emerald-600"></i> Spare Helmet
+      <div id="pill-filter-bar" class="grid grid-cols-2 gap-2 pt-0.5">
+        <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition">
+          <i data-lucide="shield" class="w-4 h-4 text-emerald-600 shrink-0"></i> Spare Helmet
         </button>
-        <button id="toggle-women" onclick="toggleFilter('women')" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition">
-          <i data-lucide="users" class="w-4 h-4 text-rose-500"></i> Women Only
+        <button id="toggle-women" onclick="toggleFilter('women')" class="touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition">
+          <i data-lucide="users" class="w-4 h-4 text-rose-500 shrink-0"></i> Women Only
         </button>
       </div>
 
       <div id="rides-feed-header" class="flex items-center justify-between px-1">
         <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking live rides...</span>
         <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Database
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Feed
         </span>
       </div>
 
@@ -269,7 +279,7 @@
     </main>
 
     <!-- TAB 2: OFFER SEAT VIEW -->
-    <main id="offer-view" class="flex-1 px-4 py-4 space-y-4 hidden">
+    <main id="offer-view" class="flex-1 px-4 py-4 space-y-4 hidden overflow-x-hidden">
       <div id="offer-active-card" class="hidden"></div>
 
       <div id="offer-form-card" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
@@ -341,7 +351,7 @@
     </main>
 
     <!-- TAB 3: MY PROFILE VIEW -->
-    <main id="profile-view" class="flex-1 px-4 py-4 space-y-4 hidden">
+    <main id="profile-view" class="flex-1 px-4 py-4 space-y-4 hidden overflow-x-hidden">
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-5">
         <div class="flex flex-col items-center text-center">
           <div class="relative group">
@@ -412,7 +422,7 @@
       </div>
     </main>
 
-    <!-- Booking Pass Modal (For Pillion) -->
+    <!-- Booking Pass Modal -->
     <div id="booking-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
       <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -430,18 +440,18 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-2">
+    <!-- Bottom Navigation Bar: Locked Inside Max-Width Container -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-1.5">
       <div class="max-w-md mx-auto grid grid-cols-3 px-3">
-        <button onclick="switchTab('find')" id="nav-find" class="flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1">
+        <button onclick="switchTab('find')" id="nav-find" class="flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1">
           <i data-lucide="compass" class="w-5 h-5"></i>
           <span class="text-[11px]">Find Ride</span>
         </button>
-        <button onclick="switchTab('offer')" id="nav-offer" class="flex flex-col items-center justify-center gap-1 text-slate-400 font-medium py-1">
+        <button onclick="switchTab('offer')" id="nav-offer" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
           <i data-lucide="bike" class="w-5 h-5"></i>
           <span class="text-[11px]">Offer Seat</span>
         </button>
-        <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center justify-center gap-1 text-slate-400 font-medium py-1">
+        <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
           <i data-lucide="user" class="w-5 h-5"></i>
           <span class="text-[11px]">My Profile</span>
         </button>
@@ -646,7 +656,7 @@
 
       banner.classList.remove('hidden');
 
-      // STATE A: VERIFIED (Onboard with Rider — NO PIN, NO CANCEL BUTTON!)
+      // STATE A: VERIFIED (Onboard - No Cancel, No PIN)
       if (isVerified) {
         banner.innerHTML = `
           <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
@@ -664,7 +674,7 @@
                 <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
                 <p class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</p>
               </div>
-              <a href="${riderWhatsAppUrl}" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-500/80 hover:bg-emerald-400 active:scale-95 text-white flex items-center justify-center shadow-md transition">
+              <a href="${riderWhatsAppUrl}" target="_blank" class="w-10 h-10 rounded-2xl bg-emerald-500/80 hover:bg-emerald-400 active:scale-95 text-white flex items-center justify-center shadow-md transition" title="Chat on WhatsApp">
                 <i data-lucide="message-circle" class="w-5 h-5"></i>
               </a>
             </div>
@@ -674,7 +684,7 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
                 <div>
                   <span class="text-[10px] uppercase font-bold text-emerald-300 block">Drop-off Destination</span>
-                  <span class="font-bold text-white leading-snug">${bookedRide.routeEnd}</span>
+                  <span class="font-bold text-white leading-snug break-words">${bookedRide.routeEnd}</span>
                 </div>
               </div>
               <div class="flex justify-between border-t border-emerald-700/50 pt-2">
@@ -694,7 +704,7 @@
           </div>
         `;
       } 
-      // STATE B: RESERVED (Waiting to board — shows PIN, Cancel, and WhatsApp)
+      // STATE B: RESERVED (Waiting to board)
       else {
         const pin = mySavedPin || bookedRide.safetyPin || '----';
         banner.innerHTML = `
@@ -721,7 +731,7 @@
             <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-2 border border-slate-700">
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
-                <span class="text-slate-200 font-medium leading-snug">${bookedRide.routeStart} → ${bookedRide.routeEnd}</span>
+                <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeStart} → ${bookedRide.routeEnd}</span>
               </div>
               <p class="text-slate-400 border-t border-slate-700/80 pt-1.5 flex items-center gap-1.5">
                 <i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Departure: <strong class="text-white">${cleanTime}</strong>
@@ -729,8 +739,8 @@
             </div>
 
             <div class="flex items-center gap-2 pt-1">
-              <a href="${riderWhatsAppUrl}" target="_blank" class="px-3.5 py-2.5 bg-emerald-700/70 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
-                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300"></i> Chat
+              <a href="${riderWhatsAppUrl}" target="_blank" class="px-3 py-2.5 bg-emerald-700/70 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-300"></i> Chat
               </a>
               <a href="${upiUrl}" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold py-2.5 rounded-xl text-center shadow-sm flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare}
@@ -745,7 +755,7 @@
       lucide.createIcons();
     }
 
-    // Pillion cancels their reservation
+    // Pillion cancels booking
     async function cancelMyPillionBooking(rideId) {
       if (!confirm("Are you sure you want to cancel your seat booking?")) return;
 
@@ -771,7 +781,7 @@
       fetchLiveRides();
     }
 
-    // Refined Ride Cards with Full Itinerary and WhatsApp Buttons
+    // Render Ride Cards (Centered, Balanced, and Non-stretching)
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -782,7 +792,6 @@
       
       const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Hide other rides if pillion is verified and in transit
       if (myActiveBookedRide && myActiveBookedRide.status === 'VERIFIED') {
         container.innerHTML = `
           <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
@@ -795,7 +804,6 @@
         return;
       }
 
-      // Deduplicate rides: Keep only the most recent listing per rider
       const riderMap = new Map();
       allRides.forEach(ride => {
         const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
@@ -847,10 +855,10 @@
         return `
           <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3.5">
             
-            <!-- Header Row: Identity & Fare -->
+            <!-- Header Row -->
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
+                <div class="w-11 h-11 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
                   ${ride.riderName ? ride.riderName.charAt(0).toUpperCase() : 'R'}
                 </div>
                 <div>
@@ -867,16 +875,16 @@
                 </div>
               </div>
 
-              <!-- Price Box -->
-              <div class="bg-emerald-50 text-emerald-800 border border-emerald-200/90 px-3 py-1 rounded-2xl text-right shrink-0">
+              <!-- Price Tag -->
+              <div class="bg-emerald-50 text-emerald-800 border border-emerald-200/90 px-2.5 py-1 rounded-2xl text-right shrink-0">
                 <div class="text-base font-extrabold leading-tight flex items-center justify-end gap-0.5">
-                  <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-700"></i>${cleanFare}
+                  <i data-lucide="indian-rupee" class="w-3.5 h-3.5 text-emerald-700"></i>${cleanFare}
                 </div>
                 <div class="text-[9px] font-semibold uppercase tracking-wider text-emerald-700/80">per ride</div>
               </div>
             </div>
 
-            <!-- Full Unclipped Route Box with Stopover Indicators -->
+            <!-- Route Stopovers -->
             <div class="bg-[#f8fafc] rounded-2xl p-3.5 border border-slate-100 space-y-2.5">
               <div class="space-y-1.5">
                 <div class="flex items-start gap-2.5">
@@ -898,7 +906,7 @@
                 </div>
               </div>
 
-              <!-- Schedule Row: Date + Time -->
+              <!-- Date + Departure -->
               <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
                 <div class="flex items-center gap-1.5 text-slate-600 font-medium">
                   <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -908,21 +916,22 @@
               </div>
             </div>
 
-            <!-- Action Area: Helmet Badges, WhatsApp Chat & Booking Controls -->
+            <!-- Bottom Actions & Clean Badges -->
             <div class="flex items-center justify-between pt-1 gap-2">
-              <div class="flex items-center gap-1.5 flex-wrap">
+              <div class="flex items-center gap-2">
                 ${ride.hasHelmet ? `
-                  <span class="text-[11px] font-bold text-[#059669] bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Helmet
+                  <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#059669] bg-emerald-50/90 px-3 py-1.5 rounded-xl border border-emerald-200">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i> Helmet
                   </span>
                 ` : `
-                  <span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                  <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200">
                     No Helmet
                   </span>
                 `}
+
                 ${!isMyOwnRide ? `
-                  <a href="${riderWhatsAppUrl}" target="_blank" class="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center active:scale-95 transition" title="Chat on WhatsApp">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                  <a href="${riderWhatsAppUrl}" target="_blank" class="h-9 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center gap-1.5 text-xs font-bold active:scale-95 transition" title="Chat on WhatsApp">
+                    <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i> WhatsApp
                   </a>
                 ` : ''}
               </div>
@@ -930,21 +939,21 @@
               <div>
                 ${isMyOwnRide ? `
                   ${isBooked ? `
-                    <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-emerald-600 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                    <button onclick="switchTab('offer')" class="h-9 px-4 bg-emerald-600 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
                       <i data-lucide="key" class="w-3.5 h-3.5"></i> Verify PIN
                     </button>
                   ` : (isVerified ? `
-                    <button onclick="switchTab('offer')" class="touch-target px-4 py-2 bg-teal-700 active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
+                    <button onclick="switchTab('offer')" class="h-9 px-4 bg-teal-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center gap-1.5">
                       <i data-lucide="navigation" class="w-3.5 h-3.5"></i> In Transit
                     </button>
                   ` : `
-                    <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target px-4 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5 shadow-2xs">
+                    <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="h-9 px-3.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition flex items-center gap-1.5">
                       <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel
                     </button>
                   `)}
                 ` : `
-                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="touch-target px-4 py-2 bg-[#059669] active:scale-95 text-white rounded-2xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
-                    <i data-lucide="ticket" class="w-4 h-4"></i> Book Seat
+                  <button onclick="openBooking('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="h-9 px-4 bg-[#059669] active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm hover:bg-emerald-700 transition flex items-center gap-1.5">
+                    <i data-lucide="ticket" class="w-3.5 h-3.5"></i> Book Seat
                   </button>
                 `}
               </div>
@@ -988,7 +997,7 @@
       lastRenderedOfferStatus = targetState;
       lastRenderedOfferRideId = myActiveRide ? myActiveRide.id : null;
 
-      // STATE 1: Passenger Booked the Seat! (Rider verifies PIN)
+      // STATE 1: Passenger Booked (Rider enters OTP)
       if (targetState === 'BOOKED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1013,7 +1022,7 @@
                 <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-500">Contact & Chat:</span>
+                <span class="text-slate-500">Contact & WhatsApp:</span>
                 <div class="flex items-center gap-2">
                   <a href="tel:${myActiveRide.passengerPhone}" class="font-extrabold text-emerald-700 underline">${myActiveRide.passengerPhone}</a>
                   <a href="${passengerWhatsAppUrl}" target="_blank" class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center active:scale-95 transition" title="Chat on WhatsApp">
@@ -1045,7 +1054,7 @@
         `;
         lucide.createIcons();
       }
-      // STATE 2: RIDER IN TRANSIT (ENFORCED LOCKOUT RULE)
+      // STATE 2: RIDER IN TRANSIT (LOCKED)
       else if (targetState === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1062,7 +1071,6 @@
               </div>
             </div>
 
-            <!-- ENFORCED COMMUTER DISPATCH GUARD -->
             <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-3">
               <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
               <div class="text-xs text-amber-900">
@@ -1080,7 +1088,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-500">Destination:</span>
-                <span class="font-bold text-slate-800">${myActiveRide.routeEnd}</span>
+                <span class="font-bold text-slate-800 break-words">${myActiveRide.routeEnd}</span>
               </div>
               <div class="flex justify-between border-t border-slate-200/60 pt-2">
                 <span class="text-slate-500">Fuel Contribution:</span>
@@ -1095,7 +1103,7 @@
         `;
         lucide.createIcons();
       }
-      // STATE 3: Ride Available (Waiting for Pillion)
+      // STATE 3: Ride Available (Waiting)
       else if (targetState === 'AVAILABLE') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1113,7 +1121,7 @@
             <div class="bg-[#f8fafc] p-4 rounded-2xl border border-slate-100 text-xs space-y-2.5">
               <div class="flex justify-between">
                 <span class="text-slate-500">Route:</span>
-                <span class="font-bold text-slate-800">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</span>
+                <span class="font-bold text-slate-800 break-words">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-500">Departure Time:</span>
@@ -1138,7 +1146,7 @@
         `;
         lucide.createIcons();
       }
-      // STATE 4: No active ride — Show creation form
+      // STATE 4: Form
       else {
         activeCard.classList.add('hidden');
         activeCard.innerHTML = '';
@@ -1213,7 +1221,7 @@
       }
     }
 
-    // Rider verifies Pillion's OTP Handshake
+    // Verify OTP Handshake
     async function handleVerifyOtp(e, rideId) {
       e.preventDefault();
       const inputPin = document.getElementById('riderInputOtp').value.trim();
@@ -1248,7 +1256,7 @@
       fetchLiveRides();
     }
 
-    // Rider Completes the Drop-off
+    // Complete Ride
     async function completeMyRide(rideId) {
       if (!confirm("Confirm drop-off destination reached and commute completed?")) return;
 
@@ -1277,7 +1285,7 @@
       fetchLiveRides();
     }
 
-    // Cancel Ride (By Rider)
+    // Cancel Ride
     async function cancelMyRide(id) {
       if (!confirm("Are you sure you want to cancel your seat listing?")) return;
 
@@ -1315,7 +1323,7 @@
       updateOfferTabState();
     }
 
-    // Booking modal with UPI & WhatsApp Handshake (BOOK_RIDE)
+    // Open Booking Pass with WhatsApp
     async function openBooking(id, rider, start, end, fare, rawPhone) {
       const decodedRider = decodeURIComponent(rider);
       const decodedStart = decodeURIComponent(start);
@@ -1362,11 +1370,11 @@
           </div>
           <div class="flex justify-between">
             <span class="text-slate-500">Pickup:</span>
-            <span class="font-bold text-slate-800">${decodedStart}</span>
+            <span class="font-bold text-slate-800 break-words">${decodedStart}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-slate-500">Destination:</span>
-            <span class="font-bold text-slate-800">${decodedEnd}</span>
+            <span class="font-bold text-slate-800 break-words">${decodedEnd}</span>
           </div>
           <div class="flex justify-between border-t border-slate-200 pt-2">
             <span class="text-slate-500">Fuel Split:</span>
@@ -1513,7 +1521,6 @@
       setUserRole(savedRole);
     }
 
-    // Modal and Drawer Controls
     function toggleSidebar(open) {
       const drawer = document.getElementById('side-drawer');
       if (open) drawer.classList.remove('hidden');
@@ -1531,7 +1538,7 @@
       document.getElementById(id).classList.add('hidden');
     }
 
-    // Submit Feedback to Backend (Logs in Sheet and Emails rajkumarashish75@gmail.com)
+    // Submit Feedback
     async function handleFeedbackSubmit(e) {
       e.preventDefault();
       const feedbackInput = document.getElementById('feedbackText');
@@ -1582,14 +1589,14 @@
         filterHelmetOnly = !filterHelmetOnly;
         const btn = document.getElementById('toggle-helmet');
         btn.className = filterHelmetOnly 
-          ? "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition"
-          : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
+          ? "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition"
+          : "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
       } else {
         filterWomenOnly = !filterWomenOnly;
         const btn = document.getElementById('toggle-women');
         btn.className = filterWomenOnly 
-          ? "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-rose-500 bg-rose-50/70 text-rose-800 text-xs font-bold transition"
-          : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
+          ? "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-rose-500 bg-rose-50/70 text-rose-800 text-xs font-bold transition"
+          : "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
       }
       renderRides();
     }
@@ -1607,23 +1614,23 @@
       offerView.classList.add('hidden');
       profileView.classList.add('hidden');
 
-      navFind.className = 'flex flex-col items-center justify-center gap-1 text-slate-400 font-medium py-1';
-      navOffer.className = 'flex flex-col items-center justify-center gap-1 text-slate-400 font-medium py-1';
-      navProfile.className = 'flex flex-col items-center justify-center gap-1 text-slate-400 font-medium py-1';
+      navFind.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navOffer.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
 
       if (tab === 'find') {
         findView.classList.remove('hidden');
-        navFind.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
+        navFind.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
         fetchLiveRides();
       } else if (tab === 'offer') {
         offerView.classList.remove('hidden');
-        navOffer.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
+        navOffer.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
         lastRenderedOfferStatus = null;
         updateOfferTabState();
         populateFormFromProfile();
       } else if (tab === 'profile') {
         profileView.classList.remove('hidden');
-        navProfile.className = 'flex flex-col items-center justify-center gap-1 text-[#059669] font-bold py-1';
+        navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
       }
       lucide.createIcons();
     }
