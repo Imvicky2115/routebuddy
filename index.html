@@ -602,7 +602,7 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0Ry8AOop32u18ROIUiAbFczi7FmZSx2nJQ5YyOI2YEEFIZXut1DejSNHWwcZaisym/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_P8W8Dw1xb9tLcU8wMjGqoyhiZE0cO6ZZEe_SjzXnT7C2rQznWb0TD7Co59y5GGpyHg/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
@@ -687,7 +687,7 @@
       return cleanTimeFormat(timeStr);
     }
 
-    // ROBUST EXPIRY ENGINE WITH 60-MIN BUFFER
+    // EXPIRY CALCULATION WITH 60-MIN BUFFER
     function isRideExpired(timeStr, graceMinutes = 60) {
       if (!timeStr) return false;
       const now = new Date();
@@ -760,7 +760,6 @@
         const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
         const myUid = getOrCreateUserId();
 
-        // Harmonize field naming from Sheet response
         const mappedData = (Array.isArray(data) ? data : []).map(r => ({
           id: r.id || r.ID || r.rideId,
           creatorUid: r.creatorUid || r.CREATORUID || '',
@@ -785,10 +784,10 @@
           if (cancelledLocally.includes(r.id)) return false;
           
           const isMine = (r.creatorUid && r.creatorUid === myUid) || mySavedRides.includes(r.id);
-          if (isMine) return true; // Always display user's own listings
+          if (isMine) return true;
 
           if (r.status === 'BOOKED' || r.status === 'VERIFIED') return true;
-          return !isRideExpired(r.depTime, 60); // 60 min buffer
+          return !isRideExpired(r.depTime, 60);
         });
 
         valid.forEach(r => {
@@ -797,7 +796,6 @@
           }
         });
 
-        // Retain optimistic locally created rides if sheet hasn't refreshed yet
         const existingLocalOnly = allRides.filter(local => 
           mySavedRides.includes(local.id) && !valid.some(remote => remote.id === local.id)
         );
@@ -1525,7 +1523,6 @@
       }
     }
 
-    // POST RIDE (WITH OPTIMISTIC LOCAL CACHING & DIRECT OFFER TAB OPEN)
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1588,13 +1585,11 @@
         status: 'AVAILABLE'
       };
 
-      // 1. Optimistically store in local storage & memory immediately
       const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       myRides.push(generatedRideId);
       localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
       allRides.unshift(newRideObj);
 
-      // 2. Transmit to backend
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -1614,7 +1609,6 @@
 
       alert("Seat posted! View and manage your live listing right here on the Offer Seat tab.");
       
-      // 3. Immediately switch to Offer tab and refresh views
       lastRenderedOfferStatus = null;
       lastRenderedOfferRideId = null;
       switchTab('offer');
