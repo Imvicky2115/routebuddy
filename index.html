@@ -142,7 +142,7 @@
             </div>
             <div class="truncate">
               <p class="text-xs font-extrabold text-slate-900 truncate" id="drawer-user-name">Guest Commuter</p>
-              <p class="text-[10px] text-slate-400 font-mono" id="drawer-user-id">Token: ...</p>
+              <p class="text-[10px] text-slate-400 font-mono" id="drawer-user-id">Device: ...</p>
             </div>
           </div>
 
@@ -509,10 +509,7 @@
             <input type="file" id="profile-pic-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
           </div>
           <h2 class="text-base font-extrabold text-slate-900 mt-2" id="profile-name-header">Guest Commuter</h2>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <p class="text-[10px] text-slate-400 font-mono" id="profile-device-id">Token: ...</p>
-          </div>
+          <p class="text-[11px] text-slate-400 font-mono" id="profile-device-id">Device: ...</p>
         </div>
 
         <div>
@@ -645,32 +642,21 @@
       }
     }
 
-    // OPTION 1: CRYPTOGRAPHIC DEVICE COMMUTER TOKEN (Unforgeable & Permanent)
     function getOrCreateUserId() {
-      let uid = localStorage.getItem('mrb_commuter_uid');
+      let uid = localStorage.getItem('routebuddy_user_id');
       if (!uid) {
-        const array = new Uint8Array(8);
-        window.crypto.getRandomValues(array);
-        const hex = Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
-        uid = 'MRB_' + hex;
-        localStorage.setItem('mrb_commuter_uid', uid);
+        uid = 'usr_' + Math.random().toString(36).substring(2, 9);
+        localStorage.setItem('routebuddy_user_id', uid);
       }
       return uid;
     }
 
     function getMyProfile() {
       const saved = localStorage.getItem('routebuddy_profile');
-      if (!saved) return null;
-      try {
-        const parsed = JSON.parse(saved);
-        if (!parsed.uid) {
-          parsed.uid = getOrCreateUserId();
-          localStorage.setItem('routebuddy_profile', JSON.stringify(parsed));
-        }
-        return parsed;
-      } catch (e) {
-        return null;
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
       }
+      return null;
     }
 
     function cleanPhoneForWhatsApp(raw) {
@@ -807,16 +793,8 @@
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       const myUid = getOrCreateUserId();
 
-      // Explicit UID and local state lock
-      const hasActiveBooking = allRides.some(r => 
-        (r.id === myBookedRideId || (r.passengerUid && r.passengerUid === myUid)) &&
-        ((r.status || '').toUpperCase() === 'BOOKED' || (r.status || '').toUpperCase() === 'VERIFIED')
-      );
-
-      const hasActiveListing = allRides.some(r => 
-        ((r.creatorUid && r.creatorUid === myUid) || mySavedRides.includes(r.id)) && 
-        ((r.status || '').toUpperCase() === 'AVAILABLE' || (r.status || '').toUpperCase() === 'BOOKED' || (r.status || '').toUpperCase() === 'VERIFIED')
-      );
+      const hasActiveBooking = allRides.some(r => r.id === myBookedRideId && (r.status === 'BOOKED' || r.status === 'VERIFIED'));
+      const hasActiveListing = allRides.some(r => (mySavedRides.includes(r.id) || r.creatorUid === myUid) && (r.status === 'AVAILABLE' || r.status === 'BOOKED' || r.status === 'VERIFIED'));
 
       if (pillionBadge) {
         if (hasActiveBooking) pillionBadge.classList.remove('hidden');
@@ -834,7 +812,6 @@
       if (!banner) return;
 
       const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
-      const myUid = getOrCreateUserId();
 
       if (!myBookedRideId) {
         if (lastRenderedPillionRideId !== null) {
@@ -846,12 +823,13 @@
         return;
       }
 
-      // Find by ID or strict passenger token
-      const bookedRide = allRides.find(r => r.id === myBookedRideId || (r.passengerUid && r.passengerUid === myUid));
+      const bookedRide = allRides.find(r => r.id === myBookedRideId);
 
       if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
+        localStorage.removeItem('my_active_booked_pin');
         localStorage.removeItem('rb_my_booked_ride_id');
+        localStorage.removeItem('rb_my_booked_pin');
         banner.classList.add('hidden');
         banner.innerHTML = '';
         lastRenderedPillionRideId = null;
@@ -1013,7 +991,7 @@
       safeRenderIcons();
     }
 
-    // DIRECT 1-TAP BOOKING WITH COMMUTER TOKEN
+    // DIRECT 1-TAP BOOKING
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1039,7 +1017,6 @@
       }
 
       let profile = getMyProfile() || {};
-      profile.uid = getOrCreateUserId();
       profile.name = name;
       profile.phone = phone;
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
@@ -1054,7 +1031,6 @@
     }
 
     async function executeDirectBooking(id, rider, start, end, fare, rawPhone, passengerName, passengerPhone) {
-      const myUid = getOrCreateUserId();
       localStorage.setItem('my_active_booked_ride_id', id);
 
       lastRenderedPillionRideId = null;
@@ -1071,7 +1047,6 @@
           body: JSON.stringify({
             action: 'BOOK_RIDE',
             rideId: id,
-            passengerUid: myUid, // Bind passenger to unique device token
             passengerName: passengerName,
             passengerPhone: passengerPhone
           })
@@ -1084,13 +1059,16 @@
       fetchLiveRides();
     }
 
-    // RENDER RIDE CARDS (Strict UID & Token Matching)
+    // RENDER RIDE CARDS
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+      const myProfile = getMyProfile();
       const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
-      const myActiveBookedRide = allRides.find(r => r.id === myBookedRideId || (r.passengerUid && r.passengerUid === myUid));
+      const myActiveBookedRide = allRides.find(r => r.id === myBookedRideId);
+      
+      const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
       if (myActiveBookedRide && (myActiveBookedRide.status || '').toUpperCase() === 'VERIFIED') {
         container.innerHTML = `
@@ -1106,21 +1084,21 @@
 
       const riderMap = new Map();
       allRides.forEach(ride => {
-        // Strict UID Check: Is this device the creator?
-        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) || mySavedRides.includes(ride.id);
+        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
+          mySavedRides.includes(ride.id) || 
+          (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
 
         if (isMyOwnRide) {
           riderMap.set(ride.id, ride);
           return;
         }
 
-        if (ride.id === myBookedRideId || (ride.passengerUid && ride.passengerUid === myUid)) return;
+        if (ride.id === myBookedRideId) return;
         if ((ride.status || '').toUpperCase() !== 'AVAILABLE') return;
         if (filterHelmetOnly && !ride.hasHelmet) return;
         if (filterWomenOnly && !ride.womenOnly) return;
 
-        // Group only true duplicates by rider name + start landmark
-        const key = `${(ride.riderName || '').toLowerCase()}_${(ride.routeStart || '').toLowerCase()}`;
+        const key = clean(ride.riderName);
         riderMap.set(key, ride);
       });
 
@@ -1144,8 +1122,10 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        // Strict device token verification
-        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) || mySavedRides.includes(ride.id);
+        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
+          mySavedRides.includes(ride.id) || 
+          (myProfile && myProfile.name && clean(myProfile.name) === clean(ride.riderName));
+
         const isBooked = (ride.status || '').toUpperCase() === 'BOOKED';
         const isVerified = (ride.status || '').toUpperCase() === 'VERIFIED';
 
@@ -1261,13 +1241,15 @@
 
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+      const myProfile = getMyProfile();
       const inTransitId = localStorage.getItem('my_in_transit_ride_id');
+      const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Strict creator token match
       const myActiveRide = allRides.find(r => 
         (r.creatorUid && r.creatorUid === myUid) || 
         mySavedRides.includes(r.id) ||
-        (inTransitId && r.id === inTransitId)
+        (inTransitId && r.id === inTransitId) ||
+        (myProfile && myProfile.name && clean(myProfile.name) === clean(r.riderName))
       );
 
       let targetState = 'NONE';
@@ -1473,7 +1455,7 @@
           handleQrScanSuccess(decodedText, activeScanningRideId);
         },
         () => {
-          // Continuous scanning pass
+          // Continuous scanning
         }
       ).catch((err) => {
         console.warn("Camera start failed:", err);
@@ -1534,7 +1516,7 @@
       }
     }
 
-    // POST RIDE WITH CRYPTOGRAPHIC COMMUTER TOKEN
+    // POST RIDE TO APPS SCRIPT
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1571,7 +1553,6 @@
       const generatedRideId = 'RB-' + Math.floor(100 + Math.random() * 900);
 
       let profile = getMyProfile() || {};
-      profile.uid = myUid;
       profile.name = rName;
       profile.phone = rPhone;
       profile.upiId = rUpi;
@@ -1582,7 +1563,7 @@
       const payload = {
         action: 'CREATE_RIDE',
         rideId: generatedRideId,
-        creatorUid: myUid, // Cryptographic commuter token
+        creatorUid: myUid,
         riderName: rName,
         riderPhone: rPhone,
         upiId: rUpi,
@@ -1741,9 +1722,7 @@
 
     function saveUserProfile(e) {
       e.preventDefault();
-      const myUid = getOrCreateUserId();
       const profile = {
-        uid: myUid,
         name: document.getElementById('userFullName').value.trim(),
         phone: document.getElementById('userPhone').value.trim(),
         defaultTime: document.getElementById('userDefaultTime').value,
@@ -1793,8 +1772,8 @@
 
     function loadSavedProfile() {
       const uid = getOrCreateUserId();
-      document.getElementById('profile-device-id').innerText = `Token: ${uid.substring(0, 10)}...`;
-      document.getElementById('drawer-user-id').innerText = `Token: ${uid.substring(0, 10)}...`;
+      document.getElementById('profile-device-id').innerText = `Device: ${uid}`;
+      document.getElementById('drawer-user-id').innerText = `Device: ${uid}`;
 
       const saved = localStorage.getItem('routebuddy_profile');
       const savedPhoto = localStorage.getItem('routebuddy_avatar');
