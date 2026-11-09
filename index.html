@@ -471,7 +471,7 @@
 
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block text-xs font-bold text-slate-700">Fuel Contribution (₹) <span class="text-rose-500">*</span></label>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Fuel Contribution (₹) <span class="text-rose-500">*</span></label>
               <span class="text-[10px] font-bold text-emerald-700">Max ₹25 (MVA Peer Cap)</span>
             </div>
             <input type="number" id="nominalFare" min="10" max="25" value="15" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
@@ -602,7 +602,7 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGAISjncHPygxgbgMSbGc2c-fnO4c_V3x6oIHmW-RbxDuTRMzgQKEOY6ztMWlC3zm0hg/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjV4mh33rc8y04qjVrBS_iJL7Q6M_HPr1lco3y0ltAADiC7SWOO2zX3DU1C8olsLoO/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
 
     let allRides = [];
@@ -635,6 +635,7 @@
       }
     });
 
+    // SAFE ICON RENDERER (Ensures icons render under all browser timings)
     function safeRenderIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons();
@@ -669,6 +670,7 @@
     function cleanTimeFormat(timeInput) {
       if (!timeInput) return "09:00 AM";
       const str = String(timeInput).trim();
+      
       if (/am|pm/i.test(str)) return str;
 
       const parts = str.split(':');
@@ -687,8 +689,7 @@
       return cleanTimeFormat(timeStr);
     }
 
-    // EXPIRY CALCULATION WITH 60-MIN BUFFER
-    function isRideExpired(timeStr, graceMinutes = 60) {
+    function isRideExpired(timeStr, graceMinutes = 0) {
       if (!timeStr) return false;
       const now = new Date();
       const rideDate = new Date();
@@ -757,37 +758,12 @@
         
         const cancelledLocally = JSON.parse(localStorage.getItem('my_cancelled_ride_ids') || '[]');
         const inTransitId = localStorage.getItem('my_in_transit_ride_id');
-        const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
-        const myUid = getOrCreateUserId();
 
-        const mappedData = (Array.isArray(data) ? data : []).map(r => ({
-          id: r.id || r.ID || r.rideId,
-          creatorUid: r.creatorUid || r.CREATORUID || '',
-          riderName: r.riderName || r.RIDERNAME || '',
-          riderPhone: r.riderPhone || r.RIDERPHONE || '',
-          upiId: r.upiId || r.UPIID || '',
-          bikeModel: r.bikeModel || r.BIKEMODEL || '',
-          vehiclePlate: r.vehiclePlate || r.VEHICLEPLATE || '',
-          depTime: r.depTime || r.DEPTIME || '',
-          routeStart: r.routeStart || r.ROUTESTART || '',
-          routeEnd: r.routeEnd || r.ROUTEEND || '',
-          fare: r.fare || r.FARE || 15,
-          hasHelmet: (r.hasHelmet === true || String(r.hasHelmet).toUpperCase() === 'TRUE'),
-          womenOnly: (r.womenOnly === true || String(r.womenOnly).toUpperCase() === 'TRUE'),
-          status: (r.status || r.STATUS || 'AVAILABLE').toUpperCase(),
-          passengerName: r.passengerName || r.PASSENGERNAME || '',
-          passengerPhone: r.passengerPhone || r.PASSENGERPHONE || ''
-        }));
-
-        const valid = mappedData.filter(r => {
-          if (!r.id) return false;
+        const valid = (data || []).filter(r => {
           if (cancelledLocally.includes(r.id)) return false;
-          
-          const isMine = (r.creatorUid && r.creatorUid === myUid) || mySavedRides.includes(r.id);
-          if (isMine) return true;
-
-          if (r.status === 'BOOKED' || r.status === 'VERIFIED') return true;
-          return !isRideExpired(r.depTime, 60);
+          const st = (r.status || '').toUpperCase();
+          if (st === 'BOOKED' || st === 'VERIFIED') return true;
+          return !isRideExpired(r.depTime, 0);
         });
 
         valid.forEach(r => {
@@ -796,18 +772,14 @@
           }
         });
 
-        const existingLocalOnly = allRides.filter(local => 
-          mySavedRides.includes(local.id) && !valid.some(remote => remote.id === local.id)
-        );
-
-        allRides = [...existingLocalOnly, ...valid];
+        allRides = valid;
 
         renderPillionActiveBanner();
         renderRides();
         if (currentActiveTab === 'offer') updateOfferTabState();
         updateNavBadges();
       } catch (err) {
-        console.warn("Live fetch notice:", err);
+        console.error("Fetch error:", err);
       } finally {
         if (icon) icon.classList.remove('animate-spin');
         safeRenderIcons();
@@ -834,6 +806,7 @@
       }
     }
 
+    // PILLION BANNER WITH DYNAMIC QR PASS & FLICKER CACHE GUARDS
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -864,6 +837,7 @@
         return;
       }
 
+      // STATE GUARD: Prevent rebuilding the DOM if state is unchanged
       if (lastRenderedPillionRideId === bookedRide.id && lastRenderedPillionStatus === bookedRide.status) {
         return;
       }
@@ -883,6 +857,7 @@
 
       banner.classList.remove('hidden');
 
+      // STATE A: VERIFIED (ONBOARD)
       if (isVerified) {
         banner.innerHTML = `
           <div class="privacy-guard bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
@@ -936,7 +911,9 @@
             </div>
           </div>
         `;
-      } else {
+      } 
+      // STATE B: RESERVED (SHOW DYNAMIC QR PASS)
+      else {
         banner.innerHTML = `
           <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
             <div class="flex items-center justify-between border-b border-slate-700 pb-2.5">
@@ -947,6 +924,7 @@
               <span class="text-xs bg-slate-800 border border-slate-600 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
+            <!-- Rider Summary & Bike Plate Badge -->
             <div class="flex items-center justify-between">
               <div>
                 <h3 class="text-base font-extrabold tracking-tight">${bookedRide.riderName}</h3>
@@ -958,6 +936,7 @@
               </div>
             </div>
 
+            <!-- SCANNABLE DYNAMIC QR CODE CONTAINER -->
             <div class="bg-white p-4 rounded-3xl text-center shadow-md flex flex-col items-center justify-center space-y-2">
               <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider flex items-center justify-center gap-1">
                 <i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-600"></i> Boarding QR Pass
@@ -966,13 +945,14 @@
               <p class="text-[10px] text-slate-500 font-medium">Show this to your rider to scan before boarding</p>
             </div>
 
+            <!-- Route Details -->
             <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-1.5 border border-slate-700">
               <div class="flex items-start gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
                 <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeStart}</span>
               </div>
               <div class="flex items-start gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-rose-400 mt-1 shrink-0"></span>
+                <span class="w-2 h-2 rounded-full bg-rose-400 mt-1 shrink-0"></span>
                 <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeEnd}</span>
               </div>
               <div class="flex items-center justify-between border-t border-slate-700/80 pt-1.5 text-slate-300">
@@ -981,6 +961,7 @@
               </div>
             </div>
 
+            <!-- Action Buttons: WhatsApp & UPI Pay -->
             <div class="grid grid-cols-2 gap-2 pt-1">
               <a href="${riderWhatsAppUrl}" target="_blank" class="h-11 px-3.5 bg-emerald-700/90 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
                 <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300 shrink-0"></i> WhatsApp Rider
@@ -1010,6 +991,7 @@
       safeRenderIcons();
     }
 
+    // DIRECT 1-TAP BOOKING
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1077,6 +1059,7 @@
       fetchLiveRides();
     }
 
+    // RENDER RIDE CARDS
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -1250,6 +1233,7 @@
       safeRenderIcons();
     }
 
+    // RIDER DASHBOARD WITH QR SCANNER TRIGGER
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
@@ -1280,6 +1264,7 @@
       lastRenderedOfferStatus = targetState;
       lastRenderedOfferRideId = myActiveRide ? myActiveRide.id : null;
 
+      // STATE 1: PASSENGER BOOKED (QR SCAN TRIGGER)
       if (targetState === 'BOOKED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1299,6 +1284,7 @@
               </div>
             </div>
 
+            <!-- Passenger Details -->
             <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-3">
               <div class="flex justify-between items-center">
                 <div>
@@ -1315,6 +1301,7 @@
               </div>
             </div>
 
+            <!-- Full Unclipped Route View for Rider -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
               <div class="space-y-1">
                 <div>
@@ -1335,6 +1322,7 @@
               </p>
             </div>
 
+            <!-- ONE-TAP IN-APP QR CODE SCAN BUTTON -->
             <button onclick="startQrScanner('${myActiveRide.id}')" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
               <i data-lucide="camera" class="w-5 h-5"></i> Scan Passenger QR
             </button>
@@ -1346,6 +1334,7 @@
         `;
         safeRenderIcons();
       }
+      // STATE 2: RIDER IN TRANSIT
       else if (targetState === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1384,6 +1373,7 @@
         `;
         safeRenderIcons();
       }
+      // STATE 3: Ride Available
       else if (targetState === 'AVAILABLE') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1423,7 +1413,7 @@
               </div>
             </div>
 
-            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically after departure time. Once booked, passenger details and QR scan controls appear here.</p>
+            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically at departure time. Once booked, passenger details and QR scan controls appear here.</p>
 
             <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
               <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing
@@ -1440,6 +1430,7 @@
       }
     }
 
+    // IN-APP QR CODE SCANNER CONTROLLER (CLEAN UNMOUNT & RE-MOUNT)
     function startQrScanner(rideId) {
       activeScanningRideId = rideId;
       document.getElementById('qr-scanner-modal').classList.remove('hidden');
@@ -1463,7 +1454,9 @@
         (decodedText) => {
           handleQrScanSuccess(decodedText, activeScanningRideId);
         },
-        () => {}
+        () => {
+          // Continuous scanning
+        }
       ).catch((err) => {
         console.warn("Camera start failed:", err);
         alert("Camera access denied or unavailable. Please grant camera permission in your mobile browser.");
@@ -1523,6 +1516,7 @@
       }
     }
 
+    // POST RIDE TO APPS SCRIPT
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1566,10 +1560,9 @@
       profile.vehiclePlate = vPlate;
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
 
-      const newRideObj = {
+      const payload = {
         action: 'CREATE_RIDE',
         rideId: generatedRideId,
-        id: generatedRideId,
         creatorUid: myUid,
         riderName: rName,
         riderPhone: rPhone,
@@ -1581,24 +1574,27 @@
         routeEnd: document.getElementById('routeEnd').value.trim(),
         fare: cleanFare,
         hasHelmet: document.getElementById('hasHelmet').checked,
-        womenOnly: document.getElementById('womenOnly').checked,
-        status: 'AVAILABLE'
+        womenOnly: document.getElementById('womenOnly').checked
       };
-
-      const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
-      myRides.push(generatedRideId);
-      localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
-      allRides.unshift(newRideObj);
 
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newRideObj)
+          body: JSON.stringify(payload)
         });
+
+        const myRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
+        myRides.push(generatedRideId);
+        localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
+
+        alert("Seat posted! Other commuters can now book it.");
+        switchTab('find');
+        setTimeout(fetchLiveRides, 800);
       } catch (err) {
-        console.warn("Async network post completed locally:", err);
+        alert("Ride saved!");
+        switchTab('find');
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1606,15 +1602,6 @@
         }
         safeRenderIcons();
       }
-
-      alert("Seat posted! View and manage your live listing right here on the Offer Seat tab.");
-      
-      lastRenderedOfferStatus = null;
-      lastRenderedOfferRideId = null;
-      switchTab('offer');
-      updateOfferTabState();
-      renderRides();
-      setTimeout(fetchLiveRides, 1500);
     }
 
     async function completeMyRide(rideId) {
