@@ -30,19 +30,21 @@
           },
           colors: {
             brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b',
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
             }
           },
           boxShadow: {
-            'card': '0 2px 10px -2px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.03)',
-            'float': '0 12px 30px -6px rgba(15, 23, 42, 0.12)',
-            'btn': '0 4px 14px 0 rgba(5, 150, 105, 0.35)',
+            'card': '0 4px 18px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
+            'float': '0 16px 36px -6px rgba(15, 23, 42, 0.16)',
+            'btn': '0 6px 18px 0 rgba(79, 70, 229, 0.38)',
           }
         }
       }
@@ -57,7 +59,7 @@
       max-width: 100vw;
       overflow-x: hidden !important;
       overscroll-behavior-x: none;
-      background-color: #0b1320;
+      background-color: #090d16;
     }
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -81,7 +83,7 @@
     .spinner-dark {
       border: 2.5px solid #e2e8f0;
       border-radius: 50%;
-      border-top-color: #059669;
+      border-top-color: #4f46e5;
       width: 22px;
       height: 22px;
       animation: spin 0.75s linear infinite;
@@ -101,41 +103,39 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex justify-center selection:bg-brand-500 selection:text-white">
+<body class="min-h-screen flex justify-center selection:bg-brand-600 selection:text-white">
 
-  <!-- Main Mobile App Shell -->
+  <!-- Mobile Screen App Shell -->
   <div class="w-full max-w-md bg-[#f8fafc] min-h-screen flex flex-col relative shadow-2xl overflow-x-hidden pb-28 border-x border-slate-200/80">
 
-    <!-- Top Sticky App Bar -->
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/70 px-4 py-3 flex items-center justify-between transition-all">
-      <div class="flex items-center gap-3 cursor-pointer group" onclick="switchTab('home')">
-        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white shadow-btn group-hover:scale-105 transition-transform duration-200">
-          <i data-lucide="zap" class="w-4 h-4 fill-white text-white"></i>
+    <!-- Balanced Header with Perfectly Aligned Controls -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 flex items-center justify-between transition-all">
+      <div class="flex items-center gap-3 cursor-pointer group shrink-0" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-btn group-hover:scale-105 transition-transform duration-200">
+          <i data-lucide="zap" class="w-5 h-5 fill-white text-white"></i>
         </div>
         <div>
           <div class="flex items-center gap-1.5">
             <h1 class="text-sm font-extrabold tracking-tight text-slate-900 leading-none">MyRouteBuddy</h1>
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+            <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
           </div>
-          <p class="text-[11px] font-semibold text-slate-400 tracking-wide mt-0.5">Pune Peer Pool</p>
+          <p class="text-[11px] font-semibold text-slate-400 tracking-wide mt-1">Pune Peer Pool</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <a href="tel:+918788337049" class="h-9 flex items-center gap-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200/80 text-[11px] font-bold px-3 rounded-xl active:scale-95 transition-all">
-          <i data-lucide="phone-call" class="w-3.5 h-3.5 text-rose-600"></i> SOS
-        </a>
-        <button onclick="fetchLiveRides()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 flex items-center justify-center active:scale-95 transition-all" title="Refresh Feed">
+      <!-- Right Action Icons: Refresh + Menu -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="fetchLiveRides()" class="w-10 h-10 rounded-2xl bg-slate-100/90 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all border border-slate-200/60" title="Refresh Feed">
           <i data-lucide="rotate-cw" id="refresh-icon" class="w-4 h-4 text-slate-600"></i>
         </button>
-        <button onclick="toggleSidebar(true)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 flex items-center justify-center active:scale-95 transition-all" title="Menu">
-          <i data-lucide="menu" class="w-4 h-4 text-slate-700"></i>
+        <button onclick="toggleSidebar(true)" class="w-10 h-10 rounded-2xl bg-slate-100/90 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all border border-slate-200/60" title="Open Navigation Menu">
+          <i data-lucide="menu" class="w-5 h-5 text-slate-700"></i>
         </button>
       </div>
     </header>
 
     <!-- QR SCANNER MODAL -->
-    <div id="qr-scanner-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center hidden p-4 animate-in fade-in duration-200">
+    <div id="qr-scanner-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-float border border-slate-100">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div class="flex items-center gap-2.5">
@@ -144,7 +144,7 @@
             </div>
             <div>
               <h3 class="text-sm font-extrabold text-slate-900 leading-none">Scan Pass</h3>
-              <p class="text-[11px] text-slate-500 mt-1">Align the pillion passenger's QR</p>
+              <p class="text-[11px] text-slate-500 mt-1">Align the passenger's dynamic pass</p>
             </div>
           </div>
           <button onclick="closeQrScanner()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition">
@@ -183,7 +183,7 @@
 
           <!-- User Card in Menu -->
           <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3.5 p-3.5 bg-slate-50 hover:bg-brand-50/60 border border-slate-200/80 rounded-2xl cursor-pointer active:scale-98 transition">
-            <div id="drawer-avatar" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-teal-500 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+            <div id="drawer-avatar" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-700 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
               <span id="drawer-avatar-text">U</span>
             </div>
             <div class="truncate">
@@ -193,11 +193,11 @@
           </div>
 
           <!-- Pune Support Card -->
-          <div class="bg-gradient-to-br from-brand-900 to-slate-900 text-white rounded-2xl p-4 space-y-2.5 shadow-md">
-            <span class="text-[10px] uppercase font-extrabold tracking-wider text-brand-300">Pune Helpline</span>
+          <div class="bg-gradient-to-br from-slate-900 to-brand-950 text-white rounded-2xl p-4 space-y-2.5 shadow-md border border-slate-800">
+            <span class="text-[10px] uppercase font-extrabold tracking-wider text-brand-300">Pune Peer Desk</span>
             <p class="text-sm font-extrabold tracking-wide text-white">+91 8788337049</p>
-            <p class="text-[11px] text-slate-300 leading-snug">Peer rider and pillion verification assistance in Pune tech parks.</p>
-            <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="w-full bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-2 active:scale-95 transition shadow-sm mt-1">
+            <p class="text-[11px] text-slate-300 leading-snug">Peer coordination assistance across Hadapsar, Kharadi & Magarpatta.</p>
+            <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-2 active:scale-95 transition shadow-sm mt-1">
               <i data-lucide="message-square" class="w-3.5 h-3.5"></i> WhatsApp Desk
             </a>
           </div>
@@ -206,19 +206,19 @@
           <div class="space-y-1 pt-1">
             <button onclick="openModal('safety-modal')" class="w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
               <span class="flex items-center gap-2.5">
-                <i data-lucide="shield-check" class="w-4 h-4 text-brand-600"></i> Safety Guidelines
+                <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> Safety Guidelines & Notice
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
             <button onclick="openModal('faq-modal')" class="w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
               <span class="flex items-center gap-2.5">
-                <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> Commuter FAQs
+                <i data-lucide="help-circle" class="w-4 h-4 text-brand-600"></i> Commuter FAQs
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
             <button onclick="openModal('feedback-modal')" class="w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
               <span class="flex items-center gap-2.5">
-                <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> Commuter Feedback
+                <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Commuter Feedback
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
             </button>
@@ -232,38 +232,44 @@
         </div>
 
         <div class="text-center text-[11px] text-slate-400 border-t border-slate-100 pt-3">
-          MyRouteBuddy • Clean Pune Commute
+          MyRouteBuddy • Pune Peer Pilot
         </div>
       </div>
     </div>
 
-    <!-- Safety Rules Modal -->
+    <!-- Safety Rules & Unverified Pilot Notice Modal -->
     <div id="safety-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center hidden p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-float max-h-[85vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="shield-check" class="w-4 h-4 text-brand-600"></i> Safety Protocol
+            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> Safety & Pilot Notice
           </h3>
           <button onclick="closeModal('safety-modal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
-        <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
+
+        <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-1.5">
+          <div class="font-extrabold flex items-center gap-1.5 text-amber-800">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i> Community Pilot Notice
+          </div>
+          <p class="leading-relaxed text-[11px]">
+            Profiles are currently community-submitted and <strong>not government-verified</strong>. Always inspect the vehicle plate and coordinate on WhatsApp before boarding.
+          </p>
+        </div>
+
+        <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="font-bold text-slate-900">1. Mandatory ISI Helmets</p>
-            <p class="mt-0.5 text-slate-500">MVA Section 129 requires certified helmets for both rider and pillion.</p>
+            <p class="font-bold text-slate-900">1. Mandatory Helmets</p>
+            <p class="mt-0.5 text-slate-500">Motor Vehicles Act requires certified ISI/BIS helmets for both rider and pillion.</p>
           </div>
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="font-bold text-slate-900">2. Instant QR Boarding Pass</p>
-            <p class="mt-0.5 text-slate-500">Scan rider/pillion QR pass before wheels roll to verify identities.</p>
+            <p class="font-bold text-slate-900">2. Dynamic QR Pass</p>
+            <p class="mt-0.5 text-slate-500">Scan rider or passenger pass before departure to confirm you are paired correctly.</p>
           </div>
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
             <p class="font-bold text-slate-900">3. Direct UPI Fuel Share</p>
-            <p class="mt-0.5 text-slate-500">Zero disputes: passenger pays exact fuel split straight to rider's UPI.</p>
-          </div>
-          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="font-bold text-slate-900">4. Locked Routes</p>
-            <p class="mt-0.5 text-slate-500">Prevent cancellations and phantom rides with locked peer pooling.</p>
+            <p class="mt-0.5 text-slate-500">Contribute exact fuel split directly to the rider's personal UPI ID with zero cash disputes.</p>
           </div>
         </div>
       </div>
@@ -274,7 +280,7 @@
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-float max-h-[85vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> Commuter FAQs
+            <i data-lucide="help-circle" class="w-4 h-4 text-brand-600"></i> Commuter FAQs
           </h3>
           <button onclick="closeModal('faq-modal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-4 h-4"></i>
@@ -282,16 +288,16 @@
         </div>
         <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p class="font-bold text-slate-900">Are profiles identity-verified?</p>
+            <p class="mt-1 text-slate-500">We are currently in open community pilot mode. Identity KYC is actively under development, so commuters should verify peer credentials independently.</p>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
             <p class="font-bold text-slate-900">How do I verify boarding?</p>
-            <p class="mt-1 text-slate-500">Display your pass on screen. The rider scans it using the in-app camera scanner.</p>
+            <p class="mt-1 text-slate-500">Display your QR pass on screen. The rider scans it in 1 second using the built-in scanner.</p>
           </div>
           <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="font-bold text-slate-900">How does payment work?</p>
-            <p class="mt-1 text-slate-500">Tapping 'Pay via UPI' launches your installed payment app with the rider's ID pre-filled.</p>
-          </div>
-          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="font-bold text-slate-900">When do seats expire?</p>
-            <p class="mt-1 text-slate-500">Unbooked listings expire at scheduled departure to keep the Pune feed active.</p>
+            <p class="font-bold text-slate-900">How does fuel contribution work?</p>
+            <p class="mt-1 text-slate-500">Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for the rider's UPI ID.</p>
           </div>
         </div>
       </div>
@@ -306,8 +312,8 @@
               <i data-lucide="user-check" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="text-sm font-extrabold text-slate-900 leading-none">Confirm Identity</h3>
-              <p class="text-[11px] text-slate-400 mt-1">Required to confirm booking</p>
+              <h3 class="text-sm font-extrabold text-slate-900 leading-none">Confirm Commuter Info</h3>
+              <p class="text-[11px] text-slate-400 mt-1">Required before reserving your seat</p>
             </div>
           </div>
           <button onclick="closeModal('profile-gate-modal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500">
@@ -326,8 +332,8 @@
           </div>
 
           <div class="bg-brand-50/80 p-3.5 rounded-2xl border border-brand-200/70 text-xs text-brand-900 flex items-start gap-2.5">
-            <i data-lucide="shield-check" class="w-4 h-4 text-brand-700 shrink-0 mt-0.5"></i>
-            <p class="leading-relaxed">Direct fuel contribution paid to rider via UPI (GPay / PhonePe / Paytm).</p>
+            <i data-lucide="smartphone" class="w-4 h-4 text-brand-700 shrink-0 mt-0.5"></i>
+            <p class="leading-relaxed">Fuel contribution is paid directly to the rider via UPI (GPay / PhonePe / Paytm).</p>
           </div>
 
           <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-btn transition flex items-center justify-center gap-2">
@@ -349,7 +355,7 @@
           </button>
         </div>
         <form onsubmit="handleFeedbackSubmit(event)" class="space-y-3.5">
-          <textarea id="feedbackText" required rows="3" placeholder="Share your experience or corridor suggestion..." class="w-full bg-slate-50 border border-slate-200/90 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-brand-600 focus:bg-white transition"></textarea>
+          <textarea id="feedbackText" required rows="3" placeholder="Share your commute experience or corridor suggestions..." class="w-full bg-slate-50 border border-slate-200/90 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-brand-600 focus:bg-white transition"></textarea>
           <button type="submit" id="btn-submit-feedback" class="w-full py-3 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-btn">
             <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit Feedback
           </button>
@@ -367,23 +373,24 @@
           </button>
         </div>
         <p class="text-xs text-slate-600 leading-relaxed">
-          Engineered for daily Pune commuters across Hadapsar, Magarpatta, Kharadi, and Viman Nagar corridors to decongest roads and share commute costs transparently.
+          Peer-to-peer two-wheeler seat sharing initiative for Hadapsar, Kharadi, Magarpatta, and Viman Nagar to cut traffic jams and split petrol costs fairly.
         </p>
       </div>
     </div>
 
     <!-- TAB 0: HOME VIEW -->
     <main id="home-view" class="flex-1 px-4 py-4 space-y-4">
-      <!-- Hero Banner -->
-      <section class="bg-gradient-to-br from-slate-900 via-brand-950 to-brand-900 rounded-3xl p-5 text-white shadow-card space-y-4 relative overflow-hidden border border-slate-800">
-        <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-brand-500/20 rounded-full blur-2xl pointer-events-none"></div>
+      <!-- Modern Hero Banner in Electric Indigo & Violet Palette -->
+      <section class="bg-gradient-to-br from-slate-950 via-slate-900 to-brand-950 rounded-3xl p-5 text-white shadow-card space-y-4 relative overflow-hidden border border-slate-800/80">
+        <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-brand-600/25 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="flex items-center justify-between">
+        <!-- Top Header with Pilot Warning Notice -->
+        <div class="flex items-center justify-between gap-2">
           <span class="inline-flex items-center gap-1.5 bg-brand-500/20 border border-brand-400/30 text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full text-brand-300">
             <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-ping"></span> Pune Commute Pool
           </span>
-          <span class="text-[11px] font-semibold text-slate-300 flex items-center gap-1">
-            <i data-lucide="badge-check" class="w-3.5 h-3.5 text-brand-400"></i> 100% Peer Verified
+          <span class="inline-flex items-center gap-1 bg-amber-500/15 border border-amber-400/30 text-[10px] font-bold px-2.5 py-1 rounded-full text-amber-300">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-400"></i> Open Pilot
           </span>
         </div>
 
@@ -392,26 +399,34 @@
           <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">Share empty two-wheeler seats between tech parks. Save petrol, cut emissions, and avoid bus crowds.</p>
         </div>
 
+        <!-- Community Notice Banner -->
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-3 flex items-start gap-2 text-xs text-slate-300">
+          <i data-lucide="info" class="w-4 h-4 text-brand-300 shrink-0 mt-0.5"></i>
+          <p class="text-[11px] leading-relaxed">
+            <strong class="text-white">Community Pilot:</strong> User verification KYC is in progress. Please review vehicle plate and coordinate on WhatsApp before meeting.
+          </p>
+        </div>
+
         <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-800 text-center">
           <div class="bg-white/5 border border-white/10 rounded-2xl p-2.5">
             <span class="block text-sm font-extrabold text-brand-300">₹25 max</span>
             <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Fuel Split</span>
           </div>
           <div class="bg-white/5 border border-white/10 rounded-2xl p-2.5">
-            <span class="block text-sm font-extrabold text-teal-300">UPI</span>
+            <span class="block text-sm font-extrabold text-indigo-300">UPI</span>
             <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Direct Pay</span>
           </div>
           <div class="bg-white/5 border border-white/10 rounded-2xl p-2.5">
             <span class="block text-sm font-extrabold text-white">Instant</span>
-            <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">QR Boarding</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">QR Pass</span>
           </div>
         </div>
       </section>
 
-      <!-- Quick Action Buttons -->
+      <!-- Primary Action Cards -->
       <div class="grid grid-cols-2 gap-3">
         <button onclick="switchTab('find')" class="group bg-white border border-slate-200/80 hover:border-brand-500 rounded-3xl p-4 text-left shadow-card hover:shadow-float active:scale-98 transition flex flex-col justify-between h-32">
-          <div class="w-10 h-10 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center group-hover:bg-brand-600 group-hover:text-white transition">
+          <div class="w-10 h-10 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center group-hover:bg-brand-600 group-hover:text-white transition shadow-xs">
             <i data-lucide="compass" class="w-5 h-5"></i>
           </div>
           <div>
@@ -421,7 +436,7 @@
         </button>
 
         <button onclick="switchTab('offer')" class="group bg-white border border-slate-200/80 hover:border-brand-500 rounded-3xl p-4 text-left shadow-card hover:shadow-float active:scale-98 transition flex flex-col justify-between h-32">
-          <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center group-hover:bg-brand-600 group-hover:text-white transition">
+          <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center group-hover:bg-brand-600 group-hover:text-white transition shadow-xs">
             <i data-lucide="bike" class="w-5 h-5"></i>
           </div>
           <div>
@@ -446,7 +461,7 @@
               <span class="font-bold text-slate-800">Hadapsar → Kharadi EON</span>
               <span class="block text-[10px] text-slate-400 mt-0.5">Via Mundhwa Bypass • 20 mins</span>
             </div>
-            <span class="text-xs font-extrabold text-brand-700 bg-white border border-slate-200/80 px-2 py-1 rounded-xl shadow-2xs">₹15</span>
+            <span class="text-xs font-extrabold text-brand-700 bg-white border border-slate-200/80 px-2.5 py-1 rounded-xl shadow-2xs">₹15</span>
           </div>
 
           <div onclick="applyCorridorPreset('Magarpatta City Gate', 'Viman Nagar / E-Space')" class="flex items-center justify-between p-3 bg-slate-50/80 hover:bg-brand-50/60 border border-slate-200/60 hover:border-brand-200 rounded-2xl cursor-pointer active:scale-98 transition">
@@ -454,7 +469,7 @@
               <span class="font-bold text-slate-800">Magarpatta → Viman Nagar</span>
               <span class="block text-[10px] text-slate-400 mt-0.5">Via Kalyani Nagar / Nagar Rd • 25 mins</span>
             </div>
-            <span class="text-xs font-extrabold text-brand-700 bg-white border border-slate-200/80 px-2 py-1 rounded-xl shadow-2xs">₹15</span>
+            <span class="text-xs font-extrabold text-brand-700 bg-white border border-slate-200/80 px-2.5 py-1 rounded-xl shadow-2xs">₹15</span>
           </div>
         </div>
       </section>
@@ -827,12 +842,12 @@
         const ridesContainer = document.getElementById('rides-list');
         if (ridesContainer) {
           ridesContainer.innerHTML = `
-            <div class="text-center py-8 bg-white rounded-3xl border border-amber-200 p-6 space-y-2 shadow-card">
-              <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto mb-2">
+            <div class="text-center py-8 bg-white rounded-3xl border border-indigo-200 p-6 space-y-2 shadow-card">
+              <div class="w-10 h-10 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center mx-auto mb-2">
                 <i data-lucide="database" class="w-5 h-5"></i>
               </div>
-              <p class="text-xs font-bold text-amber-800">Ready to Connect</p>
-              <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Deploy your new Google Apps Script and insert the Web App URL into APPS_SCRIPT_URL.</p>
+              <p class="text-xs font-bold text-brand-900">Ready to Connect</p>
+              <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Deploy your Google Apps Script backend and update APPS_SCRIPT_URL to view live peer listings.</p>
             </div>
           `;
           safeRenderIcons();
@@ -949,13 +964,13 @@
 
       if (isVerified) {
         banner.innerHTML = `
-          <div class="privacy-guard bg-gradient-to-br from-brand-700 to-teal-800 text-white rounded-3xl p-5 shadow-float space-y-4 border-2 border-brand-400">
+          <div class="privacy-guard bg-gradient-to-br from-brand-700 to-indigo-900 text-white rounded-3xl p-5 shadow-float space-y-4 border-2 border-brand-400">
             <div class="flex items-center justify-between border-b border-brand-500/50 pb-3">
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-brand-300 animate-ping"></span>
                 <span class="text-xs font-black uppercase tracking-wider text-brand-200">Trip in Progress</span>
               </div>
-              <span class="text-xs bg-brand-950/60 border border-brand-400/40 px-3 py-1 rounded-full font-bold">₹${cleanFare}</span>
+              <span class="text-xs bg-brand-950/70 border border-brand-400/40 px-3 py-1 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
             <div class="flex items-center justify-between">
@@ -983,19 +998,16 @@
               </div>
             </div>
 
-            <div class="pt-1 flex gap-2.5">
-              <a href="${upiUrl}" class="flex-1 py-3.5 bg-white hover:bg-brand-50 active:scale-98 text-brand-900 text-xs font-black rounded-2xl text-center shadow-sm flex items-center justify-center gap-2 transition">
+            <div class="pt-1">
+              <a href="${upiUrl}" class="w-full py-3.5 bg-white hover:bg-brand-50 active:scale-98 text-brand-900 text-xs font-black rounded-2xl text-center shadow-sm flex items-center justify-center gap-2 transition">
                 <i data-lucide="send" class="w-4 h-4"></i> Pay ₹${cleanFare} via UPI
-              </a>
-              <a href="tel:+918788337049" class="px-4 py-3.5 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 shadow-sm">
-                <i data-lucide="phone" class="w-4 h-4"></i> SOS
               </a>
             </div>
           </div>
         `;
       } else {
         banner.innerHTML = `
-          <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-float space-y-4 border border-slate-700">
+          <div class="privacy-guard bg-gradient-to-br from-slate-900 via-slate-800 to-brand-950 text-white rounded-3xl p-5 shadow-float space-y-4 border border-slate-700">
             <div class="flex items-center justify-between border-b border-slate-700 pb-3">
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-brand-400 animate-ping"></span>
@@ -1020,7 +1032,7 @@
                 <i data-lucide="qr-code" class="w-4 h-4 text-brand-600"></i> Boarding QR Pass
               </span>
               <div id="pillion-qr-target" class="p-2 bg-white rounded-2xl flex items-center justify-center min-w-[140px] min-h-[140px]"></div>
-              <p class="text-[11px] text-slate-500 font-medium">Show this to your rider upon arrival</p>
+              <p class="text-[11px] text-slate-500 font-medium">Show this to your rider upon pickup</p>
             </div>
 
             <div class="bg-slate-800/80 rounded-2xl p-3.5 text-xs space-y-2 border border-slate-700">
@@ -1221,11 +1233,11 @@
                 <div>
                   <div class="flex items-center gap-1.5 flex-wrap">
                     <h3 class="text-sm font-extrabold text-slate-900 leading-tight">${ride.riderName}</h3>
-                    <span class="inline-flex items-center gap-1 text-[10px] bg-brand-50 text-brand-800 border border-brand-200/70 px-1.5 py-0.5 rounded-md font-bold">
-                      <i data-lucide="check-check" class="w-3 h-3 text-brand-600"></i> Verified
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded-md font-bold">
+                      <i data-lucide="user" class="w-3 h-3 text-slate-500"></i> Peer Member
                     </span>
                     ${isMyOwnRide ? `
-                      <span class="inline-flex items-center gap-1 text-[10px] ${isBooked ? 'bg-brand-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200')} font-bold px-2 py-0.5 rounded-md">
+                      <span class="inline-flex items-center gap-1 text-[10px] ${isBooked ? 'bg-brand-600 text-white animate-pulse' : (isVerified ? 'bg-indigo-800 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200')} font-bold px-2 py-0.5 rounded-md">
                         <i data-lucide="tag" class="w-3 h-3"></i>
                         ${isBooked ? 'Booked!' : (isVerified ? 'In Transit' : 'Your Listing')}
                       </span>
@@ -1274,7 +1286,7 @@
             <div class="flex items-center justify-between text-xs">
               ${ride.hasHelmet ? `
                 <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-brand-800 bg-brand-50/80 px-2.5 py-1 rounded-xl border border-brand-200/60">
-                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-600"></i> Spare Helmet Included
+                  <i data-lucide="shield" class="w-3.5 h-3.5 text-brand-600"></i> Spare Helmet Included
                 </span>
               ` : `
                 <span class="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/60">
@@ -1290,7 +1302,7 @@
                     <i data-lucide="qr-code" class="w-4 h-4"></i> Passenger Booked • Scan QR
                   </button>
                 ` : (isVerified ? `
-                  <button onclick="switchTab('offer')" class="w-full py-3 bg-teal-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-2">
+                  <button onclick="switchTab('offer')" class="w-full py-3 bg-indigo-800 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-2">
                     <i data-lucide="navigation" class="w-4 h-4"></i> Commute In Progress
                   </button>
                 ` : `
@@ -1416,7 +1428,7 @@
           <div class="privacy-guard bg-white rounded-3xl border-2 border-brand-500 p-5 shadow-float space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-teal-700 px-2.5 py-0.5 rounded-full">Live Commute</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-indigo-800 px-2.5 py-0.5 rounded-full">Live Commute</span>
                 <h2 class="text-base font-extrabold text-slate-900 mt-1">Ride In Progress</h2>
               </div>
               <div class="w-10 h-10 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center animate-pulse">
@@ -1595,7 +1607,7 @@
       const cleanFare = formatFare(rawFare);
 
       if (!rName || rPhone.length < 10 || !bModel || !vPlate || !rUpi) {
-        alert("Verification required: Please enter Full Name, WhatsApp, UPI ID, Bike Model, and Vehicle Plate.");
+        alert("Please enter Full Name, WhatsApp, UPI ID, Bike Model, and Vehicle Plate.");
         return;
       }
 
