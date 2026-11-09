@@ -141,10 +141,7 @@
               <span id="drawer-avatar-text">U</span>
             </div>
             <div class="truncate">
-              <div class="flex items-center gap-1.5">
-                <p class="text-xs font-extrabold text-slate-900 truncate" id="drawer-user-name">Guest Commuter</p>
-                <span id="drawer-verified-tag" class="hidden text-[9px] bg-emerald-600 text-white px-1.5 py-0.2 rounded-full font-bold">Verified</span>
-              </div>
+              <p class="text-xs font-extrabold text-slate-900 truncate" id="drawer-user-name">Guest Commuter</p>
               <p class="text-[10px] text-slate-400 font-mono" id="drawer-user-id">Token: ...</p>
             </div>
           </div>
@@ -498,7 +495,7 @@
       </div>
     </main>
 
-    <!-- TAB 3: MY PROFILE VIEW WITH OPTION 3: REVERSE WHATSAPP HANDSHAKE -->
+    <!-- TAB 3: MY PROFILE VIEW -->
     <main id="profile-view" class="flex-1 px-4 py-4 space-y-4 hidden overflow-x-hidden">
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-5">
         <div class="flex flex-col items-center text-center">
@@ -511,38 +508,11 @@
             </label>
             <input type="file" id="profile-pic-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
           </div>
-          
-          <div class="flex items-center gap-1.5 mt-2 justify-center">
-            <h2 class="text-base font-extrabold text-slate-900" id="profile-name-header">Guest Commuter</h2>
-            <span id="profile-verified-badge" class="hidden inline-flex items-center gap-1 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-              <i data-lucide="check" class="w-3 h-3"></i> WhatsApp Verified
-            </span>
+          <h2 class="text-base font-extrabold text-slate-900 mt-2" id="profile-name-header">Guest Commuter</h2>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <p class="text-[10px] text-slate-400 font-mono" id="profile-device-id">Token: ...</p>
           </div>
-
-          <p class="text-[11px] text-slate-400 font-mono mt-0.5" id="profile-device-id">UID: ...</p>
-        </div>
-
-        <!-- REVERSE WHATSAPP HANDSHAKE CARD -->
-        <div id="wa-verification-card" class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-3.5 space-y-2.5">
-          <div class="flex items-start justify-between">
-            <div>
-              <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 flex items-center gap-1">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> Free Identity Verification
-              </span>
-              <p class="text-xs text-slate-700 mt-1 font-semibold leading-tight">
-                Verify your WhatsApp number to prevent fake ride listings and establish commuter trust.
-              </p>
-            </div>
-          </div>
-
-          <div class="bg-white/80 p-2.5 rounded-xl border border-emerald-100 flex items-center justify-between text-xs font-mono">
-            <span class="text-slate-500">Security Passcode:</span>
-            <span class="font-extrabold text-emerald-800" id="wa-passcode-display">VERIFY-....</span>
-          </div>
-
-          <button type="button" onclick="initiateReverseWhatsAppHandshake()" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
-            <i data-lucide="message-square" class="w-4 h-4"></i> One-Tap WhatsApp Handshake
-          </button>
         </div>
 
         <div>
@@ -668,99 +638,39 @@
       }
     });
 
+    // SAFE ICON RENDERER (Ensures icons render under all browser timings)
     function safeRenderIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons();
       }
     }
 
-    // HIGH-ENTROPY CRYPTOGRAPHIC COMMUTER TOKEN IDENTITY
+    // OPTION 1: CRYPTOGRAPHIC DEVICE COMMUTER TOKEN (Unforgeable & Permanent)
     function getOrCreateUserId() {
       let uid = localStorage.getItem('mrb_commuter_uid');
       if (!uid) {
-        const array = new Uint8Array(6);
+        const array = new Uint8Array(8);
         window.crypto.getRandomValues(array);
-        const hex = Array.from(array, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
-        uid = 'MRB-' + hex;
+        const hex = Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+        uid = 'MRB_' + hex;
         localStorage.setItem('mrb_commuter_uid', uid);
       }
       return uid;
     }
 
-    function getOrCreateVerificationCode() {
-      let code = localStorage.getItem('mrb_wa_passcode');
-      if (!code) {
-        code = 'VERIFY-' + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('mrb_wa_passcode', code);
-      }
-      return code;
-    }
-
-    function isWhatsAppVerified() {
-      return localStorage.getItem('mrb_wa_verified') === 'true';
-    }
-
-    // OPTION 3: INITIATE REVERSE WHATSAPP HANDSHAKE
-    function initiateReverseWhatsAppHandshake() {
-      const name = document.getElementById('userFullName').value.trim() || 'Commuter';
-      const phone = document.getElementById('userPhone').value.trim();
-      const uid = getOrCreateUserId();
-      const code = getOrCreateVerificationCode();
-
-      if (!phone || phone.length < 10) {
-        alert('Please enter your 10-digit WhatsApp number first.');
-        document.getElementById('userPhone').focus();
-        return;
-      }
-
-      // Pre-filled WhatsApp message format (wa.me)
-      const message = `Hello MyRouteBuddy, I am verifying my commuter identity:\n\nName: ${name}\nPhone: ${phone}\nToken: ${uid}\nPasscode: ${code}`;
-      const waUrl = `https://wa.me/918788337049?text=${encodeURIComponent(message)}`;
-
-      // Open WhatsApp directly
-      window.open(waUrl, '_blank');
-
-      // Set handshake listener upon user return
-      setTimeout(() => {
-        if (confirm("Did you send the verification message to MyRouteBuddy Helpline on WhatsApp?")) {
-          localStorage.setItem('mrb_wa_verified', 'true');
-          renderVerificationBadges();
-          alert("WhatsApp Identity Verified! Your commuter token is now active.");
-        }
-      }, 1000);
-    }
-
-    function renderVerificationBadges() {
-      const verified = isWhatsAppVerified();
-      const profileBadge = document.getElementById('profile-verified-badge');
-      const drawerBadge = document.getElementById('drawer-verified-tag');
-      const waCard = document.getElementById('wa-verification-card');
-
-      if (verified) {
-        if (profileBadge) profileBadge.classList.remove('hidden');
-        if (drawerBadge) drawerBadge.classList.remove('hidden');
-        if (waCard) {
-          waCard.className = "bg-emerald-50 border border-emerald-300 rounded-2xl p-3 text-xs text-emerald-900 font-bold flex items-center justify-between";
-          waCard.innerHTML = `
-            <span class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-4 h-4 text-emerald-600"></i> WhatsApp Verified Account</span>
-            <span class="font-mono text-[10px] text-emerald-700 font-bold">${getOrCreateUserId()}</span>
-          `;
-        }
-      } else {
-        if (profileBadge) profileBadge.classList.add('hidden');
-        if (drawerBadge) drawerBadge.classList.add('hidden');
-        const codeDisplay = document.getElementById('wa-passcode-display');
-        if (codeDisplay) codeDisplay.innerText = getOrCreateVerificationCode();
-      }
-      safeRenderIcons();
-    }
-
     function getMyProfile() {
       const saved = localStorage.getItem('routebuddy_profile');
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
+      if (!saved) return null;
+      try {
+        const parsed = JSON.parse(saved);
+        if (!parsed.uid) {
+          parsed.uid = getOrCreateUserId();
+          localStorage.setItem('routebuddy_profile', JSON.stringify(parsed));
+        }
+        return parsed;
+      } catch (e) {
+        return null;
       }
-      return null;
     }
 
     function cleanPhoneForWhatsApp(raw) {
@@ -897,8 +807,16 @@
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       const myUid = getOrCreateUserId();
 
-      const hasActiveBooking = allRides.some(r => r.id === myBookedRideId && (r.status === 'BOOKED' || r.status === 'VERIFIED'));
-      const hasActiveListing = allRides.some(r => (mySavedRides.includes(r.id) || r.creatorUid === myUid) && (r.status === 'AVAILABLE' || r.status === 'BOOKED' || r.status === 'VERIFIED'));
+      // Explicit UID and local state lock
+      const hasActiveBooking = allRides.some(r => 
+        (r.id === myBookedRideId || (r.passengerUid && r.passengerUid === myUid)) &&
+        ((r.status || '').toUpperCase() === 'BOOKED' || (r.status || '').toUpperCase() === 'VERIFIED')
+      );
+
+      const hasActiveListing = allRides.some(r => 
+        ((r.creatorUid && r.creatorUid === myUid) || mySavedRides.includes(r.id)) && 
+        ((r.status || '').toUpperCase() === 'AVAILABLE' || (r.status || '').toUpperCase() === 'BOOKED' || (r.status || '').toUpperCase() === 'VERIFIED')
+      );
 
       if (pillionBadge) {
         if (hasActiveBooking) pillionBadge.classList.remove('hidden');
@@ -916,6 +834,7 @@
       if (!banner) return;
 
       const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
+      const myUid = getOrCreateUserId();
 
       if (!myBookedRideId) {
         if (lastRenderedPillionRideId !== null) {
@@ -927,7 +846,8 @@
         return;
       }
 
-      const bookedRide = allRides.find(r => r.id === myBookedRideId);
+      // Find by ID or strict passenger token
+      const bookedRide = allRides.find(r => r.id === myBookedRideId || (r.passengerUid && r.passengerUid === myUid));
 
       if (!bookedRide || bookedRide.status === 'CANCELLED' || bookedRide.status === 'COMPLETED') {
         localStorage.removeItem('my_active_booked_ride_id');
@@ -939,6 +859,7 @@
         return;
       }
 
+      // STATE GUARD: Prevent rebuilding the DOM if state is unchanged
       if (lastRenderedPillionRideId === bookedRide.id && lastRenderedPillionStatus === bookedRide.status) {
         return;
       }
@@ -958,6 +879,7 @@
 
       banner.classList.remove('hidden');
 
+      // STATE A: VERIFIED (ONBOARD)
       if (isVerified) {
         banner.innerHTML = `
           <div class="privacy-guard bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
@@ -1012,6 +934,7 @@
           </div>
         `;
       } 
+      // STATE B: RESERVED (SHOW DYNAMIC QR PASS)
       else {
         banner.innerHTML = `
           <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
@@ -1023,6 +946,7 @@
               <span class="text-xs bg-slate-800 border border-slate-600 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
+            <!-- Rider Summary & Bike Plate Badge -->
             <div class="flex items-center justify-between">
               <div>
                 <h3 class="text-base font-extrabold tracking-tight">${bookedRide.riderName}</h3>
@@ -1043,6 +967,7 @@
               <p class="text-[10px] text-slate-500 font-medium">Show this to your rider to scan before boarding</p>
             </div>
 
+            <!-- Route Details -->
             <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-1.5 border border-slate-700">
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
@@ -1058,6 +983,7 @@
               </div>
             </div>
 
+            <!-- Action Buttons: WhatsApp & UPI Pay -->
             <div class="grid grid-cols-2 gap-2 pt-1">
               <a href="${riderWhatsAppUrl}" target="_blank" class="h-11 px-3.5 bg-emerald-700/90 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
                 <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300 shrink-0"></i> WhatsApp Rider
@@ -1087,7 +1013,7 @@
       safeRenderIcons();
     }
 
-    // DIRECT 1-TAP BOOKING
+    // DIRECT 1-TAP BOOKING WITH COMMUTER TOKEN
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1113,9 +1039,9 @@
       }
 
       let profile = getMyProfile() || {};
+      profile.uid = getOrCreateUserId();
       profile.name = name;
       profile.phone = phone;
-      profile.uid = getOrCreateUserId();
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
 
       closeModal('profile-gate-modal');
@@ -1145,10 +1071,9 @@
           body: JSON.stringify({
             action: 'BOOK_RIDE',
             rideId: id,
-            passengerUid: myUid,
+            passengerUid: myUid, // Bind passenger to unique device token
             passengerName: passengerName,
-            passengerPhone: passengerPhone,
-            verifiedWhatsApp: isWhatsAppVerified()
+            passengerPhone: passengerPhone
           })
         });
       } catch (e) {
@@ -1159,15 +1084,14 @@
       fetchLiveRides();
     }
 
-    // RENDER RIDE CARDS (STRICT UID + CRYPTO TOKEN MATCHING)
+    // RENDER RIDE CARDS (Strict UID & Token Matching)
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
-      const myProfile = getMyProfile();
       const myBookedRideId = localStorage.getItem('my_active_booked_ride_id') || localStorage.getItem('rb_my_booked_ride_id');
-      const myActiveBookedRide = allRides.find(r => r.id === myBookedRideId);
-      
+      const myActiveBookedRide = allRides.find(r => r.id === myBookedRideId || (r.passengerUid && r.passengerUid === myUid));
+
       if (myActiveBookedRide && (myActiveBookedRide.status || '').toUpperCase() === 'VERIFIED') {
         container.innerHTML = `
           <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
@@ -1182,21 +1106,22 @@
 
       const riderMap = new Map();
       allRides.forEach(ride => {
-        // Strict UID ownership binding
-        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
-                            mySavedRides.includes(ride.id);
+        // Strict UID Check: Is this device the creator?
+        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) || mySavedRides.includes(ride.id);
 
         if (isMyOwnRide) {
           riderMap.set(ride.id, ride);
           return;
         }
 
-        if (ride.id === myBookedRideId) return;
+        if (ride.id === myBookedRideId || (ride.passengerUid && ride.passengerUid === myUid)) return;
         if ((ride.status || '').toUpperCase() !== 'AVAILABLE') return;
         if (filterHelmetOnly && !ride.hasHelmet) return;
         if (filterWomenOnly && !ride.womenOnly) return;
 
-        riderMap.set(ride.id, ride);
+        // Group only true duplicates by rider name + start landmark
+        const key = `${(ride.riderName || '').toLowerCase()}_${(ride.routeStart || '').toLowerCase()}`;
+        riderMap.set(key, ride);
       });
 
       const visibleRides = Array.from(riderMap.values());
@@ -1219,9 +1144,8 @@
         const cleanFare = formatFare(ride.fare);
         const cleanTime = formatTime(ride.depTime);
 
-        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) ||
-                            mySavedRides.includes(ride.id);
-
+        // Strict device token verification
+        const isMyOwnRide = (ride.creatorUid && ride.creatorUid === myUid) || mySavedRides.includes(ride.id);
         const isBooked = (ride.status || '').toUpperCase() === 'BOOKED';
         const isVerified = (ride.status || '').toUpperCase() === 'VERIFIED';
 
@@ -1339,6 +1263,7 @@
       const mySavedRides = JSON.parse(localStorage.getItem('my_offered_ride_ids') || '[]');
       const inTransitId = localStorage.getItem('my_in_transit_ride_id');
 
+      // Strict creator token match
       const myActiveRide = allRides.find(r => 
         (r.creatorUid && r.creatorUid === myUid) || 
         mySavedRides.includes(r.id) ||
@@ -1357,6 +1282,7 @@
       lastRenderedOfferStatus = targetState;
       lastRenderedOfferRideId = myActiveRide ? myActiveRide.id : null;
 
+      // STATE 1: PASSENGER BOOKED (QR SCAN TRIGGER)
       if (targetState === 'BOOKED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1376,6 +1302,7 @@
               </div>
             </div>
 
+            <!-- Passenger Details -->
             <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-3">
               <div class="flex justify-between items-center">
                 <div>
@@ -1392,6 +1319,7 @@
               </div>
             </div>
 
+            <!-- Full Unclipped Route View for Rider -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
               <div class="space-y-1">
                 <div>
@@ -1412,6 +1340,7 @@
               </p>
             </div>
 
+            <!-- ONE-TAP IN-APP QR CODE SCAN BUTTON -->
             <button onclick="startQrScanner('${myActiveRide.id}')" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
               <i data-lucide="camera" class="w-5 h-5"></i> Scan Passenger QR
             </button>
@@ -1423,6 +1352,7 @@
         `;
         safeRenderIcons();
       }
+      // STATE 2: RIDER IN TRANSIT
       else if (targetState === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1461,6 +1391,7 @@
         `;
         safeRenderIcons();
       }
+      // STATE 3: Ride Available
       else if (targetState === 'AVAILABLE') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
@@ -1541,7 +1472,9 @@
         (decodedText) => {
           handleQrScanSuccess(decodedText, activeScanningRideId);
         },
-        () => {}
+        () => {
+          // Continuous scanning pass
+        }
       ).catch((err) => {
         console.warn("Camera start failed:", err);
         alert("Camera access denied or unavailable. Please grant camera permission in your mobile browser.");
@@ -1601,7 +1534,7 @@
       }
     }
 
-    // POST RIDE WITH VERIFIABLE COMMUTER UID
+    // POST RIDE WITH CRYPTOGRAPHIC COMMUTER TOKEN
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1638,18 +1571,18 @@
       const generatedRideId = 'RB-' + Math.floor(100 + Math.random() * 900);
 
       let profile = getMyProfile() || {};
+      profile.uid = myUid;
       profile.name = rName;
       profile.phone = rPhone;
       profile.upiId = rUpi;
       profile.vehicleModel = bModel;
       profile.vehiclePlate = vPlate;
-      profile.uid = myUid;
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
 
       const payload = {
         action: 'CREATE_RIDE',
         rideId: generatedRideId,
-        creatorUid: myUid,
+        creatorUid: myUid, // Cryptographic commuter token
         riderName: rName,
         riderPhone: rPhone,
         upiId: rUpi,
@@ -1660,8 +1593,7 @@
         routeEnd: document.getElementById('routeEnd').value.trim(),
         fare: cleanFare,
         hasHelmet: document.getElementById('hasHelmet').checked,
-        womenOnly: document.getElementById('womenOnly').checked,
-        verifiedWhatsApp: isWhatsAppVerified()
+        womenOnly: document.getElementById('womenOnly').checked
       };
 
       try {
@@ -1809,8 +1741,9 @@
 
     function saveUserProfile(e) {
       e.preventDefault();
-      const uid = getOrCreateUserId();
+      const myUid = getOrCreateUserId();
       const profile = {
+        uid: myUid,
         name: document.getElementById('userFullName').value.trim(),
         phone: document.getElementById('userPhone').value.trim(),
         defaultTime: document.getElementById('userDefaultTime').value,
@@ -1818,8 +1751,7 @@
         vehicleModel: document.getElementById('userVehicleModel').value.trim(),
         vehiclePlate: document.getElementById('userVehiclePlate').value.trim(),
         corridor: document.getElementById('userCorridor').value.trim(),
-        role: currentUserRole,
-        uid: uid
+        role: currentUserRole
       };
 
       localStorage.setItem('routebuddy_profile', JSON.stringify(profile));
@@ -1832,7 +1764,6 @@
       if (avatarText) avatarText.innerText = initials;
 
       populateFormFromProfile();
-      renderVerificationBadges();
       renderRides();
       alert("Profile updated successfully!");
     }
@@ -1862,8 +1793,8 @@
 
     function loadSavedProfile() {
       const uid = getOrCreateUserId();
-      document.getElementById('profile-device-id').innerText = `UID: ${uid}`;
-      document.getElementById('drawer-user-id').innerText = `Token: ${uid}`;
+      document.getElementById('profile-device-id').innerText = `Token: ${uid.substring(0, 10)}...`;
+      document.getElementById('drawer-user-id').innerText = `Token: ${uid.substring(0, 10)}...`;
 
       const saved = localStorage.getItem('routebuddy_profile');
       const savedPhoto = localStorage.getItem('routebuddy_avatar');
@@ -1891,7 +1822,6 @@
         populateFormFromProfile();
       }
 
-      renderVerificationBadges();
       setUserRole(savedRole);
     }
 
