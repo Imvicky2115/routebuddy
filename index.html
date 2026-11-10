@@ -1,415 +1,438 @@
 <!DOCTYPE html>
-<html lang="en" class="overflow-x-hidden">
+<html lang="en" class="overflow-x-hidden antialiased">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>MyRouteBuddy — Pune Commuter Peer-Pooling</title>
+  <title>RouteBuddy — Pune Commuter Peer Pool</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Stable Lucide CDN -->
+  <!-- Lucide Icons -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
-  <!-- QR Code Generator & Scanner CDNs -->
+  <!-- QR Code CDNs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    *, *::before, *::after { 
-      box-sizing: border-box; 
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
     html, body {
       max-width: 100vw;
       overflow-x: hidden !important;
       overscroll-behavior-x: none;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
       color: #0f172a;
-      background-color: #f1f5f9;
+      background-color: #f8fafc;
       margin: 0;
       padding: 0;
     }
-    input, select, textarea, button { font-size: 16px !important; }
-    .touch-target { min-height: 48px; }
-    .custom-scroll::-webkit-scrollbar { display: none; }
-    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 3px solid #059669;
-      width: 22px;
-      height: 22px;
-      animation: spin 0.8s linear infinite;
+    input, select, textarea, button {
+      font-size: 15px !important;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
+    .touch-target {
+      min-height: 44px;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-radius: 50%;
+      border-top: 2.5px solid #059669;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     .privacy-guard {
       -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
       user-select: none;
       -webkit-touch-callout: none;
     }
     #qr-reader video {
-      border-radius: 1rem;
+      border-radius: 1.25rem;
       object-fit: cover;
       width: 100% !important;
     }
+    .pressable {
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
+    }
+    .pressable:active {
+      transform: scale(0.97);
+    }
   </style>
 </head>
-<body class="min-h-screen flex justify-center pb-24 overflow-x-hidden">
+<body class="min-h-screen flex justify-center pb-20 bg-slate-100">
 
-  <div class="w-full max-w-md bg-[#fbfcfd] min-h-screen flex flex-col relative shadow-md overflow-x-hidden border-x border-slate-200/60">
+  <div class="w-full max-w-md bg-white min-h-screen flex flex-col relative shadow-xl overflow-x-hidden border-x border-slate-200/80">
 
-    <!-- Top Sticky Header -->
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-2.5 flex items-center justify-between">
-      <div class="flex items-center space-x-2.5 shrink-0 cursor-pointer" onclick="switchTab('home')">
-        <div class="w-8 h-8 rounded-xl bg-[#059669] flex items-center justify-center text-white shadow-xs">
+    <!-- Refined Sticky App Bar -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between transition-all">
+      <div class="flex items-center space-x-2.5 cursor-pointer select-none" onclick="switchTab('home')">
+        <div class="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm ring-2 ring-emerald-500/20">
           <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
         </div>
         <div>
-          <h1 class="text-sm font-extrabold tracking-tight text-slate-900 leading-none">MyRouteBuddy</h1>
-          <p class="text-[10px] font-semibold text-slate-500 mt-0.5">Pune Peer Pool</p>
+          <h1 class="text-sm font-extrabold tracking-tight text-slate-900 leading-none">RouteBuddy</h1>
+          <p class="text-[10px] font-semibold text-slate-400 tracking-wide mt-0.5">Pune Commuter Pool</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 shrink-0">
-        <a href="tel:+918788337049" class="flex items-center gap-1.5 border border-rose-200 bg-rose-50/90 text-rose-600 text-[11px] font-bold px-2.5 py-1.5 rounded-xl active:scale-95 transition">
-          <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600"></i> SOS
+      <div class="flex items-center gap-1.5 shrink-0">
+        <a href="tel:+918788337049" class="pressable flex items-center gap-1.5 border border-rose-200 bg-rose-50/80 text-rose-600 text-[11px] font-bold px-2.5 py-1.5 rounded-xl shadow-2xs">
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> SOS
         </a>
-        <button onclick="fetchLiveRides()" class="w-8 h-8 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition" title="Refresh Feed">
-          <i data-lucide="refresh-cw" id="refresh-icon" class="w-3.5 h-3.5"></i>
+        <button onclick="fetchLiveRides()" class="pressable w-8 h-8 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:text-slate-900" title="Refresh Feed">
+          <i data-lucide="rotate-cw" id="refresh-icon" class="w-3.5 h-3.5"></i>
         </button>
-        <button onclick="toggleSidebar(true)" class="w-8 h-8 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition" title="Menu">
+        <button onclick="toggleSidebar(true)" class="pressable w-8 h-8 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:text-slate-900" title="Menu">
           <i data-lucide="menu" class="w-4 h-4"></i>
         </button>
       </div>
     </header>
 
-    <!-- QR SCANNER MODAL FOR RIDER -->
-    <div id="qr-scanner-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative">
-        <div class="flex items-center justify-between border-b pb-2">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+    <!-- Refined In-App QR Scanner Modal -->
+    <div id="qr-scanner-modal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl relative border border-slate-100">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
               <i data-lucide="qr-code" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="text-sm font-extrabold text-slate-900">Scan Passenger QR</h3>
-              <p class="text-[10px] text-slate-500">Align the pillion's QR pass inside the frame</p>
+              <h3 class="text-xs font-bold text-slate-900">Scan Pass</h3>
+              <p class="text-[10px] text-slate-400">Align rider's pass inside boundary</p>
             </div>
           </div>
-          <button onclick="closeQrScanner()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+          <button onclick="closeQrScanner()" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
 
-        <div id="qr-reader" class="w-full overflow-hidden rounded-2xl bg-black min-h-[260px] flex items-center justify-center text-white text-xs"></div>
+        <div id="qr-reader" class="w-full overflow-hidden rounded-2xl bg-black min-h-[240px] flex items-center justify-center text-white text-xs"></div>
 
-        <p class="text-[11px] text-slate-400 text-center">Camera scans automatically once ticket is visible.</p>
+        <p class="text-[11px] text-slate-400 text-center font-medium">Automatic detection when code is in frame.</p>
 
-        <button onclick="closeQrScanner()" class="touch-target w-full bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+        <button onclick="closeQrScanner()" class="pressable touch-target w-full bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">
           Close Scanner
         </button>
       </div>
     </div>
 
-    <!-- Side Navigation Drawer -->
-    <div id="side-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200 hidden">
-      <div class="absolute right-0 top-0 bottom-0 w-4/5 max-w-xs bg-white p-5 flex flex-col justify-between shadow-xl overflow-y-auto custom-scroll">
+    <!-- Side Drawer -->
+    <div id="side-drawer" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-200 hidden">
+      <div class="absolute right-0 top-0 bottom-0 w-4/5 max-w-xs bg-white p-5 flex flex-col justify-between shadow-2xl overflow-y-auto custom-scroll">
         <div class="space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3.5">
             <div class="flex items-center gap-2">
               <div class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
                 <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
               </div>
-              <span class="font-extrabold text-slate-900 text-sm">MyRouteBuddy Menu</span>
+              <span class="font-extrabold text-slate-900 text-sm tracking-tight">RouteBuddy</span>
             </div>
-            <button onclick="toggleSidebar(false)" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
-              <i data-lucide="x" class="w-4 h-4"></i>
+            <button onclick="toggleSidebar(false)" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>
           </div>
 
-          <div onclick="toggleSidebar(false); switchTab('profile');" class="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl cursor-pointer active:scale-98 transition">
-            <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0">
+          <div onclick="toggleSidebar(false); switchTab('profile');" class="pressable flex items-center gap-3 p-3 bg-slate-50 border border-slate-200/80 rounded-2xl cursor-pointer">
+            <div id="drawer-avatar" class="w-10 h-10 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
               <span id="drawer-avatar-text">U</span>
             </div>
             <div class="truncate">
-              <p class="text-xs font-extrabold text-slate-900 truncate" id="drawer-user-name">Guest Commuter</p>
-              <p class="text-[10px] text-slate-400 font-mono" id="drawer-user-id">Device: ...</p>
+              <p class="text-xs font-bold text-slate-900 truncate" id="drawer-user-name">Guest Commuter</p>
+              <p class="text-[10px] text-slate-400 font-mono mt-0.5" id="drawer-user-id">Device: ...</p>
             </div>
           </div>
 
-          <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2">
-            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Pune Helpline</span>
-            <p class="text-sm font-extrabold text-slate-900">+91 8788337049</p>
-            <p class="text-[11px] text-slate-500">Direct assistance for Pune peer riders and pillions.</p>
+          <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-3.5 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800">Support Desk</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+            <p class="text-xs font-extrabold text-slate-900">+91 8788337049</p>
+            <p class="text-[11px] text-slate-500 leading-snug">Direct line for verified Pune commuter peer assistance.</p>
             <div class="pt-1">
-              <a href="https://wa.me/918788337049?text=Hi%20MyRouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="w-full bg-emerald-600 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 active:scale-95 transition">
-                <i data-lucide="message-square" class="w-4 h-4"></i> WhatsApp Helpline
+              <a href="https://wa.me/918788337049?text=Hi%20RouteBuddy%2C%20I%20need%20assistance%20with%20a%20commute%20ride." target="_blank" class="pressable w-full bg-emerald-600 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-sm">
+                <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Open WhatsApp Help
               </a>
             </div>
           </div>
 
-          <div class="space-y-1.5 pt-1">
-            <button onclick="openModal('safety-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
-              <span class="flex items-center gap-2">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Safety Guidelines
+          <div class="space-y-1 pt-1">
+            <button onclick="openModal('safety-modal')" class="pressable w-full flex items-center justify-between p-2.5 bg-white rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Safety Checklist
               </span>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
             </button>
-            <button onclick="openModal('faq-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
-              <span class="flex items-center gap-2">
-                <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> Commuter FAQs
+            <button onclick="openModal('faq-modal')" class="pressable w-full flex items-center justify-between p-2.5 bg-white rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> How It Works
               </span>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
             </button>
-            <button onclick="openModal('feedback-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
-              <span class="flex items-center gap-2">
+            <button onclick="openModal('feedback-modal')" class="pressable w-full flex items-center justify-between p-2.5 bg-white rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+              <span class="flex items-center gap-2.5">
                 <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> Commuter Feedback
               </span>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
             </button>
-            <button onclick="openModal('about-modal')" class="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-800 hover:bg-slate-50 transition">
-              <span class="flex items-center gap-2">
-                <i data-lucide="info" class="w-4 h-4 text-slate-600"></i> About MyRouteBuddy
+            <button onclick="openModal('about-modal')" class="pressable w-full flex items-center justify-between p-2.5 bg-white rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="info" class="w-4 h-4 text-slate-500"></i> About RouteBuddy
               </span>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
             </button>
           </div>
         </div>
 
-        <div class="text-center text-[10px] text-slate-400 border-t border-slate-100 pt-3 mt-4">
-          MyRouteBuddy Pune • Clean Pune Commute
+        <div class="text-center text-[10px] text-slate-400 border-t border-slate-100 pt-3">
+          RouteBuddy Pune • Made for smoother daily transits
         </div>
       </div>
     </div>
 
     <!-- Modals -->
-    <div id="safety-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll">
-        <div class="flex items-center justify-between border-b pb-2">
-          <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Commuter Safety Rules
+    <div id="safety-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll border border-slate-100">
+        <div class="flex items-center justify-between border-b pb-2.5">
+          <h3 class="font-bold text-xs text-slate-900 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Mandatory Safety Rules
           </h3>
-          <button onclick="closeModal('safety-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+          <button onclick="closeModal('safety-modal')" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-          <p><strong>1. Mandatory Helmets:</strong> MVA Section 129 mandates BIS/ISI helmets for both rider and pillion.</p>
-          <p><strong>2. Instant QR Boarding:</strong> Rider scans the passenger's dynamic pass to start the commute.</p>
-          <p><strong>3. 100% Online UPI Payment:</strong> Direct fuel share to rider via UPI to eliminate disputes.</p>
-          <p><strong>4. Strict Commute Locking:</strong> Bookings cannot be cancelled by pillions once confirmed.</p>
+        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
+          <p><strong>1. ISI Helmets:</strong> MVA Sec 129 mandates BIS/ISI certified helmets for both rider and pillion.</p>
+          <p><strong>2. Instant QR Boarding:</strong> Always scan passenger's pass before vehicle starts moving.</p>
+          <p><strong>3. Transparent UPI:</strong> Fixed max ₹25 petrol split contribution paid straight to rider via UPI.</p>
+          <p><strong>4. Confirmed Seats:</strong> Prevents last-minute ghosting on daily Pune office lanes.</p>
         </div>
       </div>
     </div>
 
-    <div id="faq-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll">
-        <div class="flex items-center justify-between border-b pb-2">
-          <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+    <div id="faq-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl max-h-[85vh] overflow-y-auto custom-scroll border border-slate-100">
+        <div class="flex items-center justify-between border-b pb-2.5">
+          <h3 class="font-bold text-xs text-slate-900 flex items-center gap-2">
             <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i> Frequently Asked Questions
           </h3>
-          <button onclick="closeModal('faq-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+          <button onclick="closeModal('faq-modal')" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-          <p><strong>How do I verify boarding?</strong> Show the dynamic QR code on your active pass to the rider. The rider scans it in 1 second.</p>
-          <p><strong>How do I pay?</strong> Tapping 'Pay via UPI' opens Google Pay, PhonePe, or Paytm pre-filled for the rider's UPI ID.</p>
-          <p><strong>When do unbooked rides expire?</strong> Unbooked listings vanish automatically at departure time.</p>
+          <p><strong>How is my trip started?</strong> Present your dynamic QR code pass to the bike rider to verify boarding in 1 second.</p>
+          <p><strong>How do I send fuel contribution?</strong> Tap the UPI link on your pass to open GPay, PhonePe, or Paytm with the rider's ID and exact amount preloaded.</p>
+          <p><strong>When do listings vanish?</strong> Rides without bookings are auto-archived once departure time passes.</p>
         </div>
       </div>
     </div>
 
-    <!-- Mandatory Profile Setup Modal Before Booking -->
-    <div id="profile-gate-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between border-b pb-2.5">
+    <div id="profile-gate-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-slate-100">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
           <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
               <i data-lucide="user-check" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="text-sm font-extrabold text-slate-900 leading-tight">Confirm Commuter Profile</h3>
-              <p class="text-[10px] text-slate-500">Required before reserving your seat</p>
+              <h3 class="text-xs font-bold text-slate-900">Commuter Profile</h3>
+              <p class="text-[10px] text-slate-400">Required once before booking</p>
             </div>
           </div>
-          <button onclick="closeModal('profile-gate-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+          <button onclick="closeModal('profile-gate-modal')" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
 
         <form id="profile-gate-form" onsubmit="handleProfileGateSubmit(event)" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
-            <input type="text" id="gateFullName" required placeholder="e.g. Rahul Sharma" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name</label>
+            <input type="text" id="gateFullName" required placeholder="e.g. Rahul Sharma" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Mobile Number</label>
-            <input type="tel" id="gatePhone" required placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp Number</label>
+            <input type="tel" id="gatePhone" required placeholder="10-digit mobile number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
-          <div class="bg-emerald-50/80 p-3 rounded-xl border border-emerald-200 text-xs text-emerald-900 space-y-1">
-            <p class="font-bold flex items-center gap-1.5"><i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-700"></i> Payment: 100% Online UPI</p>
-            <p class="text-[11px] text-emerald-800">Direct fuel share paid to rider via GPay / PhonePe / Paytm.</p>
+          <div class="bg-emerald-50/80 p-3 rounded-xl border border-emerald-200/80 text-[11px] text-emerald-950 space-y-0.5">
+            <p class="font-bold flex items-center gap-1.5"><i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-700"></i> Cashless Peer Share</p>
+            <p class="text-emerald-800/90 text-[10px]">Direct fuel share sent to rider via UPI (GPay/PhonePe/Paytm).</p>
           </div>
 
-          <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-md transition flex items-center justify-center gap-2 mt-2">
-            <i data-lucide="check-circle" class="w-4 h-4"></i> Save & Confirm Booking
+          <button type="submit" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2 mt-1">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Save & Continue
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Feedback Modal -->
-    <div id="feedback-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between border-b pb-3">
-          <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-            <i data-lucide="star" class="w-4 h-4 text-amber-500 fill-amber-500"></i> Commuter Feedback
+    <div id="feedback-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-slate-100">
+        <div class="flex items-center justify-between border-b pb-2.5">
+          <h3 class="font-bold text-xs text-slate-900 flex items-center gap-2">
+            <i data-lucide="star" class="w-4 h-4 text-amber-500 fill-amber-500"></i> Help Improve RouteBuddy
           </h3>
-          <button onclick="closeModal('feedback-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+          <button onclick="closeModal('feedback-modal')" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
         <form onsubmit="handleFeedbackSubmit(event)" class="space-y-3">
-          <textarea id="feedbackText" required rows="3" placeholder="Tell us how your ride or route matching went..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"></textarea>
-          <button type="submit" id="btn-submit-feedback" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i> Send to Team
+          <textarea id="feedbackText" required rows="3" placeholder="Share your experience on Hadapsar, Kharadi or Viman Nagar routes..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"></textarea>
+          <button type="submit" id="btn-submit-feedback" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit Feedback
           </button>
         </form>
       </div>
     </div>
 
-    <div id="about-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl">
-        <div class="flex items-center justify-between border-b pb-2">
-          <h3 class="font-extrabold text-sm text-slate-900">About MyRouteBuddy</h3>
-          <button onclick="closeModal('about-modal')" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+    <div id="about-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl border border-slate-100">
+        <div class="flex items-center justify-between border-b pb-2.5">
+          <h3 class="font-bold text-xs text-slate-900">About RouteBuddy</h3>
+          <button onclick="closeModal('about-modal')" class="pressable w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <p class="text-xs text-slate-600 leading-relaxed">Built for peer commuters in Hadapsar, Kharadi, and Viman Nagar to cut Pune traffic congestion by sharing empty two-wheeler seats.</p>
+        <p class="text-xs text-slate-600 leading-relaxed">RouteBuddy connects tech park commuters in Hadapsar, Magarpatta, Kharadi, and Kalyani Nagar to share empty seats, cut traffic bottlenecks, and split fuel costs transparently.</p>
       </div>
     </div>
 
     <!-- TAB 0: HOME VIEW -->
-    <main id="home-view" class="flex-1 px-4 py-3.5 space-y-4 overflow-x-hidden">
-      <section class="bg-gradient-to-br from-emerald-700 via-emerald-800 to-slate-900 rounded-3xl p-5 text-white shadow-lg space-y-3 relative overflow-hidden">
+    <main id="home-view" class="flex-1 px-4 py-4 space-y-4 overflow-x-hidden">
+      <!-- Hero Banner -->
+      <section class="bg-gradient-to-br from-emerald-800 via-emerald-900 to-slate-950 rounded-3xl p-5 text-white shadow-md space-y-3.5 relative overflow-hidden">
         <div class="flex items-center justify-between">
-          <span class="inline-flex items-center gap-1.5 bg-emerald-500/30 border border-emerald-400/40 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full text-emerald-200">
-            <span class="w-2 h-2 rounded-full bg-emerald-300 animate-ping"></span> Pune Commuter Network
+          <span class="inline-flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full text-emerald-300">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live Pune Pool
           </span>
-          <span class="text-xs font-bold text-slate-300 flex items-center gap-1">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> Verified
+          <span class="text-[11px] font-semibold text-slate-300 flex items-center gap-1">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> Peer Verified
           </span>
         </div>
 
         <div>
-          <h2 class="text-xl font-extrabold tracking-tight leading-tight">Welcome to MyRouteBuddy</h2>
-          <p class="text-xs text-emerald-100/90 mt-1 leading-relaxed">Share empty two-wheeler seats across Pune tech corridors. Save petrol, cut traffic, and commute together.</p>
+          <h2 class="text-lg font-extrabold tracking-tight leading-snug">Beat Pune Traffic Together</h2>
+          <p class="text-xs text-slate-300/90 mt-1 leading-relaxed">Share your empty seat, cut daily fuel expenses, and travel faster through key tech corridors.</p>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-emerald-600/50 text-center">
-          <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
-            <span class="block text-base font-extrabold text-emerald-300">₹25 max</span>
-            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Fuel Split</span>
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-emerald-700/40 text-center">
+          <div class="bg-white/5 backdrop-blur-xs border border-white/10 rounded-2xl p-2.5">
+            <span class="block text-sm font-extrabold text-emerald-300">₹25 max</span>
+            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Fuel Share</span>
           </div>
-          <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
-            <span class="block text-base font-extrabold text-teal-300">100%</span>
-            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">Online UPI</span>
+          <div class="bg-white/5 backdrop-blur-xs border border-white/10 rounded-2xl p-2.5">
+            <span class="block text-sm font-extrabold text-teal-300">100%</span>
+            <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">UPI Split</span>
           </div>
-          <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-2">
-            <span class="block text-base font-extrabold text-white">1-Sec</span>
+          <div class="bg-white/5 backdrop-blur-xs border border-white/10 rounded-2xl p-2.5">
+            <span class="block text-sm font-extrabold text-white">1-Sec</span>
             <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">QR Boarding</span>
           </div>
         </div>
       </section>
 
+      <!-- Action Selectors -->
       <div class="grid grid-cols-2 gap-2.5">
-        <button onclick="switchTab('find')" class="touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-3.5 text-left shadow-2xs active:scale-98 transition flex flex-col justify-between">
-          <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-2">
-            <i data-lucide="compass" class="w-4 h-4"></i>
+        <button onclick="switchTab('find')" class="pressable touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-4 text-left shadow-2xs flex flex-col justify-between">
+          <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+            <i data-lucide="navigation" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-xs font-extrabold text-slate-900 leading-tight">Need a Ride?</h3>
-            <p class="text-[10px] text-slate-500 mt-0.5">Find available seats now</p>
+            <h3 class="text-xs font-bold text-slate-900 leading-tight">Need a Ride?</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Find available seats</p>
           </div>
         </button>
 
-        <button onclick="switchTab('offer')" class="touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-3.5 text-left shadow-2xs active:scale-98 transition flex flex-col justify-between">
-          <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center mb-2">
+        <button onclick="switchTab('offer')" class="pressable touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-4 text-left shadow-2xs flex flex-col justify-between">
+          <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center mb-3">
             <i data-lucide="bike" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-xs font-extrabold text-slate-900 leading-tight">Offering a Seat?</h3>
-            <p class="text-[10px] text-slate-500 mt-0.5">Post route in 10 seconds</p>
+            <h3 class="text-xs font-bold text-slate-900 leading-tight">Offering a Seat?</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Publish in 10 seconds</p>
           </div>
         </button>
       </div>
 
-      <section class="bg-white rounded-3xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
+      <!-- Corridor Quick Hubs -->
+      <section class="bg-white rounded-3xl border border-slate-200/80 p-4 shadow-2xs space-y-3">
         <div class="flex items-center justify-between">
-          <h3 class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+          <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
             <i data-lucide="map-pin" class="w-4 h-4 text-emerald-600"></i> Popular Pune Hubs
           </h3>
-          <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">High Demand</span>
+          <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">High Demand</span>
         </div>
 
         <div class="space-y-2">
-          <div onclick="applyCorridorPreset('Noble Hospital, Hadapsar', 'EON IT Park, Kharadi')" class="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/70 rounded-2xl cursor-pointer active:scale-98 transition">
+          <div onclick="applyCorridorPreset('Noble Hospital, Hadapsar', 'EON IT Park, Kharadi')" class="pressable flex items-center justify-between p-3 bg-slate-50 hover:bg-emerald-50/60 border border-slate-200/70 rounded-2xl cursor-pointer">
             <div class="text-xs">
               <span class="font-bold text-slate-800">Hadapsar → Kharadi EON</span>
               <span class="block text-[10px] text-slate-400 mt-0.5">Via Mundhwa Bypass • 20 mins</span>
             </div>
-            <span class="text-xs font-extrabold text-emerald-700">₹15</span>
+            <span class="text-xs font-extrabold text-emerald-700 bg-white px-2 py-1 rounded-xl border border-slate-200/80">₹15</span>
           </div>
 
-          <div onclick="applyCorridorPreset('Magarpatta City Gate', 'Viman Nagar / E-Space')" class="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/70 rounded-2xl cursor-pointer active:scale-98 transition">
+          <div onclick="applyCorridorPreset('Magarpatta City Gate', 'Viman Nagar / E-Space')" class="pressable flex items-center justify-between p-3 bg-slate-50 hover:bg-emerald-50/60 border border-slate-200/70 rounded-2xl cursor-pointer">
             <div class="text-xs">
               <span class="font-bold text-slate-800">Magarpatta → Viman Nagar</span>
-              <span class="block text-[10px] text-slate-400 mt-0.5">Via Kalyani Nagar / Nagar Road • 25 mins</span>
+              <span class="block text-[10px] text-slate-400 mt-0.5">Via Nagar Road • 25 mins</span>
             </div>
-            <span class="text-xs font-extrabold text-emerald-700">₹15</span>
+            <span class="text-xs font-extrabold text-emerald-700 bg-white px-2 py-1 rounded-xl border border-slate-200/80">₹15</span>
           </div>
         </div>
       </section>
     </main>
 
     <!-- TAB 1: FIND RIDE VIEW -->
-    <main id="find-view" class="flex-1 px-4 py-3 space-y-3.5 overflow-x-hidden hidden">
+    <main id="find-view" class="flex-1 px-4 py-3.5 space-y-3.5 overflow-x-hidden hidden">
       <div id="pillion-active-booking-banner" class="hidden"></div>
 
-      <!-- Pill Filters -->
-      <div id="pill-filter-bar" class="grid grid-cols-2 gap-2 pt-0.5">
-        <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition">
-          <i data-lucide="shield" class="w-4 h-4 text-emerald-600 shrink-0"></i> Spare Helmet
+      <!-- Quick Toggles -->
+      <div id="pill-filter-bar" class="grid grid-cols-2 gap-2">
+        <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold shadow-2xs">
+          <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-600"></i> Spare Helmet
         </button>
-        <button id="toggle-women" onclick="toggleFilter('women')" class="touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition">
-          <i data-lucide="users" class="w-4 h-4 text-rose-500 shrink-0"></i> Women Only
+        <button id="toggle-women" onclick="toggleFilter('women')" class="pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold shadow-2xs">
+          <i data-lucide="users" class="w-3.5 h-3.5 text-rose-500"></i> Women Only
         </button>
       </div>
 
-      <div class="flex items-center justify-between px-1">
-        <span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60" id="verified-count">Checking seats...</span>
-        <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active Corridors
+      <div class="flex items-center justify-between px-1 text-[11px]">
+        <span class="font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/70" id="verified-count">Checking seats...</span>
+        <span class="text-emerald-700 font-semibold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active Route Feed
         </span>
       </div>
 
-      <!-- Live Rides Feed -->
-      <div id="rides-list" class="space-y-3 pb-2">
-        <div class="flex flex-col items-center justify-center py-10 text-slate-400">
-          <div class="loader mb-2.5"></div>
-          <p class="text-xs font-semibold text-slate-500">Connecting to MyRouteBuddy...</p>
+      <!-- Rides Feed Container -->
+      <div id="rides-list" class="space-y-3 pb-3">
+        <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+          <div class="loader mb-3"></div>
+          <p class="text-xs font-semibold text-slate-500">Checking live Pune pool...</p>
         </div>
       </div>
     </main>
@@ -420,181 +443,180 @@
 
       <div id="offer-form-card" class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div>
-          <h2 class="text-base font-extrabold text-slate-900">Offer an Empty Seat</h2>
-          <p class="text-xs text-slate-500 mt-0.5">All fields required. Plate number is protected until booking.</p>
+          <h2 class="text-sm font-extrabold text-slate-900 tracking-tight">Offer an Empty Seat</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Help a fellow commuter and split daily fuel.</p>
         </div>
 
         <form id="offer-form" onsubmit="handlePostRide(event)" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Your Full Name <span class="text-rose-500">*</span></label>
-            <input type="text" id="riderName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Your Full Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="riderName" required placeholder="Enter full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Number <span class="text-rose-500">*</span></label>
-              <input type="tel" id="riderPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp <span class="text-rose-500">*</span></label>
+              <input type="tel" id="riderPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter <span class="text-rose-500">*</span></label>
-              <input type="text" id="bikeModel" required placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Bike / Scooter <span class="text-rose-500">*</span></label>
+              <input type="text" id="bikeModel" required placeholder="e.g. Hunter / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
           </div>
 
-          <!-- Dynamic UPI ID Input for Rider -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Your UPI ID (GPay / PhonePe / Paytm) <span class="text-rose-500">*</span></label>
-            <input type="text" id="riderUpiId" required placeholder="e.g. 9876543210@okaxis or name@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition font-mono">
-            <span class="text-[10px] text-slate-400 mt-0.5 block">Passenger's UPI app will open with this ID pre-filled.</span>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Your UPI ID <span class="text-rose-500">*</span></label>
+            <input type="text" id="riderUpiId" required placeholder="e.g. phone@okaxis or name@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition font-mono">
+            <span class="text-[10px] text-slate-400 mt-1 block">Passenger sends fuel contribution directly here.</span>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Departure Time <span class="text-rose-500">*</span></label>
-              <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Departure Time <span class="text-rose-500">*</span></label>
+              <input type="time" id="depTimePicker" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate <span class="text-rose-500">*</span></label>
-              <input type="text" id="vehicleReg" required placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition uppercase font-mono">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Vehicle Plate <span class="text-rose-500">*</span></label>
+              <input type="text" id="vehicleReg" required placeholder="MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition uppercase font-mono">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Starting Landmark <span class="text-rose-500">*</span></label>
-            <input type="text" id="routeStart" required placeholder="e.g. JSPM Gate No 2, Kale Padal" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Pickup Landmark <span class="text-rose-500">*</span></label>
+            <input type="text" id="routeStart" required placeholder="e.g. Hadapsar / Kale Padal" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Destination Landmark <span class="text-rose-500">*</span></label>
-            <input type="text" id="routeEnd" required placeholder="e.g. Noble Hospital, Hadapsar" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Drop-off Destination <span class="text-rose-500">*</span></label>
+            <input type="text" id="routeEnd" required placeholder="e.g. Kharadi EON IT Park" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block text-xs font-bold text-slate-700">Fuel Contribution (₹) <span class="text-rose-500">*</span></label>
-              <span class="text-[10px] font-bold text-emerald-700">Max ₹25 (MVA Peer Cap)</span>
+              <label class="block text-[11px] font-bold text-slate-700">Fuel Contribution (₹) <span class="text-rose-500">*</span></label>
+              <span class="text-[10px] font-bold text-emerald-700">Max ₹25 Cap</span>
             </div>
-            <input type="number" id="nominalFare" min="10" max="25" value="15" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
+            <input type="number" id="nominalFare" min="10" max="25" value="15" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition">
           </div>
 
           <div class="space-y-2 pt-1">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="hasHelmet" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300">
-              <span class="text-xs font-semibold text-slate-700">Spare helmet available for pillion (Yes)</span>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="hasHelmet" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-0">
+              <span class="text-xs font-semibold text-slate-700">Spare helmet available for pillion</span>
             </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="womenOnly" class="w-4 h-4 text-emerald-600 rounded border-slate-300">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="womenOnly" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-0">
               <span class="text-xs font-semibold text-slate-700">Women-only commuter pool</span>
             </label>
           </div>
 
-          <button type="submit" id="submit-ride-btn" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i> Post Ride to Database
+          <button type="submit" id="submit-ride-btn" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs shadow-md flex items-center justify-center gap-2 mt-3">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Publish Live Seat
           </button>
         </form>
       </div>
     </main>
 
-    <!-- TAB 3: MY PROFILE VIEW -->
+    <!-- TAB 3: PROFILE VIEW -->
     <main id="profile-view" class="flex-1 px-4 py-4 space-y-4 hidden overflow-x-hidden">
-      <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-5">
+      <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div class="flex flex-col items-center text-center">
           <div class="relative group">
-            <div id="profile-pic-preview" class="w-20 h-20 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center overflow-hidden text-emerald-700 font-extrabold text-2xl shadow-sm">
+            <div id="profile-pic-preview" class="w-18 h-18 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center overflow-hidden text-emerald-800 font-extrabold text-xl shadow-xs">
               <span id="avatar-initials">U</span>
             </div>
-            <label for="profile-pic-input" class="absolute bottom-0 right-0 w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-slate-700 transition">
-              <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+            <label for="profile-pic-input" class="pressable absolute bottom-0 right-0 w-6 h-6 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-slate-800">
+              <i data-lucide="camera" class="w-3 h-3"></i>
             </label>
             <input type="file" id="profile-pic-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
           </div>
-          <h2 class="text-base font-extrabold text-slate-900 mt-2" id="profile-name-header">Guest Commuter</h2>
-          <p class="text-[11px] text-slate-400 font-mono" id="profile-device-id">Device: ...</p>
+          <h2 class="text-sm font-extrabold text-slate-900 mt-2" id="profile-name-header">Guest Commuter</h2>
+          <p class="text-[10px] text-slate-400 font-mono" id="profile-device-id">Device: ...</p>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5 text-center">Your Commuter Mode</label>
-          <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-2xl">
-            <button type="button" id="role-btn-pillion" onclick="setUserRole('pillion')" class="py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600">
-              <i data-lucide="user" class="w-4 h-4"></i> Pillion Rider
+          <label class="block text-[11px] font-bold text-slate-600 mb-1.5 text-center">Default Role</label>
+          <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-2xl">
+            <button type="button" id="role-btn-pillion" onclick="setUserRole('pillion')" class="py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i> Pillion
             </button>
-            <button type="button" id="role-btn-rider" onclick="setUserRole('rider')" class="py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs">
-              <i data-lucide="bike" class="w-4 h-4"></i> Rider with Bike
+            <button type="button" id="role-btn-rider" onclick="setUserRole('rider')" class="py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs">
+              <i data-lucide="bike" class="w-3.5 h-3.5"></i> Bike Rider
             </button>
           </div>
         </div>
 
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-3 pt-1">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="userFullName" required placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name</label>
+            <input type="text" id="userFullName" required placeholder="Your full name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Number</label>
-              <input type="tel" id="userPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp</label>
+              <input type="tel" id="userPhone" required placeholder="10-digit number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Daily Departure</label>
-              <input type="time" id="userDefaultTime" value="09:15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Departure</label>
+              <input type="time" id="userDefaultTime" value="09:15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600">
             </div>
           </div>
 
           <div id="rider-vehicle-fields" class="space-y-3 pt-1 border-t border-slate-100">
-            <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Rider Specifications</span>
+            <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">Rider Preferences</span>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Your Personal UPI ID</label>
-              <input type="text" id="userUpiId" placeholder="e.g. mobile@okaxis or name@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 font-mono">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">UPI ID for Fuel Split</label>
+              <input type="text" id="userUpiId" placeholder="e.g. mobile@okaxis" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 font-mono">
             </div>
             <div class="grid grid-cols-2 gap-2.5">
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Bike / Scooter</label>
-                <input type="text" id="userVehicleModel" placeholder="e.g. Hunter 350 / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Vehicle Model</label>
+                <input type="text" id="userVehicleModel" placeholder="Hunter / Activa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600">
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Plate</label>
-                <input type="text" id="userVehiclePlate" placeholder="e.g. MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600 uppercase font-mono">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Number Plate</label>
+                <input type="text" id="userVehiclePlate" placeholder="MH12 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 uppercase font-mono">
               </div>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Primary Pune Corridor</label>
-            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar → Kharadi Bypass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-600">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Primary Pune Route</label>
+            <input type="text" id="userCorridor" placeholder="e.g. Hadapsar to Kharadi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600">
           </div>
 
-          <button type="submit" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-2xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2 mt-4">
-            <i data-lucide="check" class="w-4 h-4"></i> Save My Profile
+          <button type="submit" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs shadow-md flex items-center justify-center gap-2 mt-3">
+            <i data-lucide="check" class="w-4 h-4"></i> Save Profile Details
           </button>
         </form>
       </div>
     </main>
 
-    <!-- Bottom Navigation Bar: 4 Primary Tabs -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-1.5">
+    <!-- Bottom App Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-slate-200/80 py-1">
       <div class="max-w-md mx-auto grid grid-cols-4 px-2">
-        <button onclick="switchTab('home')" id="nav-home" class="relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1">
-          <i data-lucide="home" class="w-5 h-5"></i>
+        <button onclick="switchTab('home')" id="nav-home" class="pressable relative flex flex-col items-center justify-center gap-0.5 text-emerald-600 font-bold py-1">
+          <i data-lucide="home" class="w-4 h-4"></i>
           <span class="text-[10px]">Home</span>
         </button>
-        <button onclick="switchTab('find')" id="nav-find" class="relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
+        <button onclick="switchTab('find')" id="nav-find" class="pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
           <div class="relative">
-            <i data-lucide="compass" class="w-5 h-5"></i>
-            <span id="nav-find-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+            <i data-lucide="compass" class="w-4 h-4"></i>
+            <span id="nav-find-badge" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
           </div>
           <span class="text-[10px]">Find Ride</span>
         </button>
-        <button onclick="switchTab('offer')" id="nav-offer" class="relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
+        <button onclick="switchTab('offer')" id="nav-offer" class="pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
           <div class="relative">
-            <i data-lucide="bike" class="w-5 h-5"></i>
-            <span id="nav-offer-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+            <i data-lucide="bike" class="w-4 h-4"></i>
+            <span id="nav-offer-badge" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
           </div>
           <span class="text-[10px]">Offer Seat</span>
         </button>
-        <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
-          <i data-lucide="user" class="w-5 h-5"></i>
-          <span class="text-[10px]">My Profile</span>
+        <button onclick="switchTab('profile')" id="nav-profile" class="pressable flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          <span class="text-[10px]">Profile</span>
         </button>
       </div>
     </nav>
@@ -618,24 +640,21 @@
     let html5QrScannerInstance = null;
     let activeScanningRideId = null;
 
-    // SCREENSHOT COUNTERMEASURE
+    // Screenshot Protection
     window.addEventListener('keyup', (e) => {
       if (e.key === 'PrintScreen') {
         navigator.clipboard.writeText('');
-        alert('Personal commuter details are protected under MyRouteBuddy privacy guidelines.');
+        alert('Personal commuter details are protected.');
       }
     });
 
     document.addEventListener('copy', (e) => {
       if (currentActiveTab === 'find' || currentActiveTab === 'offer') {
         const sel = window.getSelection().toString();
-        if (sel.length > 20) {
-          e.preventDefault();
-        }
+        if (sel.length > 20) e.preventDefault();
       }
     });
 
-    // SAFE ICON RENDERER (Ensures icons render under all browser timings)
     function safeRenderIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons();
@@ -670,7 +689,6 @@
     function cleanTimeFormat(timeInput) {
       if (!timeInput) return "09:00 AM";
       const str = String(timeInput).trim();
-      
       if (/am|pm/i.test(str)) return str;
 
       const parts = str.split(':');
@@ -806,7 +824,6 @@
       }
     }
 
-    // PILLION BANNER WITH DYNAMIC QR PASS & FLICKER CACHE GUARDS
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -837,7 +854,6 @@
         return;
       }
 
-      // STATE GUARD: Prevent rebuilding the DOM if state is unchanged
       if (lastRenderedPillionRideId === bookedRide.id && lastRenderedPillionStatus === bookedRide.status) {
         return;
       }
@@ -852,122 +868,104 @@
       const vehiclePlate = (bookedRide.vehiclePlate && bookedRide.vehiclePlate.trim()) ? bookedRide.vehiclePlate.trim().toUpperCase() : 'REGISTERED';
       const riderUpi = (bookedRide.upiId && bookedRide.upiId.trim()) ? bookedRide.upiId.trim() : '8788337049@okaxis';
       
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(riderUpi)}&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=MyRouteBuddy%20Petrol%20Share`;
-      const riderWhatsAppUrl = `https://wa.me/${waPhone}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20MyRouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(riderUpi)}&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
+      const riderWhatsAppUrl = `https://wa.me/${waPhone}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20RouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
 
       banner.classList.remove('hidden');
 
-      // STATE A: VERIFIED (ONBOARD)
       if (isVerified) {
         banner.innerHTML = `
-          <div class="privacy-guard bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-3xl p-5 shadow-xl space-y-3.5 border-2 border-emerald-400">
-            <div class="flex items-center justify-between border-b border-emerald-400/40 pb-2.5">
+          <div class="privacy-guard bg-gradient-to-br from-emerald-700 to-teal-900 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-emerald-400/40">
+            <div class="flex items-center justify-between border-b border-emerald-500/40 pb-2.5">
               <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-300 animate-ping"></span>
-                <span class="text-xs font-black uppercase tracking-wider text-emerald-200">Trip in Progress</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-200">Trip in Progress</span>
               </div>
-              <span class="text-xs bg-emerald-950/60 border border-emerald-400/40 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
+              <span class="text-xs bg-emerald-950/70 border border-emerald-400/30 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">Onboard with</p>
-                <h3 class="text-lg font-black tracking-tight leading-tight mt-0.5">${bookedRide.riderName}</h3>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="text-xs text-emerald-100 font-medium">${bookedRide.bikeModel}</span>
-                  <span class="text-[11px] bg-white/20 border border-white/30 px-2.5 py-0.5 rounded font-mono font-bold text-white uppercase tracking-wider">${vehiclePlate}</span>
+                <p class="text-[10px] text-emerald-200/90 font-bold uppercase tracking-wider">Rider</p>
+                <h3 class="text-base font-extrabold tracking-tight mt-0.5">${bookedRide.riderName}</h3>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <span class="text-xs text-emerald-100">${bookedRide.bikeModel}</span>
+                  <span class="text-[10px] bg-white/15 px-2 py-0.5 rounded font-mono font-bold text-white uppercase">${vehiclePlate}</span>
                 </div>
               </div>
-              <a href="${riderWhatsAppUrl}" target="_blank" class="w-12 h-12 rounded-2xl bg-emerald-500/90 hover:bg-emerald-400 active:scale-95 text-white flex items-center justify-center shadow-md transition shrink-0" title="Chat on WhatsApp">
-                <i data-lucide="message-circle" class="w-6 h-6"></i>
+              <a href="${riderWhatsAppUrl}" target="_blank" class="pressable w-11 h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-md shrink-0">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
               </a>
             </div>
 
-            <div class="bg-emerald-900/80 rounded-2xl p-3 text-[11px] text-emerald-100 border border-emerald-500/40 space-y-1">
-              <div class="flex items-center gap-1.5 font-bold text-emerald-300">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Boarding QR Verified
-              </div>
-              <p class="leading-tight">Verify that the vehicle plate matches <strong>${vehiclePlate}</strong>. Pay fuel contribution via UPI.</p>
-            </div>
-
-            <div class="bg-emerald-900/60 rounded-2xl p-3 text-xs space-y-1.5 border border-emerald-500/30">
-              <div class="flex justify-between">
-                <span class="text-emerald-300">Drop-off:</span>
-                <span class="font-bold text-white text-right break-words">${bookedRide.routeEnd}</span>
-              </div>
-              <div class="flex justify-between border-t border-emerald-700/50 pt-1.5">
-                <span class="text-emerald-300">Payment:</span>
-                <span class="text-emerald-200 font-bold">100% Online UPI</span>
+            <div class="bg-emerald-950/50 rounded-2xl p-3 text-xs space-y-1.5 border border-emerald-400/20">
+              <div class="flex justify-between items-center">
+                <span class="text-emerald-300 text-[11px]">Drop-off:</span>
+                <span class="font-bold text-white text-right break-words text-xs">${bookedRide.routeEnd}</span>
               </div>
             </div>
 
             <div class="pt-1 flex gap-2">
-              <a href="${upiUrl}" class="touch-target flex-1 bg-white hover:bg-emerald-50 active:scale-95 text-emerald-900 text-xs font-black py-3 rounded-2xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
-                <i data-lucide="send" class="w-4 h-4"></i> Pay ₹${cleanFare} via UPI
+              <a href="${upiUrl}" class="pressable touch-target flex-1 bg-white hover:bg-emerald-50 text-emerald-950 text-xs font-extrabold py-2.5 rounded-xl text-center shadow-md flex items-center justify-center gap-1.5">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} via UPI
               </a>
-              <a href="tel:+918788337049" class="px-4 py-3 bg-rose-600/90 active:scale-95 text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1 shadow-md">
-                <i data-lucide="alert-circle" class="w-4 h-4"></i> SOS
+              <a href="tel:+918788337049" class="pressable px-3.5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1 shadow-md">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
               </a>
             </div>
           </div>
         `;
-      } 
-      // STATE B: RESERVED (SHOW DYNAMIC QR PASS)
-      else {
+      } else {
         banner.innerHTML = `
-          <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-700">
-            <div class="flex items-center justify-between border-b border-slate-700 pb-2.5">
+          <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-800">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-400">Reserved Pool Seat</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Reserved Pool Seat</span>
               </div>
-              <span class="text-xs bg-slate-800 border border-slate-600 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
+              <span class="text-xs bg-slate-800/80 border border-slate-700 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
             </div>
 
-            <!-- Rider Summary & Bike Plate Badge -->
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-base font-extrabold tracking-tight">${bookedRide.riderName}</h3>
-                <p class="text-[11px] text-slate-300 font-medium">${bookedRide.bikeModel}</p>
+                <h3 class="text-sm font-extrabold tracking-tight">${bookedRide.riderName}</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">${bookedRide.bikeModel}</p>
               </div>
-              <div class="bg-slate-800/90 border border-emerald-500/40 px-3 py-1 rounded-xl text-center">
-                <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Bike Plate</span>
-                <span class="font-mono text-xs font-extrabold text-emerald-300 uppercase tracking-widest">${vehiclePlate}</span>
+              <div class="bg-slate-800/90 border border-slate-700 px-2.5 py-1 rounded-xl text-right">
+                <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Bike</span>
+                <span class="font-mono text-xs font-bold text-emerald-300 uppercase">${vehiclePlate}</span>
               </div>
             </div>
 
-            <!-- SCANNABLE DYNAMIC QR CODE CONTAINER -->
-            <div class="bg-white p-4 rounded-3xl text-center shadow-md flex flex-col items-center justify-center space-y-2">
-              <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider flex items-center justify-center gap-1">
-                <i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-600"></i> Boarding QR Pass
+            <div class="bg-white p-3.5 rounded-2xl text-center shadow-xs flex flex-col items-center justify-center space-y-1.5">
+              <span class="text-[9px] uppercase font-bold text-slate-500 tracking-wider flex items-center gap-1">
+                <i data-lucide="qr-code" class="w-3 h-3 text-emerald-600"></i> Boarding QR Pass
               </span>
-              <div id="pillion-qr-target" class="p-2 bg-white rounded-2xl flex items-center justify-center min-w-[140px] min-h-[140px]"></div>
-              <p class="text-[10px] text-slate-500 font-medium">Show this to your rider to scan before boarding</p>
+              <div id="pillion-qr-target" class="p-1.5 bg-white rounded-xl flex items-center justify-center min-w-[130px] min-h-[130px]"></div>
+              <p class="text-[10px] text-slate-400 font-medium">Show pass to rider before sitting</p>
             </div>
 
-            <!-- Route Details -->
-            <div class="bg-slate-800/80 rounded-2xl p-3 text-xs space-y-1.5 border border-slate-700">
+            <div class="bg-slate-800/60 rounded-2xl p-3 text-xs space-y-1 border border-slate-800">
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
-                <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeStart}</span>
+                <span class="text-slate-300 font-medium text-[11px] leading-tight break-words">${bookedRide.routeStart}</span>
               </div>
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-rose-400 mt-1 shrink-0"></span>
-                <span class="text-slate-200 font-medium leading-snug break-words">${bookedRide.routeEnd}</span>
+                <span class="text-slate-300 font-medium text-[11px] leading-tight break-words">${bookedRide.routeEnd}</span>
               </div>
-              <div class="flex items-center justify-between border-t border-slate-700/80 pt-1.5 text-slate-300">
-                <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Departs: <strong class="text-white">${cleanTime}</strong></span>
-                <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded-md font-bold text-emerald-300">Online UPI</span>
+              <div class="flex items-center justify-between border-t border-slate-800 pt-1.5 text-slate-400 text-[10px]">
+                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-emerald-400"></i> Departure: <strong class="text-white">${cleanTime}</strong></span>
+                <span class="bg-slate-800 px-1.5 py-0.5 rounded text-emerald-300 font-semibold">UPI Only</span>
               </div>
             </div>
 
-            <!-- Action Buttons: WhatsApp & UPI Pay -->
-            <div class="grid grid-cols-2 gap-2 pt-1">
-              <a href="${riderWhatsAppUrl}" target="_blank" class="h-11 px-3.5 bg-emerald-700/90 hover:bg-emerald-600 active:scale-95 text-white border border-emerald-500/40 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
-                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-300 shrink-0"></i> WhatsApp Rider
+            <div class="grid grid-cols-2 gap-2 pt-0.5">
+              <a href="${riderWhatsAppUrl}" target="_blank" class="pressable h-10 px-3 bg-emerald-700/80 hover:bg-emerald-700 text-white border border-emerald-600/40 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-300"></i> WhatsApp
               </a>
-              <a href="${upiUrl}" class="h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm">
-                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare} (UPI)
+              <a href="${upiUrl}" class="pressable h-10 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-1.5 shadow-xs">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Pay ₹${cleanFare}
               </a>
             </div>
           </div>
@@ -978,10 +976,10 @@
           if (qrTarget && typeof QRCode !== 'undefined') {
             qrTarget.innerHTML = '';
             new QRCode(qrTarget, {
-              text: `MYROUTEBUDDY:${bookedRide.id}`,
-              width: 140,
-              height: 140,
-              colorDark: "#0f172a",
+              text: `ROUTEBUDDY:${bookedRide.id}`,
+              width: 130,
+              height: 130,
+              colorDark: "#020617",
               colorLight: "#ffffff",
               correctLevel: QRCode.CorrectLevel.H
             });
@@ -991,7 +989,6 @@
       safeRenderIcons();
     }
 
-    // DIRECT 1-TAP BOOKING
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1055,11 +1052,9 @@
         console.error("Booking post error:", e);
       }
 
-      alert(`Seat confirmed with ${decodeURIComponent(rider)}! Show your QR pass to the rider upon boarding.`);
       fetchLiveRides();
     }
 
-    // RENDER RIDE CARDS
     function renderRides() {
       const container = document.getElementById('rides-list');
       const myUid = getOrCreateUserId();
@@ -1072,9 +1067,9 @@
 
       if (myActiveBookedRide && (myActiveBookedRide.status || '').toUpperCase() === 'VERIFIED') {
         container.innerHTML = `
-          <div class="text-center py-8 bg-white rounded-3xl border border-slate-200 p-6 space-y-2">
+          <div class="text-center py-8 bg-white rounded-3xl border border-slate-200/80 p-5 space-y-1.5 shadow-2xs">
             <p class="text-xs font-bold text-slate-800">Commute In Progress</p>
-            <p class="text-[11px] text-slate-400">You are onboard with ${myActiveBookedRide.riderName}. Dual bookings are locked until drop-off.</p>
+            <p class="text-[11px] text-slate-400">You are onboard with ${myActiveBookedRide.riderName}. New bookings unlock once trip finishes.</p>
           </div>
         `;
         document.getElementById('verified-count').innerText = `1 active commute`;
@@ -1107,9 +1102,9 @@
 
       if (visibleRides.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-slate-200 p-6">
-            <p class="text-xs font-bold text-slate-700">No active seats right now</p>
-            <p class="text-[11px] text-slate-400 mt-1">Unbooked rides expire automatically at departure time.</p>
+          <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-slate-200 p-6 space-y-1">
+            <p class="text-xs font-bold text-slate-700">No active seats listed right now</p>
+            <p class="text-[10px] text-slate-400">Offer a seat or check back during commute peaks.</p>
           </div>
         `;
         safeRenderIcons();
@@ -1130,98 +1125,95 @@
         const isVerified = (ride.status || '').toUpperCase() === 'VERIFIED';
 
         return `
-          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-md' : 'border-slate-200/90 shadow-xs'} p-4 space-y-3">
+          <div class="bg-white rounded-3xl border ${isMyOwnRide && (isBooked || isVerified) ? 'border-2 border-emerald-500 shadow-sm' : 'border-slate-200/80 shadow-2xs'} p-4 space-y-3">
             
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-sm border border-slate-200 shrink-0">
+                <div class="w-10 h-10 rounded-full ${isMyOwnRide && (isBooked || isVerified) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'} flex items-center justify-center font-extrabold text-xs border border-slate-200/80 shrink-0">
                   ${ride.riderName ? ride.riderName.charAt(0).toUpperCase() : 'R'}
                 </div>
                 <div>
                   <div class="flex items-center gap-1.5 flex-wrap">
-                    <h3 class="text-sm font-extrabold text-slate-900 leading-tight">${ride.riderName}</h3>
-                    <span class="inline-flex items-center gap-0.5 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200/80 px-1.5 py-0.5 rounded font-bold">
-                      <i data-lucide="check-check" class="w-3 h-3 text-emerald-600"></i> Verified
+                    <h3 class="text-xs font-bold text-slate-900 leading-tight">${ride.riderName}</h3>
+                    <span class="inline-flex items-center gap-0.5 text-[9px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded font-bold">
+                      <i data-lucide="check" class="w-2.5 h-2.5 text-emerald-600"></i> Verified
                     </span>
                     ${isMyOwnRide ? `
-                      <span class="inline-flex items-center gap-1 text-[10px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200')} font-bold px-2 py-0.5 rounded-md">
-                        <i data-lucide="tag" class="w-3 h-3"></i>
-                        ${isBooked ? 'Booked!' : (isVerified ? 'In Transit' : 'Your Listing')}
+                      <span class="inline-flex items-center gap-1 text-[9px] ${isBooked ? 'bg-emerald-600 text-white animate-pulse' : (isVerified ? 'bg-teal-700 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200')} font-bold px-1.5 py-0.5 rounded">
+                        ${isBooked ? 'Booked' : (isVerified ? 'In Transit' : 'Yours')}
                       </span>
                     ` : ''}
                   </div>
-                  <p class="text-xs text-slate-500 font-medium mt-0.5">${ride.bikeModel}</p>
+                  <p class="text-[11px] text-slate-400 mt-0.5">${ride.bikeModel}</p>
                 </div>
               </div>
 
-              <div class="bg-emerald-50 text-emerald-800 border border-emerald-200/90 px-2.5 py-1 rounded-2xl text-right shrink-0">
-                <div class="text-base font-extrabold leading-tight flex items-center justify-end gap-0.5">
-                  <i data-lucide="indian-rupee" class="w-3.5 h-3.5 text-emerald-700"></i>${cleanFare}
-                </div>
-                <div class="text-[9px] font-semibold uppercase tracking-wider text-emerald-700/80">fuel share</div>
+              <div class="bg-emerald-50/80 text-emerald-800 border border-emerald-200/70 px-2.5 py-1 rounded-2xl text-right shrink-0">
+                <div class="text-sm font-extrabold leading-tight">₹${cleanFare}</div>
+                <div class="text-[8px] font-bold uppercase tracking-wider text-emerald-600">petrol share</div>
               </div>
             </div>
 
-            <div class="bg-[#f8fafc] rounded-2xl p-3 border border-slate-100 space-y-2">
+            <div class="bg-slate-50/70 rounded-2xl p-3 border border-slate-100 space-y-2">
               <div class="space-y-1.5">
-                <div class="flex items-start gap-2.5">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 shrink-0 ring-4 ring-emerald-100"></span>
-                  <div class="leading-tight">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Pickup</span>
-                    <p class="text-xs font-bold text-slate-800 break-words">${ride.routeStart}</p>
+                <div class="flex items-start gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 mt-1 shrink-0 ring-3 ring-emerald-100"></span>
+                  <div>
+                    <span class="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Pickup</span>
+                    <p class="text-xs font-semibold text-slate-800 break-words leading-tight">${ride.routeStart}</p>
                   </div>
                 </div>
 
-                <div class="ml-1 pl-2 border-l border-dashed border-slate-300 h-2"></div>
+                <div class="ml-1 pl-2 border-l border-dashed border-slate-300 h-1.5"></div>
 
-                <div class="flex items-start gap-2.5">
-                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1 shrink-0 ring-4 ring-rose-100"></span>
-                  <div class="leading-tight">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Drop-off</span>
-                    <p class="text-xs font-bold text-slate-800 break-words">${ride.routeEnd}</p>
+                <div class="flex items-start gap-2">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 mt-1 shrink-0 ring-3 ring-rose-100"></span>
+                  <div>
+                    <span class="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Drop</span>
+                    <p class="text-xs font-semibold text-slate-800 break-words leading-tight">${ride.routeEnd}</p>
                   </div>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
-                <div class="flex items-center gap-1.5 text-slate-600 font-medium">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+              <div class="flex items-center justify-between pt-2 border-t border-slate-200/50 text-[11px]">
+                <div class="flex items-center gap-1.5 text-slate-500">
+                  <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
                   <span>${todayDateStr} • <strong class="text-slate-800 font-bold">${cleanTime}</strong></span>
                 </div>
-                ${ride.womenOnly ? '<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> Women Only</span>' : ''}
+                ${ride.womenOnly ? '<span class="text-[9px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 flex items-center gap-1"><i data-lucide="users" class="w-2.5 h-2.5"></i> Women Only</span>' : ''}
               </div>
             </div>
 
             <div class="flex items-center justify-between text-xs pt-0.5">
               ${ride.hasHelmet ? `
-                <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Spare Helmet Included
+                <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200/80">
+                  <i data-lucide="shield" class="w-3 h-3 text-emerald-600 shrink-0"></i> Spare Helmet Included
                 </span>
               ` : `
-                <span class="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60">
+                <span class="text-[10px] font-medium text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200/60">
                   Helmet Not Provided
                 </span>
               `}
             </div>
 
-            <div class="pt-1">
+            <div class="pt-0.5">
               ${isMyOwnRide ? `
                 ${isBooked ? `
-                  <button onclick="switchTab('offer')" class="touch-target w-full bg-emerald-600 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="qr-code" class="w-4 h-4"></i> Passenger Booked • Scan QR
+                  <button onclick="switchTab('offer')" class="pressable touch-target w-full bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
+                    <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> Passenger Booked • Scan Pass
                   </button>
                 ` : (isVerified ? `
-                  <button onclick="switchTab('offer')" class="touch-target w-full bg-teal-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="navigation" class="w-4 h-4"></i> Commute In Progress
+                  <button onclick="switchTab('offer')" class="pressable touch-target w-full bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> Trip In Progress
                   </button>
                 ` : `
-                  <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="touch-target w-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold active:scale-98 transition flex items-center justify-center gap-1.5">
-                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i> Cancel Listing
+                  <button onclick="cancelMyRide('${ride.id}')" id="btn-cancel-${ride.id}" class="pressable touch-target w-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i> Cancel Listing
                   </button>
                 `)}
               ` : `
-                <button onclick="attemptBookRide('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-1.5">
-                  <i data-lucide="ticket" class="w-4 h-4"></i> Book Seat
+                <button onclick="attemptBookRide('${ride.id}', '${encodeURIComponent(ride.riderName)}', '${encodeURIComponent(ride.routeStart)}', '${encodeURIComponent(ride.routeEnd)}', ${cleanFare}, '${encodeURIComponent(ride.riderPhone || '')}')" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5">
+                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i> Book This Seat
                 </button>
               `}
             </div>
@@ -1233,7 +1225,6 @@
       safeRenderIcons();
     }
 
-    // RIDER DASHBOARD WITH QR SCANNER TRIGGER
     function updateOfferTabState() {
       const formCard = document.getElementById('offer-form-card');
       const activeCard = document.getElementById('offer-active-card');
@@ -1264,165 +1255,137 @@
       lastRenderedOfferStatus = targetState;
       lastRenderedOfferRideId = myActiveRide ? myActiveRide.id : null;
 
-      // STATE 1: PASSENGER BOOKED (QR SCAN TRIGGER)
       if (targetState === 'BOOKED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
         const passengerWaPhone = cleanPhoneForWhatsApp(myActiveRide.passengerPhone);
-        const passengerWhatsAppUrl = `https://wa.me/${passengerWaPhone}?text=Hi%20${encodeURIComponent(myActiveRide.passengerName)}%2C%20I%20am%20your%20MyRouteBuddy%20rider.%20I%20am%20arriving%20at%20pickup.`;
+        const passengerWhatsAppUrl = `https://wa.me/${passengerWaPhone}?text=Hi%20${encodeURIComponent(myActiveRide.passengerName)}%2C%20I%20am%20your%20RouteBuddy%20rider.%20I%20am%20arriving%20at%20pickup.`;
 
         activeCard.innerHTML = `
           <div class="privacy-guard bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2.5 py-0.5 rounded-full">Seat Reserved</span>
-                <h2 class="text-base font-extrabold text-slate-900 mt-1">Passenger Confirmed</h2>
+                <span class="text-[9px] font-bold uppercase tracking-wider text-white bg-emerald-600 px-2 py-0.5 rounded-full">Seat Reserved</span>
+                <h2 class="text-sm font-extrabold text-slate-900 mt-1">Passenger Confirmed</h2>
               </div>
-              <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
-                <i data-lucide="user-check" class="w-5 h-5"></i>
+              <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center animate-pulse">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
               </div>
             </div>
 
-            <!-- Passenger Details -->
-            <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 text-xs space-y-3">
+            <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-100 text-xs space-y-2.5">
               <div class="flex justify-between items-center">
                 <div>
-                  <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Passenger</span>
-                  <span class="font-extrabold text-slate-900 text-sm">${myActiveRide.passengerName}</span>
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Passenger</span>
+                  <span class="font-bold text-slate-900 text-xs">${myActiveRide.passengerName}</span>
                 </div>
-                <a href="${passengerWhatsAppUrl}" target="_blank" class="h-10 px-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-sm transition" title="Coordinate on WhatsApp">
-                  <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
+                <a href="${passengerWhatsAppUrl}" target="_blank" class="pressable h-9 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-xs text-xs">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
                 </a>
               </div>
-              <div class="flex justify-between items-center border-t border-emerald-200/60 pt-2 text-slate-600">
+              <div class="flex justify-between items-center border-t border-emerald-200/50 pt-2 text-slate-600 text-[11px]">
                 <span>Fuel Split:</span>
-                <span class="font-extrabold text-slate-900 text-sm">₹${formatFare(myActiveRide.fare)} (Online UPI)</span>
+                <span class="font-extrabold text-slate-900 text-xs">₹${formatFare(myActiveRide.fare)} (UPI)</span>
               </div>
             </div>
 
-            <!-- Full Unclipped Route View for Rider -->
-            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
-              <div class="space-y-1">
-                <div>
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Pickup Location</span>
-                  <p class="font-bold text-slate-900 leading-snug break-words">${myActiveRide.routeStart}</p>
-                </div>
-                <div class="border-t border-slate-200 pt-1 mt-1">
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Drop-off Destination</span>
-                  <p class="font-bold text-slate-900 leading-snug break-words">${myActiveRide.routeEnd}</p>
-                </div>
+            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 text-xs space-y-1.5">
+              <div>
+                <span class="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Pickup</span>
+                <p class="font-semibold text-slate-800 leading-snug break-words text-[11px]">${myActiveRide.routeStart}</p>
+              </div>
+              <div class="border-t border-slate-200/60 pt-1">
+                <span class="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Drop-off</span>
+                <p class="font-semibold text-slate-800 leading-snug break-words text-[11px]">${myActiveRide.routeEnd}</p>
               </div>
             </div>
 
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5">
-              <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-              <p class="text-[11px] text-amber-900 leading-tight">
-                <strong>Safety Verification:</strong> Tap the button below to scan the QR pass on your passenger's phone screen before departure.
-              </p>
-            </div>
-
-            <!-- ONE-TAP IN-APP QR CODE SCAN BUTTON -->
-            <button onclick="startQrScanner('${myActiveRide.id}')" class="touch-target w-full bg-[#059669] hover:bg-emerald-700 active:scale-98 text-white rounded-2xl text-sm font-extrabold transition shadow-md flex items-center justify-center gap-2">
-              <i data-lucide="camera" class="w-5 h-5"></i> Scan Passenger QR
+            <button onclick="startQrScanner('${myActiveRide.id}')" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="camera" class="w-4 h-4"></i> Scan Passenger QR Pass
             </button>
 
-            <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold active:scale-95 transition mt-2">
+            <button onclick="cancelMyRide('${myActiveRide.id}');" class="pressable touch-target w-full bg-slate-100 text-rose-600 rounded-xl text-xs font-bold mt-1">
               Cancel Listing
             </button>
           </div>
         `;
         safeRenderIcons();
-      }
-      // STATE 2: RIDER IN TRANSIT
-      else if (targetState === 'VERIFIED') {
+      } else if (targetState === 'VERIFIED') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
         activeCard.innerHTML = `
-          <div class="privacy-guard bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-xl space-y-4">
+          <div class="privacy-guard bg-white rounded-3xl border-2 border-emerald-500 p-5 shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-teal-700 px-2.5 py-0.5 rounded-full">Live Commute</span>
-                <h2 class="text-base font-extrabold text-slate-900 mt-1">Ride In Progress</h2>
+                <span class="text-[9px] font-bold uppercase tracking-wider text-white bg-teal-700 px-2.5 py-0.5 rounded-full">Onboard</span>
+                <h2 class="text-sm font-extrabold text-slate-900 mt-1">Trip In Progress</h2>
               </div>
-              <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center animate-pulse">
-                <i data-lucide="navigation" class="w-5 h-5"></i>
+              <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center animate-pulse">
+                <i data-lucide="navigation" class="w-4 h-4"></i>
               </div>
             </div>
 
-            <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 border border-slate-100">
+            <div class="bg-slate-50 p-3.5 rounded-2xl text-xs space-y-2 border border-slate-100">
               <div class="flex justify-between">
-                <span class="text-slate-500">Passenger:</span>
-                <span class="font-extrabold text-slate-900">${myActiveRide.passengerName}</span>
+                <span class="text-slate-400">Passenger:</span>
+                <span class="font-bold text-slate-800">${myActiveRide.passengerName}</span>
               </div>
-              <div class="border-t border-slate-200 pt-2">
-                <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Destination</span>
-                <p class="font-bold text-slate-900 text-sm mt-0.5 leading-snug break-words">${myActiveRide.routeEnd}</p>
-              </div>
-              <div class="flex justify-between border-t border-slate-200/60 pt-2">
-                <span class="text-slate-500">Online UPI Fuel Split:</span>
-                <span class="font-extrabold text-emerald-700">₹${formatFare(myActiveRide.fare)}</span>
+              <div class="border-t border-slate-200/60 pt-1.5">
+                <span class="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Destination</span>
+                <p class="font-bold text-slate-900 text-xs mt-0.5 leading-snug break-words">${myActiveRide.routeEnd}</p>
               </div>
             </div>
 
-            <button onclick="completeMyRide('${myActiveRide.id}');" class="h-12 w-full bg-[#059669] hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-2">
+            <button onclick="completeMyRide('${myActiveRide.id}');" class="pressable touch-target w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5">
               <i data-lucide="check" class="w-4 h-4"></i> Complete Drop-off
             </button>
           </div>
         `;
         safeRenderIcons();
-      }
-      // STATE 3: Ride Available
-      else if (targetState === 'AVAILABLE') {
+      } else if (targetState === 'AVAILABLE') {
         formCard.classList.add('hidden');
         activeCard.classList.remove('hidden');
 
         activeCard.innerHTML = `
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
-            <div class="flex items-center justify-between border-b pb-3">
+          <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-2xs space-y-3.5">
+            <div class="flex items-center justify-between border-b pb-2.5">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Live Ride Active</span>
-                <h2 class="text-base font-extrabold text-slate-900 mt-1.5">Your Empty Seat is Listed</h2>
+                <span class="text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Live Active</span>
+                <h2 class="text-sm font-extrabold text-slate-900 mt-1">Seat Is Listed</h2>
               </div>
-              <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
             </div>
 
-            <div class="bg-[#f8fafc] p-4 rounded-2xl border border-slate-100 text-xs space-y-2.5">
-              <div class="space-y-1">
-                <div>
-                  <span class="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Route</span>
-                  <p class="font-bold text-slate-800 break-words">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</p>
-                </div>
+            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-xs space-y-2">
+              <div>
+                <span class="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Route</span>
+                <p class="font-bold text-slate-800 break-words text-xs">${myActiveRide.routeStart} → ${myActiveRide.routeEnd}</p>
               </div>
-              <div class="flex justify-between border-t border-slate-200/60 pt-2">
-                <span class="text-slate-500">Departure Time:</span>
+              <div class="flex justify-between border-t border-slate-200/60 pt-1.5 text-[11px]">
+                <span class="text-slate-400">Departure:</span>
                 <span class="font-bold text-slate-800">${formatTime(myActiveRide.depTime)}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Two-Wheeler:</span>
-                <span class="font-bold text-slate-800">${myActiveRide.bikeModel} (${myActiveRide.vehiclePlate || 'Plate Listed'})</span>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Two-Wheeler:</span>
+                <span class="font-bold text-slate-800">${myActiveRide.bikeModel}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500">Your Configured UPI:</span>
-                <span class="font-mono font-bold text-emerald-700">${myActiveRide.upiId || 'Standard UPI'}</span>
-              </div>
-              <div class="flex justify-between border-t border-slate-200/60 pt-2">
-                <span class="text-slate-500">Fuel Contribution:</span>
-                <span class="font-extrabold text-emerald-700 text-sm">₹${formatFare(myActiveRide.fare)} (Online UPI)</span>
+              <div class="flex justify-between border-t border-slate-200/60 pt-1.5 text-[11px]">
+                <span class="text-slate-400">Fuel Contribution:</span>
+                <span class="font-extrabold text-emerald-700">₹${formatFare(myActiveRide.fare)} (UPI)</span>
               </div>
             </div>
 
-            <p class="text-[11px] text-slate-500 leading-relaxed text-center">Unbooked listings expire automatically at departure time. Once booked, passenger details and QR scan controls appear here.</p>
+            <p class="text-[10px] text-slate-400 text-center">Passenger details will pop up automatically when booked.</p>
 
-            <button onclick="cancelMyRide('${myActiveRide.id}');" class="touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition flex items-center justify-center gap-2">
-              <i data-lucide="trash-2" class="w-4 h-4"></i> Cancel This Listing
+            <button onclick="cancelMyRide('${myActiveRide.id}');" class="pressable touch-target w-full bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Cancel This Listing
             </button>
           </div>
         `;
         safeRenderIcons();
-      }
-      else {
+      } else {
         activeCard.classList.add('hidden');
         activeCard.innerHTML = '';
         formCard.classList.remove('hidden');
@@ -1430,14 +1393,13 @@
       }
     }
 
-    // IN-APP QR CODE SCANNER CONTROLLER (CLEAN UNMOUNT & RE-MOUNT)
     function startQrScanner(rideId) {
       activeScanningRideId = rideId;
       document.getElementById('qr-scanner-modal').classList.remove('hidden');
       safeRenderIcons();
 
       if (typeof Html5Qrcode === 'undefined') {
-        alert("Camera scanner library loading. Please try again in a moment.");
+        alert("Camera scanner library loading. Please try again.");
         closeQrScanner();
         return;
       }
@@ -1446,7 +1408,7 @@
       if (readerEl) readerEl.innerHTML = '';
 
       html5QrScannerInstance = new Html5Qrcode("qr-reader");
-      const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+      const config = { fps: 10, qrbox: { width: 200, height: 200 } };
 
       html5QrScannerInstance.start(
         { facingMode: "environment" },
@@ -1454,12 +1416,10 @@
         (decodedText) => {
           handleQrScanSuccess(decodedText, activeScanningRideId);
         },
-        () => {
-          // Continuous scanning
-        }
+        () => {}
       ).catch((err) => {
         console.warn("Camera start failed:", err);
-        alert("Camera access denied or unavailable. Please grant camera permission in your mobile browser.");
+        alert("Camera access denied or unavailable. Please grant permissions.");
         closeQrScanner();
       });
     }
@@ -1479,16 +1439,14 @@
 
     async function handleQrScanSuccess(decodedText, rideId) {
       const cleanText = String(decodedText || '').trim();
-      const expectedPayload = `MYROUTEBUDDY:${rideId}`;
+      const expectedPayload = `ROUTEBUDDY:${rideId}`;
 
       if (cleanText === expectedPayload || cleanText.includes(rideId)) {
         closeQrScanner();
 
         localStorage.setItem('my_in_transit_ride_id', rideId);
         const ride = allRides.find(r => String(r.id).trim() === String(rideId).trim());
-        if (ride) {
-          ride.status = 'VERIFIED';
-        }
+        if (ride) ride.status = 'VERIFIED';
 
         lastRenderedOfferStatus = null;
         updateOfferTabState();
@@ -1509,14 +1467,12 @@
           console.error("Verification error:", err);
         }
 
-        alert('QR Code Verified! Boarding complete. Starting pooled commute.');
         fetchLiveRides();
       } else {
-        alert("Scanned QR does not match this passenger's booking pass. Please scan the QR code on your passenger's active ticket.");
+        alert("Pass does not match this passenger's booking.");
       }
     }
 
-    // POST RIDE TO APPS SCRIPT
     async function handlePostRide(e) {
       e.preventDefault();
       
@@ -1529,7 +1485,7 @@
       const cleanFare = formatFare(rawFare);
 
       if (!rName || rPhone.length < 10 || !bModel || !vPlate || !rUpi) {
-        alert("Verification required: Please enter Full Name, WhatsApp, UPI ID, Bike Model, and Vehicle Plate.");
+        alert("Please complete all required fields.");
         return;
       }
 
@@ -1538,14 +1494,9 @@
         return;
       }
 
-      if (parseInt(rawFare, 10) > 25) {
-        alert("Peer pooling rules: Maximum fuel split contribution allowed is ₹25.");
-        return;
-      }
-
       const btn = document.getElementById('submit-ride-btn');
       btn.disabled = true;
-      btn.innerHTML = `<div class="loader mr-2"></div> Posting ride...`;
+      btn.innerHTML = `<div class="loader mr-2"></div> Posting...`;
 
       const myUid = getOrCreateUserId();
       const rawTime = document.getElementById('depTimePicker').value;
@@ -1589,23 +1540,21 @@
         myRides.push(generatedRideId);
         localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
 
-        alert("Seat posted! Other commuters can now book it.");
         switchTab('find');
-        setTimeout(fetchLiveRides, 800);
+        setTimeout(fetchLiveRides, 600);
       } catch (err) {
-        alert("Ride saved!");
         switchTab('find');
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Post Ride to Database`;
+          btn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Publish Live Seat`;
         }
         safeRenderIcons();
       }
     }
 
     async function completeMyRide(rideId) {
-      if (!confirm("Confirm drop-off destination reached and commute completed?")) return;
+      if (!confirm("Confirm destination reached and commute completed?")) return;
 
       localStorage.removeItem('my_in_transit_ride_id');
       allRides = allRides.filter(r => r.id !== rideId);
@@ -1624,18 +1573,15 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'COMPLETE_RIDE', rideId: rideId })
         });
-      } catch (err) {
-        console.error("Complete ride error:", err);
-      }
+      } catch (err) {}
 
-      alert("Drop-off complete! Thank you for pooling.");
       updateOfferTabState();
       renderRides();
       fetchLiveRides();
     }
 
     async function cancelMyRide(id) {
-      if (!confirm("Are you sure you want to cancel your seat listing?")) return;
+      if (!confirm("Are you sure you want to cancel this listing?")) return;
 
       const cancelBtn = document.getElementById(`btn-cancel-${id}`);
       if (cancelBtn) {
@@ -1664,11 +1610,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'CANCEL_RIDE', rideId: id })
         });
-      } catch (err) {
-        console.error("Cancel ride error:", err);
-      }
+      } catch (err) {}
 
-      alert("Listing cancelled.");
       fetchLiveRides();
       updateOfferTabState();
     }
@@ -1688,12 +1631,12 @@
       const vehicleFields = document.getElementById('rider-vehicle-fields');
 
       if (role === 'rider') {
-        riderBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs";
-        pillionBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600";
+        riderBtn.className = "py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs";
+        pillionBtn.className = "py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-500";
         vehicleFields.classList.remove('hidden');
       } else {
-        pillionBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs";
-        riderBtn.className = "py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-600";
+        pillionBtn.className = "py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition bg-white text-emerald-700 shadow-xs";
+        riderBtn.className = "py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition text-slate-500";
         vehicleFields.classList.add('hidden');
       }
       localStorage.setItem('routebuddy_role', role);
@@ -1744,7 +1687,7 @@
 
       populateFormFromProfile();
       renderRides();
-      alert("Profile updated successfully!");
+      alert("Profile details saved.");
     }
 
     function populateFormFromProfile() {
@@ -1830,7 +1773,7 @@
       const btn = document.getElementById('btn-submit-feedback');
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = `<div class="loader mr-2"></div> Sending...`;
+        btn.innerHTML = `<div class="loader mr-2"></div> Submitting...`;
       }
 
       const profile = getMyProfile() || {};
@@ -1852,16 +1795,15 @@
           body: JSON.stringify(payload)
         });
       } catch (err) {
-        console.error("Feedback post error:", err);
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i> Send to Team`;
+          btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i> Submit Feedback`;
         }
         safeRenderIcons();
       }
 
-      alert("Thank you! Your feedback has been received.");
+      alert("Thank you for your feedback.");
       closeModal('feedback-modal');
       if (feedbackInput) feedbackInput.value = '';
     }
@@ -1871,14 +1813,14 @@
         filterHelmetOnly = !filterHelmetOnly;
         const btn = document.getElementById('toggle-helmet');
         btn.className = filterHelmetOnly 
-          ? "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold transition"
-          : "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
+          ? "pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold shadow-2xs"
+          : "pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold shadow-2xs";
       } else {
         filterWomenOnly = !filterWomenOnly;
         const btn = document.getElementById('toggle-women');
         btn.className = filterWomenOnly 
-          ? "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-rose-500 bg-rose-50/70 text-rose-800 text-xs font-bold transition"
-          : "touch-target flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition";
+          ? "pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-rose-500 bg-rose-50/70 text-rose-800 text-xs font-bold shadow-2xs"
+          : "pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-slate-200 bg-white text-slate-600 text-xs font-bold shadow-2xs";
       }
       renderRides();
     }
@@ -1900,27 +1842,27 @@
       offerView.classList.add('hidden');
       profileView.classList.add('hidden');
 
-      navHome.className = 'relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
-      navFind.className = 'relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
-      navOffer.className = 'relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
-      navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navHome.className = 'pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navFind.className = 'pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navOffer.className = 'pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
+      navProfile.className = 'pressable flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1';
 
       if (tab === 'home') {
         homeView.classList.remove('hidden');
-        navHome.className = 'relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
+        navHome.className = 'pressable relative flex flex-col items-center justify-center gap-0.5 text-emerald-600 font-bold py-1';
       } else if (tab === 'find') {
         findView.classList.remove('hidden');
-        navFind.className = 'relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
+        navFind.className = 'pressable relative flex flex-col items-center justify-center gap-0.5 text-emerald-600 font-bold py-1';
         fetchLiveRides();
       } else if (tab === 'offer') {
         offerView.classList.remove('hidden');
-        navOffer.className = 'relative flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
+        navOffer.className = 'pressable relative flex flex-col items-center justify-center gap-0.5 text-emerald-600 font-bold py-1';
         lastRenderedOfferStatus = null;
         updateOfferTabState();
         populateFormFromProfile();
       } else if (tab === 'profile') {
         profileView.classList.remove('hidden');
-        navProfile.className = 'flex flex-col items-center justify-center gap-0.5 text-[#059669] font-bold py-1';
+        navProfile.className = 'pressable flex flex-col items-center justify-center gap-0.5 text-emerald-600 font-bold py-1';
       }
       updateNavBadges();
       safeRenderIcons();
@@ -1932,7 +1874,7 @@
       populateFormFromProfile();
       fetchLiveRides();
       checkForAppUpdates();
-      setTimeout(safeRenderIcons, 250);
+      setTimeout(safeRenderIcons, 200);
       setInterval(checkForAppUpdates, 60000);
       setInterval(fetchLiveRides, 5000);
     });
