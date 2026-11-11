@@ -724,6 +724,7 @@
     let pendingBookingPayload = null;
     let html5QrScannerInstance = null;
     let activeScanningRideId = null;
+    let isFetchingRides = false;
 
     // Screenshot Protection
     window.addEventListener('keyup', (e) => {
@@ -851,7 +852,11 @@
       } catch (e) {}
     }
 
+    // High-efficiency fetching with in-flight request lock
     async function fetchLiveRides() {
+      if (isFetchingRides) return;
+      isFetchingRides = true;
+
       const icon = document.getElementById('refresh-icon');
       if (icon) icon.classList.add('animate-spin');
 
@@ -884,6 +889,7 @@
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
+        isFetchingRides = false;
         if (icon) icon.classList.remove('animate-spin');
         safeRenderIcons();
       }
@@ -1005,7 +1011,7 @@
           <div class="privacy-guard bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl p-5 shadow-lg space-y-3.5 border border-slate-800">
             <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                 <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Reserved Pool Seat</span>
               </div>
               <span class="text-xs bg-slate-800/80 border border-slate-700 px-2.5 py-0.5 rounded-full font-bold">₹${cleanFare}</span>
@@ -1958,6 +1964,7 @@
       safeRenderIcons();
     }
 
+    // Lifecycle: Smart visibility-aware polling
     window.addEventListener('DOMContentLoaded', () => {
       safeRenderIcons();
       loadSavedProfile();
@@ -1965,8 +1972,23 @@
       fetchLiveRides();
       checkForAppUpdates();
       setTimeout(safeRenderIcons, 200);
+
+      // Check app updates every 60s
       setInterval(checkForAppUpdates, 60000);
-      setInterval(fetchLiveRides, 5000);
+
+      // Concurrency-friendly polling: 15 seconds, ONLY when the screen/tab is visible
+      setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          fetchLiveRides();
+        }
+      }, 15000);
+
+      // Instantly sync when user wakes or returns to phone tab
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          fetchLiveRides();
+        }
+      });
     });
   </script>
 </body>
