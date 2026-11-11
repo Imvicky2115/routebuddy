@@ -80,13 +80,17 @@
     .pressable:active {
       transform: scale(0.97);
     }
+    /* Toast Animation */
+    #toast-notification {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    }
   </style>
 </head>
 <body class="min-h-screen flex justify-center pb-20 bg-slate-100">
 
   <div class="w-full max-w-md bg-white min-h-screen flex flex-col relative shadow-xl overflow-x-hidden border-x border-slate-200/80">
 
-    <!-- Collision-Free Balanced Sticky Header -->
+    <!-- Collision-Free Balanced Header -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-3 py-2 select-none">
       <div class="flex items-center justify-between gap-1.5 w-full">
         
@@ -101,7 +105,7 @@
           </div>
         </div>
 
-        <!-- Action Buttons (Strictly Non-Colliding & Centered) -->
+        <!-- Action Buttons -->
         <div class="flex items-center gap-1.5 shrink-0 flex-nowrap">
           <button onclick="openModal('sos-modal')" class="pressable h-8 inline-flex items-center justify-center gap-1 border border-rose-300 bg-rose-50 text-rose-600 text-[11px] font-extrabold px-2 rounded-xl shadow-2xs hover:bg-rose-100 active:scale-95 transition shrink-0">
             <i data-lucide="phone-call" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i>
@@ -487,6 +491,21 @@
         </p>
       </div>
 
+      <!-- NEW: Instant Real-Time Search Bar -->
+      <div class="relative">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input 
+          type="text" 
+          id="ride-search-input" 
+          oninput="handleSearchFilter(this.value)" 
+          placeholder="Filter by destination, pickup, or rider..." 
+          class="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-9 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 shadow-2xs transition"
+        >
+        <button id="clear-search-btn" onclick="clearSearchFilter()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
       <!-- Quick Toggles -->
       <div id="pill-filter-bar" class="grid grid-cols-2 gap-2">
         <button id="toggle-helmet" onclick="toggleFilter('helmet')" class="pressable touch-target flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl border border-emerald-500 bg-emerald-50/70 text-emerald-800 text-xs font-bold shadow-2xs">
@@ -504,11 +523,43 @@
         </span>
       </div>
 
-      <!-- Rides Feed Container -->
+      <!-- Rides Feed Container (Equipped with Shimmer Skeleton) -->
       <div id="rides-list" class="space-y-3 pb-3">
-        <div class="flex flex-col items-center justify-center py-12 text-slate-400">
-          <div class="loader mb-3"></div>
-          <p class="text-xs font-semibold text-slate-500">Checking Pune peer seats...</p>
+        <!-- Skeleton Loading Placeholders -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 p-4 space-y-3 animate-pulse shadow-2xs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-slate-200"></div>
+              <div class="space-y-1.5">
+                <div class="h-3 w-24 bg-slate-200 rounded"></div>
+                <div class="h-2 w-16 bg-slate-100 rounded"></div>
+              </div>
+            </div>
+            <div class="h-6 w-12 bg-slate-100 rounded-xl"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 space-y-2">
+            <div class="h-2.5 w-3/4 bg-slate-200 rounded"></div>
+            <div class="h-2.5 w-1/2 bg-slate-200 rounded"></div>
+          </div>
+          <div class="h-9 w-full bg-slate-100 rounded-xl"></div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200/80 p-4 space-y-3 animate-pulse shadow-2xs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-slate-200"></div>
+              <div class="space-y-1.5">
+                <div class="h-3 w-28 bg-slate-200 rounded"></div>
+                <div class="h-2 w-20 bg-slate-100 rounded"></div>
+              </div>
+            </div>
+            <div class="h-6 w-12 bg-slate-100 rounded-xl"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 space-y-2">
+            <div class="h-2.5 w-2/3 bg-slate-200 rounded"></div>
+            <div class="h-2.5 w-1/3 bg-slate-200 rounded"></div>
+          </div>
+          <div class="h-9 w-full bg-slate-100 rounded-xl"></div>
         </div>
       </div>
     </main>
@@ -695,7 +746,7 @@
         <button onclick="switchTab('offer')" id="nav-offer" class="pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-1">
           <div class="relative">
             <i data-lucide="bike" class="w-4 h-4"></i>
-            <span id="nav-offer-badge" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+            <span id="nav-offer-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
           </div>
           <span class="text-[10px]">Offer Seat</span>
         </button>
@@ -708,6 +759,12 @@
 
   </div>
 
+  <!-- Sleek Native Toast Notification (Replaces Browser alert()) -->
+  <div id="toast-notification" class="fixed bottom-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 translate-y-24 opacity-0 pointer-events-none border border-slate-700/80">
+    <i id="toast-icon" data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+    <span id="toast-message">Notification message</span>
+  </div>
+
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW_R-cY9gZdOSCsHnBEw5R59jMM4ahP03o9JO0QU4DSftYPK7xH_A0kUmwBnUy5jguUw/exec";
     const GITHUB_REPO_API = "https://api.github.com/repos/Imvicky2115/routebuddy/commits/main";
@@ -715,6 +772,8 @@
     let allRides = [];
     let filterHelmetOnly = false;
     let filterWomenOnly = false;
+    let currentSearchTerm = '';
+    let lastFetchedRidesHash = '';
     let currentUserRole = 'pillion';
     let currentActiveTab = 'home';
     let lastRenderedOfferStatus = null;
@@ -725,12 +784,13 @@
     let html5QrScannerInstance = null;
     let activeScanningRideId = null;
     let isFetchingRides = false;
+    let toastTimeout = null;
 
     // Screenshot Protection
     window.addEventListener('keyup', (e) => {
       if (e.key === 'PrintScreen') {
         navigator.clipboard.writeText('');
-        alert('Personal commuter details are protected.');
+        showToast('Personal commuter details are protected.', 'alert-triangle');
       }
     });
 
@@ -740,6 +800,30 @@
         if (sel.length > 20) e.preventDefault();
       }
     });
+
+    // Native Toast Controller with Haptic Feedback
+    function showToast(msg, iconName = 'check-circle') {
+      const toast = document.getElementById('toast-notification');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+      
+      if (!toast) return;
+
+      if (navigator.vibrate) navigator.vibrate(20);
+
+      toastMsg.innerText = msg;
+      toastIcon.setAttribute('data-lucide', iconName);
+      safeRenderIcons();
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
+    }
 
     function safeRenderIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -852,7 +936,7 @@
       } catch (e) {}
     }
 
-    // High-efficiency fetching with in-flight lock to eliminate request stacking
+    // High-Efficiency Fetch with Client-Side Diffing (Eliminates Screen Flicker)
     async function fetchLiveRides() {
       if (isFetchingRides) return;
       isFetchingRides = true;
@@ -880,6 +964,12 @@
           }
         });
 
+        // Smart Diffing Check
+        const currentHash = JSON.stringify(valid);
+        if (currentHash === lastFetchedRidesHash) {
+          return;
+        }
+        lastFetchedRidesHash = currentHash;
         allRides = valid;
 
         renderPillionActiveBanner();
@@ -915,6 +1005,7 @@
       }
     }
 
+    // Pillion Active Banner with WhatsApp Family Safety Tracking Share
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -961,6 +1052,10 @@
       
       const upiUrl = `upi://pay?pa=${encodeURIComponent(riderUpi)}&pn=${encodeURIComponent(bookedRide.riderName)}&am=${cleanFare}&cu=INR&tn=RouteBuddy%20Petrol%20Share`;
       const riderWhatsAppUrl = `https://wa.me/${waPhone}?text=Hi%20${encodeURIComponent(bookedRide.riderName)}%2C%20I%20am%20your%20RouteBuddy%20passenger%20for%20the%20ride%20to%20${encodeURIComponent(bookedRide.routeEnd)}.`;
+      
+      // WhatsApp Family Share URL
+      const familyShareText = `I am pooling via MyRouteBuddy with rider ${bookedRide.riderName} (${bookedRide.bikeModel} - ${vehiclePlate}) heading towards ${bookedRide.routeEnd}.`;
+      const familyShareUrl = `https://wa.me/?text=${encodeURIComponent(familyShareText)}`;
 
       banner.classList.remove('hidden');
 
@@ -988,6 +1083,11 @@
                 <i data-lucide="message-circle" class="w-5 h-5"></i>
               </a>
             </div>
+
+            <!-- 1-Tap WhatsApp Route Sharing -->
+            <a href="${familyShareUrl}" target="_blank" class="pressable flex items-center justify-center gap-1.5 py-2 px-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white text-[11px] font-bold transition">
+              <i data-lucide="share-2" class="w-3.5 h-3.5 text-emerald-300"></i> Share Trip Details with Family
+            </a>
 
             <div class="bg-emerald-950/50 rounded-2xl p-3 text-xs space-y-1.5 border border-emerald-400/20">
               <div class="flex justify-between items-center">
@@ -1036,6 +1136,11 @@
               <p class="text-[10px] text-slate-400 font-medium">Verify number plate matches <strong class="text-slate-700">${vehiclePlate}</strong></p>
             </div>
 
+            <!-- 1-Tap WhatsApp Route Sharing -->
+            <a href="${familyShareUrl}" target="_blank" class="pressable flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl text-slate-300 hover:text-white text-[11px] font-bold transition">
+              <i data-lucide="share-2" class="w-3.5 h-3.5 text-emerald-400"></i> Share Trip Details with Family
+            </a>
+
             <div class="bg-slate-800/60 rounded-2xl p-3 text-xs space-y-1 border border-slate-800">
               <div class="flex items-start gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0"></span>
@@ -1046,7 +1151,7 @@
                 <span class="text-slate-300 font-medium text-[11px] leading-tight break-words">${bookedRide.routeEnd}</span>
               </div>
               <div class="flex items-center justify-between border-t border-slate-800 pt-1.5 text-slate-400 text-[10px]">
-                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-emerald-400"></i> Departure: <strong class="text-white">${cleanTime}</strong></span>
+                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Departure: <strong class="text-white">${cleanTime}</strong></span>
                 <span class="bg-slate-800 px-1.5 py-0.5 rounded text-emerald-300 font-semibold">UPI Only</span>
               </div>
             </div>
@@ -1080,6 +1185,26 @@
       safeRenderIcons();
     }
 
+    // Real-Time Client-Side Search Engine
+    function handleSearchFilter(val) {
+      currentSearchTerm = (val || '').toLowerCase().trim();
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) {
+        if (currentSearchTerm.length > 0) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+      renderRides();
+    }
+
+    function clearSearchFilter() {
+      const searchInput = document.getElementById('ride-search-input');
+      if (searchInput) searchInput.value = '';
+      currentSearchTerm = '';
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      renderRides();
+    }
+
     function attemptBookRide(id, rider, start, end, fare, rawPhone) {
       const myProfile = getMyProfile();
 
@@ -1100,7 +1225,7 @@
       const phone = document.getElementById('gatePhone').value.trim();
 
       if (!name || phone.length < 10) {
-        alert('Please enter a valid full name and 10-digit WhatsApp number.');
+        showToast('Please enter a valid full name and 10-digit number.', 'alert-triangle');
         return;
       }
 
@@ -1126,6 +1251,7 @@
 
       switchTab('find');
       renderPillionActiveBanner();
+      showToast('Seat reserved! Ticket generated.', 'check-circle');
 
       try {
         await fetch(APPS_SCRIPT_URL, {
@@ -1184,6 +1310,12 @@
         if (filterHelmetOnly && !ride.hasHelmet) return;
         if (filterWomenOnly && !ride.womenOnly) return;
 
+        // Instant Destination Search Filter
+        if (currentSearchTerm.length > 0) {
+          const matchTarget = `${ride.routeStart} ${ride.routeEnd} ${ride.riderName} ${ride.bikeModel}`.toLowerCase();
+          if (!matchTarget.includes(currentSearchTerm)) return;
+        }
+
         const key = clean(ride.riderName);
         riderMap.set(key, ride);
       });
@@ -1194,8 +1326,8 @@
       if (visibleRides.length === 0) {
         container.innerHTML = `
           <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-slate-200 p-6 space-y-1">
-            <p class="text-xs font-bold text-slate-700">No active seats listed right now</p>
-            <p class="text-[10px] text-slate-400">Offer a seat or check back during commute peaks.</p>
+            <p class="text-xs font-bold text-slate-700">No active seats match your filter</p>
+            <p class="text-[10px] text-slate-400">Try clearing your search or checking back shortly.</p>
           </div>
         `;
         safeRenderIcons();
@@ -1495,7 +1627,7 @@
       safeRenderIcons();
 
       if (typeof Html5Qrcode === 'undefined') {
-        alert("Camera scanner library loading. Please try again.");
+        showToast("Camera library loading. Please wait...", "alert-triangle");
         closeQrScanner();
         return;
       }
@@ -1515,7 +1647,7 @@
         () => {}
       ).catch((err) => {
         console.warn("Camera start failed:", err);
-        alert("Camera access denied. Please grant permission in browser settings.");
+        showToast("Camera permission denied.", "alert-octagon");
         closeQrScanner();
       });
     }
@@ -1547,6 +1679,7 @@
         lastRenderedOfferStatus = null;
         updateOfferTabState();
         renderRides();
+        showToast("Passenger verified! Starting trip.", "check-circle");
 
         try {
           await fetch(APPS_SCRIPT_URL, {
@@ -1565,7 +1698,7 @@
 
         fetchLiveRides();
       } else {
-        alert("Pass does not match this passenger's booking.");
+        showToast("Pass does not match this passenger's ticket.", "alert-triangle");
       }
     }
 
@@ -1581,12 +1714,12 @@
       const cleanFare = formatFare(rawFare);
 
       if (!rName || rPhone.length < 10 || !bModel || !vPlate || !rUpi) {
-        alert("Please complete all required fields.");
+        showToast("Please fill all required fields.", "alert-triangle");
         return;
       }
 
       if (!rUpi.includes('@')) {
-        alert("Please enter a valid UPI ID (e.g. mobile@okhdfcbank or name@ybl).");
+        showToast("Please enter a valid UPI ID (e.g. phone@okaxis).", "alert-triangle");
         return;
       }
 
@@ -1599,6 +1732,7 @@
       const formatted12hTime = formatTime(rawTime);
       const generatedRideId = 'RB-' + Math.floor(100 + Math.random() * 900);
 
+      // Persist rider settings locally for 1-tap re-posting
       let profile = getMyProfile() || {};
       profile.name = rName;
       profile.phone = rPhone;
@@ -1636,6 +1770,7 @@
         myRides.push(generatedRideId);
         localStorage.setItem('my_offered_ride_ids', JSON.stringify(myRides));
 
+        showToast("Seat published live!", "check-circle");
         switchTab('find');
         setTimeout(fetchLiveRides, 600);
       } catch (err) {
@@ -1650,8 +1785,6 @@
     }
 
     async function completeMyRide(rideId) {
-      if (!confirm("Confirm destination reached and commute completed?")) return;
-
       localStorage.removeItem('my_in_transit_ride_id');
       allRides = allRides.filter(r => r.id !== rideId);
 
@@ -1661,6 +1794,8 @@
 
       lastRenderedOfferStatus = null;
       lastRenderedOfferRideId = null;
+
+      showToast("Drop-off completed! Ride archived.", "check-circle");
 
       try {
         await fetch(APPS_SCRIPT_URL, {
@@ -1677,8 +1812,6 @@
     }
 
     async function cancelMyRide(id) {
-      if (!confirm("Are you sure you want to cancel this listing?")) return;
-
       const cancelBtn = document.getElementById(`btn-cancel-${id}`);
       if (cancelBtn) {
         cancelBtn.disabled = true;
@@ -1698,6 +1831,8 @@
 
       lastRenderedOfferStatus = null;
       lastRenderedOfferRideId = null;
+
+      showToast("Listing cancelled.", "trash-2");
 
       try {
         await fetch(APPS_SCRIPT_URL, {
@@ -1783,7 +1918,7 @@
 
       populateFormFromProfile();
       renderRides();
-      alert("Profile details saved.");
+      showToast("Profile details saved.", "check");
     }
 
     function populateFormFromProfile() {
@@ -1899,7 +2034,7 @@
         safeRenderIcons();
       }
 
-      alert("Thank you for your feedback.");
+      showToast("Feedback sent! Thank you.", "check-circle");
       closeModal('feedback-modal');
       if (feedbackInput) feedbackInput.value = '';
     }
