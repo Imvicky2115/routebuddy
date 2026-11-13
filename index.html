@@ -25,7 +25,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   
-  <!-- Upgraded Google Fonts: Outfit (Display), Plus Jakarta Sans (UI), JetBrains Mono (Plates/Fares) -->
+  <!-- Fonts: Outfit (Display), Plus Jakarta Sans (UI), JetBrains Mono (Plates/Fares) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,7 +37,8 @@
     html, body {
       max-width: 100vw;
       overflow-x: hidden !important;
-      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
+      -webkit-overflow-scrolling: touch;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -85,18 +86,43 @@
 
     /* Spring Tactile Press Physics */
     .pressable {
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
     .pressable:active {
-      transform: scale(0.95);
+      transform: scale(0.96);
     }
 
     /* Micro Icon Animations */
-    .brand-logo-box:active .brand-icon {
-      transform: rotate(-12deg) scale(1.1);
-    }
     .brand-icon {
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .brand-logo-box:hover .brand-icon,
+    .brand-logo-box:active .brand-icon {
+      transform: rotate(-14deg) scale(1.12);
+    }
+
+    .action-compass {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .action-card:hover .action-compass,
+    .action-card:active .action-compass {
+      transform: rotate(45deg) scale(1.1);
+    }
+
+    .action-bike {
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .action-card:hover .action-bike,
+    .action-card:active .action-bike {
+      transform: translateX(3px) scale(1.08);
+    }
+
+    .action-arrow {
+      transition: transform 0.25s ease;
+    }
+    .action-card:hover .action-arrow,
+    .action-card:active .action-arrow {
+      transform: translateX(3px);
     }
 
     @keyframes subtle-float {
@@ -109,7 +135,7 @@
 
     @keyframes sos-glow {
       0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.25); }
-      50% { box-shadow: 0 0 0 4px rgba(225, 29, 72, 0); }
+      50% { box-shadow: 0 0 0 5px rgba(225, 29, 72, 0); }
     }
     .sos-pulse {
       animation: sos-glow 2.4s infinite;
@@ -154,16 +180,23 @@
       animation: drawerSlideIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* Bottom Nav Active Pill & Icon Lift */
+    /* Bottom Nav Active Pill & Spring Icon Pop */
+    @keyframes navIconPop {
+      0% { transform: scale(0.85) translateY(0); }
+      60% { transform: scale(1.15) translateY(-3px); }
+      100% { transform: scale(1.05) translateY(-1px); }
+    }
     .nav-item {
       transition: color 0.2s ease;
     }
     .nav-item .nav-icon-wrap {
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+      transition: background-color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .nav-item.active .nav-icon-wrap {
-      transform: translateY(-2px) scale(1.06);
       background-color: #ecfdf5;
+    }
+    .nav-item.active .nav-icon {
+      animation: navIconPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     .privacy-guard {
@@ -181,12 +214,12 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex justify-center pb-22 bg-slate-100">
+<body class="min-h-[100dvh] flex justify-center bg-slate-100">
 
-  <div class="w-full max-w-md bg-slate-50/60 min-h-screen flex flex-col relative shadow-2xl overflow-x-hidden border-x border-slate-200/80">
+  <div class="w-full max-w-md bg-slate-50/70 min-h-[100dvh] flex flex-col relative shadow-2xl border-x border-slate-200/80">
 
     <!-- Collision-Free Balanced Sticky Header -->
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-slate-200/70 px-3.5 py-2.5 select-none">
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-slate-200/70 px-3.5 py-2.5 select-none">
       <div class="flex items-center justify-between gap-1.5 w-full">
         
         <!-- Brand Group with ™ & Animated Route Icon -->
@@ -484,24 +517,23 @@
     </div>
 
     <!-- TAB 0: HOME VIEW -->
-    <main id="home-view" class="view-enter flex-1 px-4 py-4 space-y-4 overflow-x-hidden">
+    <main id="home-view" class="view-enter flex-1 px-4 pt-4 pb-28 space-y-4">
       <!-- Hero Banner -->
       <section class="bg-gradient-to-br from-emerald-800 via-emerald-900 to-slate-950 rounded-3xl p-5 text-white shadow-lg space-y-3.5 relative overflow-hidden">
-        <!-- Subtle Ambient Decorative Glow -->
         <div class="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
 
-        <div class="flex items-center justify-between relative z-10">
-          <span class="inline-flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full text-emerald-300">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Pune Commuter Pool
+        <div class="flex items-center justify-between gap-2 relative z-10">
+          <span class="inline-flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full text-emerald-300 whitespace-nowrap">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span> Pune Commuter Pool
           </span>
-          <span class="text-[10px] font-semibold text-amber-300/90 bg-amber-950/60 border border-amber-500/40 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-            <i data-lucide="alert-circle" class="w-3 h-3 text-amber-400"></i> Peer Caution
+          <span class="text-[10px] font-semibold text-amber-300/95 bg-amber-950/60 border border-amber-500/40 px-2.5 py-1 rounded-full inline-flex items-center gap-1 whitespace-nowrap shrink-0">
+            <i data-lucide="alert-circle" class="w-3 h-3 text-amber-400 shrink-0"></i> Peer Caution
           </span>
         </div>
 
         <div class="relative z-10">
           <h2 class="font-display text-xl font-extrabold tracking-tight leading-snug">
-            Split Your Daily Ride<sup class="text-[10px] font-bold text-emerald-300 ml-0.5">™</sup>
+            Split Your Daily Ride
           </h2>
           <p class="text-xs text-slate-300/90 mt-1 leading-relaxed">Share empty two-wheeler seats, cut daily fuel bills, and beat Pune tech park traffic together.</p>
         </div>
@@ -523,7 +555,7 @@
       </section>
 
       <!-- Transparency & Safety Advisory Box -->
-      <div class="bg-amber-50/90 border border-amber-200/90 rounded-2xl p-3 flex items-start gap-2.5 shadow-2xs">
+      <div class="bg-amber-50/95 border border-amber-200/90 rounded-2xl p-3.5 flex items-start gap-2.5 shadow-2xs">
         <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
         <div class="text-[11px] text-amber-950 leading-snug space-y-0.5">
           <p class="font-bold">Community Safety Notice</p>
@@ -533,26 +565,26 @@
 
       <!-- Action Selectors with Animated Icons -->
       <div class="grid grid-cols-2 gap-3">
-        <button onclick="switchTab('find')" class="pressable group touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-4 text-left shadow-xs flex flex-col justify-between transition-all">
-          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-            <i data-lucide="navigation" class="w-4 h-4"></i>
+        <button onclick="switchTab('find')" class="pressable action-card touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-4 text-left shadow-xs flex flex-col justify-between">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+            <i data-lucide="compass" class="action-compass w-4 h-4"></i>
           </div>
           <div>
             <h3 class="font-display text-xs font-extrabold text-slate-900 leading-tight">Need a Ride?</h3>
             <p class="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
-              Find live seats <i data-lucide="arrow-right" class="w-2.5 h-2.5 text-emerald-600"></i>
+              Find live seats <i data-lucide="arrow-right" class="action-arrow w-2.5 h-2.5 text-emerald-600"></i>
             </p>
           </div>
         </button>
 
-        <button onclick="switchTab('offer')" class="pressable group touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-4 text-left shadow-xs flex flex-col justify-between transition-all">
-          <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-            <i data-lucide="bike" class="w-4 h-4"></i>
+        <button onclick="switchTab('offer')" class="pressable action-card touch-target bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl p-4 text-left shadow-xs flex flex-col justify-between">
+          <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center mb-3">
+            <i data-lucide="bike" class="action-bike w-4 h-4"></i>
           </div>
           <div>
             <h3 class="font-display text-xs font-extrabold text-slate-900 leading-tight">Offering a Seat?</h3>
             <p class="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
-              Publish in 10s <i data-lucide="arrow-right" class="w-2.5 h-2.5 text-slate-600"></i>
+              Publish in 10s <i data-lucide="arrow-right" class="action-arrow w-2.5 h-2.5 text-slate-600"></i>
             </p>
           </div>
         </button>
@@ -588,11 +620,11 @@
     </main>
 
     <!-- TAB 1: FIND RIDE VIEW -->
-    <main id="find-view" class="view-enter flex-1 px-4 py-3.5 space-y-3.5 overflow-x-hidden hidden">
+    <main id="find-view" class="view-enter flex-1 px-4 pt-3.5 pb-28 space-y-3.5 hidden">
       <div id="pillion-active-booking-banner" class="hidden"></div>
 
       <!-- Pillion Warning Notice -->
-      <div class="bg-amber-50/90 border border-amber-200/90 rounded-2xl p-3 flex items-start gap-2 shadow-2xs">
+      <div class="bg-amber-50/95 border border-amber-200/90 rounded-2xl p-3 flex items-start gap-2 shadow-2xs">
         <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
         <p class="text-[11px] text-amber-900 leading-tight">
           <strong>Pillion Alert:</strong> Check that the bike number plate matches the app ticket before getting on. If the rider rides recklessly, insist on disembarking and dial 112.
@@ -631,8 +663,8 @@
         </span>
       </div>
 
-      <!-- Rides Feed Container (Equipped with Shimmer Skeleton) -->
-      <div id="rides-list" class="space-y-3 pb-3">
+      <!-- Rides Feed Container -->
+      <div id="rides-list" class="space-y-3">
         <!-- Skeleton Loading Placeholders -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-4 space-y-3 animate-pulse shadow-2xs">
           <div class="flex items-center justify-between">
@@ -673,7 +705,7 @@
     </main>
 
     <!-- TAB 2: OFFER SEAT VIEW -->
-    <main id="offer-view" class="view-enter flex-1 px-4 py-4 space-y-4 hidden overflow-x-hidden">
+    <main id="offer-view" class="view-enter flex-1 px-4 pt-4 pb-28 space-y-4 hidden">
       <div id="offer-active-card" class="hidden"></div>
 
       <!-- Rider Warning Notice -->
@@ -772,7 +804,7 @@
     </main>
 
     <!-- TAB 3: PROFILE VIEW -->
-    <main id="profile-view" class="view-enter flex-1 px-4 py-4 space-y-4 hidden overflow-x-hidden">
+    <main id="profile-view" class="view-enter flex-1 px-4 pt-4 pb-28 space-y-4 hidden">
       <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
         <div class="flex flex-col items-center text-center">
           <div class="relative group">
@@ -852,14 +884,14 @@
       <div class="max-w-md mx-auto grid grid-cols-4 px-2">
         <button onclick="switchTab('home')" id="nav-home" class="nav-item active pressable relative flex flex-col items-center justify-center gap-0.5 text-emerald-700 font-bold py-0.5">
           <div class="nav-icon-wrap px-3.5 py-1 rounded-full">
-            <i data-lucide="home" class="w-4 h-4"></i>
+            <i data-lucide="home" class="nav-icon w-4 h-4"></i>
           </div>
           <span class="text-[10px]">Home</span>
         </button>
 
         <button onclick="switchTab('find')" id="nav-find" class="nav-item pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-0.5">
           <div class="nav-icon-wrap relative px-3.5 py-1 rounded-full">
-            <i data-lucide="compass" class="w-4 h-4"></i>
+            <i data-lucide="compass" class="nav-icon w-4 h-4"></i>
             <span id="nav-find-badge" class="hidden absolute top-0.5 right-2 w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
           </div>
           <span class="text-[10px]">Find Ride</span>
@@ -867,7 +899,7 @@
 
         <button onclick="switchTab('offer')" id="nav-offer" class="nav-item pressable relative flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-0.5">
           <div class="nav-icon-wrap relative px-3.5 py-1 rounded-full">
-            <i data-lucide="bike" class="w-4 h-4"></i>
+            <i data-lucide="bike" class="nav-icon w-4 h-4"></i>
             <span id="nav-offer-badge" class="hidden absolute top-0.5 right-2 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
           </div>
           <span class="text-[10px]">Offer Seat</span>
@@ -875,7 +907,7 @@
 
         <button onclick="switchTab('profile')" id="nav-profile" class="nav-item pressable flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium py-0.5">
           <div class="nav-icon-wrap px-3.5 py-1 rounded-full">
-            <i data-lucide="user" class="w-4 h-4"></i>
+            <i data-lucide="user" class="nav-icon w-4 h-4"></i>
           </div>
           <span class="text-[10px]">Profile</span>
         </button>
@@ -885,7 +917,7 @@
   </div>
 
   <!-- Sleek Native Toast Notification -->
-  <div id="toast-notification" class="fixed bottom-18 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 translate-y-24 opacity-0 pointer-events-none border border-slate-700/80 whitespace-nowrap">
+  <div id="toast-notification" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 translate-y-24 opacity-0 pointer-events-none border border-slate-700/80 whitespace-nowrap">
     <i id="toast-icon" data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
     <span id="toast-message">Notification message</span>
   </div>
@@ -912,7 +944,6 @@
     let toastTimeout = null;
     let deferredInstallPrompt = null;
 
-    // PWA Service Worker Registration (Relative Scope for GitHub Pages)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js', { scope: './' })
@@ -921,14 +952,12 @@
       });
     }
 
-    // Listen for Android Chrome PWA Install Prompt
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredInstallPrompt = e;
       showToast('Install RideSplit™ on your home screen', 'download');
     });
 
-    // Screenshot Protection
     window.addEventListener('keyup', (e) => {
       if (e.key === 'PrintScreen') {
         navigator.clipboard.writeText('');
@@ -943,7 +972,6 @@
       }
     });
 
-    // Native Toast Controller with Haptic Feedback
     function showToast(msg, iconName = 'check-circle') {
       const toast = document.getElementById('toast-notification');
       const toastMsg = document.getElementById('toast-message');
@@ -1078,7 +1106,6 @@
       } catch (e) {}
     }
 
-    // High-Efficiency Fetch with Client-Side Diffing (Eliminates Screen Flicker)
     async function fetchLiveRides(manual = false) {
       if (isFetchingRides) return;
       isFetchingRides = true;
@@ -1147,7 +1174,6 @@
       }
     }
 
-    // Pillion Active Banner with WhatsApp Family Safety Tracking Share
     function renderPillionActiveBanner() {
       const banner = document.getElementById('pillion-active-booking-banner');
       if (!banner) return;
@@ -1528,7 +1554,6 @@
             <!-- Ticket-Style Route Connector -->
             <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 space-y-2">
               <div class="relative pl-5 space-y-2.5">
-                <!-- Vertical Route Line -->
                 <div class="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-500 to-rose-500 rounded-full opacity-60"></div>
 
                 <div class="relative">
@@ -2227,7 +2252,7 @@
       if (activeView && activeNav) {
         activeView.classList.remove('hidden');
         activeView.classList.remove('view-enter');
-        void activeView.offsetWidth; // Reflow to retrigger entrance animation
+        void activeView.offsetWidth;
         activeView.classList.add('view-enter');
         activeNav.className = 'nav-item active pressable relative flex flex-col items-center justify-center gap-0.5 text-emerald-700 font-bold py-0.5';
       }
@@ -2242,9 +2267,9 @@
 
       updateNavBadges();
       safeRenderIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Lifecycle: Smart visibility-aware polling & battery-saving listeners
     window.addEventListener('DOMContentLoaded', () => {
       safeRenderIcons();
       loadSavedProfile();
